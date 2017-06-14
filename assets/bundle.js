@@ -42957,36 +42957,50 @@ return CodeMirror$1;
 
 var ko = __webpack_require__(2);
 
-module.exports = function (component, data) {
+module.exports = function (component, componentName) {
     var self = component;
 
-    self.idBeforeChange = ko.observable((newValue, oldValue) => true); // will be overridden by diagram
+    self.init = function() {
+        self.idBeforeChange = ko.observable((newValue, oldValue) => true); // will be overridden by diagram
 
-    self.id = ko.observable(data.id).extend({beforeChange: self.idBeforeChange});
-    self.component = ko.computed(() => data.component); // readonly
-    self.x = ko.observable(data.x).extend({dataType: "float", precision: 2});
-    self.y = ko.observable(data.y).extend({dataType: "float", precision: 2});
-    self.width = ko.observable(data.width || 50).extend({dataType: "float", precision: 2, range: {min: 50, max: 500}});
-    self.height = ko.observable(data.height || 50).extend({dataType: "float", precision: 2, range: {min: 50, max: 500}});
-    self.selected = ko.observable(false);
+        self.id = ko.observable().extend({beforeChange: self.idBeforeChange});
+        self.component = ko.computed(() => componentName); // readonly
+        self.x = ko.observable().extend({dataType: "float", precision: 2});
+        self.y = ko.observable().extend({dataType: "float", precision: 2});
+        self.width = ko.observable().extend({dataType: "float", precision: 2, range: {min: 50, max: 500}});
+        self.height = ko.observable().extend({dataType: "float", precision: 2, range: {min: 50, max: 500}});
+        self.selected = ko.observable(false);
 
-    self.commandSelect = function() {
-        self.selected(!self.selected());
+        //
+
+        self.designerParams = [self.x, self.y, self.width, self.height];
+        self.serializeParams = () => [self.id, self.component].concat(self.designerParams);
+
+        // commands:
+
+        self.commandSelect = function() {
+            self.selected(!self.selected());
+        };
+
+        var _viewChangers = [];
+        self.addViewChangers = function () {
+            for (var i = 0; i < arguments.length; i++) {
+                _viewChangers.push(arguments[i]);
+            }
+            self.hash = ko.pureComputed(() => _viewChangers.map(item => item()));
+        };
+
+        // add observables that affects view render:
+        self.addViewChangers(self.id, self.x, self.y, self.width, self.height, self.selected);
     };
 
-    self.designerParams = [self.x, self.y, self.width, self.height];
-    self.serializeParams = () => [self.id, self.component].concat(self.designerParams);
-
-    var _viewChangers = [];
-    self.addViewChangers = function () {
-        for (var i = 0; i < arguments.length; i++) {
-            _viewChangers.push(arguments[i]);
-        }
-        self.hash = ko.pureComputed(() => _viewChangers.map(item => item()));
+    self.load = function(data) {
+        self.id(data.id);
+        self.x(data.x);
+        self.y(data.y);
+        self.width(data.width || 50);
+        self.height(data.height || 50);
     };
-
-    // add observables that affects view render:
-    self.addViewChangers(self.id, self.x, self.y, self.width, self.height, self.selected);
 
     self.dispose = function() {
         self.idBeforeChange = null;
@@ -43005,9 +43019,9 @@ var Components = function() {
         if (!c) throw new Error('Component not registered: ' + component);
         return c;
     };
-    self.ViewModelFactory = function(data) {
-        var vmFactory = self.get(data.component).ViewModelFactory;
-        return new vmFactory(data);
+    self.ViewModelFactory = function(component) {
+        var vmFactory = self.get(component).ViewModelFactory;
+        return new vmFactory();
     };
     self.ViewFactory = function(vm, parentNode) {
         var vFactory = self.get(vm.component()).ViewFactory;
@@ -45498,82 +45512,112 @@ module.exports = function(vm, parentNode) {
 var ko = __webpack_require__(2);
 var inheritBaseComponent = __webpack_require__(6);
 
-module.exports = function (data) {
-    data.width = data.width || 200;  // default while create new
-    data.height = data.height || 150;
-    inheritBaseComponent(this, data);
-
+module.exports = function () {
     var self = this;
 
-    self.title = ko.observable(data.title || data.id).extend({dataType: "string"});
-    self.singleton = ko.observable(data.singleton).extend({dataType: "boolean"});
-    self.params = ko.observable(data.params || '').extend({dataType: "javascript"});
-    self.code = ko.observable(data.code || '// block code');
+    inheritBaseComponent(self, 'block');
 
-    self.out = ko.observable(data.out || '').extend({dataType: "string"});
+    var _init = self.init;
+    self.init = function() {
+        _init.apply(this, arguments);
 
-    self.paramsViewModel = ko.computed(() => {
-        try {
-            var params = self.params();
-            var keyValueArray = params
-                .split(';')
-                .filter(item => item.indexOf('=') != -1)
-                .map(item => {
-                return {key: item.split('=')[0].trim(), value: item.split('=')[1].trim()} ;
-            });
-            return keyValueArray;
-        } catch (e) {
-            return;
-        }
-    });
+        self.title = ko.observable().extend({dataType: "string"});
+        self.singleton = ko.observable().extend({dataType: "boolean"});
+        self.params = ko.observable().extend({dataType: "javascript"});
+        self.code = ko.observable();
+        self.out = ko.observable('').extend({dataType: "string"});
 
-    // will be overridden by diagram
-    self.commandStartLink = (outIndex) => { };
-    self.commandEndLink = () => { };
-    self.getDiagramLinksCount = () => { return 0;};
-    self.diagramLinking = () => {};
-    self.linking = ko.computed(() => self.diagramLinking());
+        // will be overridden by diagram
+        self.commandStartLink = (outIndex) => { };
+        self.commandEndLink = () => { };
+        self.getDiagramLinksCount = () => { return 0;};
+        self.diagramLinking = () => {};
+        self.linking = ko.computed(() => self.diagramLinking());
 
-    // linking:
+        self.paramsViewModel = ko.computed(() => {
+            try {
+                var params = self.params();
+                var keyValueArray = params
+                    .split(';')
+                    .filter(item => item.indexOf('=') != -1)
+                    .map(item => {
+                        return {key: item.split('=')[0].trim(), value: item.split('=')[1].trim()} ;
+                    });
+                return keyValueArray;
+            } catch (e) {
+                return;
+            }
+        });
 
-    self.inLinkPointViewModel = ko.computed(() => ({x: self.x() + self.width() / 2, y: self.y()}));
+        // linking:
 
-    self.outLinksCount = ko.computed(() => {
-        var outLinksTitlesCount = self.out().split(',').length;
-        var diagramLinksCount = self.getDiagramLinksCount(self.id());
-        var max = Math.max(outLinksTitlesCount, diagramLinksCount);
-        return max;
-    });
+        self.inLinkPointViewModel = ko.computed(() => ({x: self.x() + self.width() / 2, y: self.y()}));
 
-    self.outLinksViewModel = ko.computed(() => {
-        var result = self.out().split(',').map(item => item.trim()); // bug'o'feature: returns [''] for empty string
+        self.outLinksCount = ko.computed(() => {
+            var outLinksTitlesCount = self.out().split(',').length;
+            var diagramLinksCount = self.getDiagramLinksCount(self.id());
+            var max = Math.max(outLinksTitlesCount, diagramLinksCount);
+            return max;
+        });
 
-        var delta = self.outLinksCount() - result.length; // diagram can allready has more links than link titles
-        if (delta > 0) {
-            result = result.concat(new Array(delta).fill(''));
-        }
-        return result;
-    });
+        self.outLinksViewModel = ko.computed(() => {
+            var result = self.out().split(',').map(item => item.trim()); // bug'o'feature: returns [''] for empty string
 
-    self.outLinksPoints = ko.computed(() => {
-        var outLinksCount = self.outLinksCount();
-        var sectionLength = self.width() / outLinksCount;
+            var delta = self.outLinksCount() - result.length; // diagram can allready has more links than link titles
+            if (delta > 0) {
+                result = result.concat(new Array(delta).fill(''));
+            }
+            return result;
+        });
 
-        var result = new Array(outLinksCount).fill().map((item, index) => (
-            {
-                x: self.x() + index * sectionLength + sectionLength / 2,
-                y: self.y() + self.height()
-            }));
-        return result;
-    });
+        self.outLinksPoints = ko.computed(() => {
+            var outLinksCount = self.outLinksCount();
+            var sectionLength = self.width() / outLinksCount;
 
-    //
+            var result = new Array(outLinksCount).fill().map((item, index) => (
+                {
+                    x: self.x() + index * sectionLength + sectionLength / 2,
+                    y: self.y() + self.height()
+                }));
+            return result;
+        });
 
-    self.addViewChangers(self.title, self.singleton, self.params, self.linking, self.out);
-    self.designerParams.splice(0, 0, self.title);
-    self.designerParams.push(self.singleton, self.params, self.out);
+        //
 
-    self.serializeParams = () => [self.id, self.component].concat(self.designerParams).concat(self.code);
+        self.addViewChangers(self.title, self.singleton, self.params, self.linking, self.out);
+        self.designerParams.splice(0, 0, self.title);
+        self.designerParams.push(self.singleton, self.params, self.out);
+
+        self.serializeParams = () => [self.id, self.component].concat(self.designerParams).concat(self.code);
+    }
+
+    var _load = self.load;
+    self.load = function(data) {
+        _load.apply(this, arguments);
+        data.width = data.width || 200;  // default while create new
+        data.height = data.height || 150;
+
+        self.title(data.title || data.id);
+        self.singleton(data.singleton);
+        self.params(data.params || '');
+        self.code(data.code || '// block code');
+        self.out(data.out || '');
+    }
+
+    var _dispose = self.dispose;
+    self.dispose = function() {
+        _dispose.apply(this, arguments);
+        [
+            self.paramsViewModel,
+            self.linking,
+            self.inLinkPointViewModel,
+            self.outLinksCount,
+            self.outLinksViewModel,
+            self.outLinksPoints
+        ].forEach(item => item.dispose());
+    };
+
+    self.init();
 };
 
 /***/ }),
@@ -45614,22 +45658,279 @@ components.register(
     __webpack_require__(44)
 );
 
+var data =
+{
+  "id": "diagram1",
+  "component": "diagram",
+  "maxThreadCount": 100,
+  "showCage": false,
+  "elements": [
+    {
+      "id": "textbox1",
+      "component": "textbox",
+      "text": "You can:\n- add new Block (alt + click)\n- each block can contain code, that will be executed by engine\n- select multiple elements with shift\n- move selected with mouse or keyboard\n  (plus shift for accuracy)\n- delete selected (backspace, del)\n- resize selected with alt \n(plus shift for accuracy)\n- scale with mouse scroll or touch gestures\n- save and load diagram JSON",
+      "x": 23.94,
+      "y": 138.42,
+      "width": 420,
+      "height": 190
+    },
+    {
+      "id": "start",
+      "component": "block",
+      "title": "Start",
+      "x": 339,
+      "y": 64,
+      "width": 212,
+      "height": 84,
+      "params": "url = https://api.domain.com;\nuser = testUser;\n",
+      "out": "",
+      "code": "// block code\nfunction main(out) {\n  // some init code\n  this.context.user = this.params.user;\n  return out;\n}"
+    },
+    {
+      "id": "Check mail",
+      "component": "block",
+      "title": "Check orders",
+      "x": 257.44,
+      "y": 380.02,
+      "width": 276.18,
+      "height": 50,
+      "params": "",
+      "out": "yes, no",
+      "code": "// block code\nfunction main(outYes, outNo) {\n  // some code\n  if (this.context.user) {\n    return outYes;\n  } else {\n    return outNo;\n  }\n}"
+    },
+    {
+      "id": "block3",
+      "component": "block",
+      "title": "Send email",
+      "x": 549,
+      "y": 194,
+      "width": 200,
+      "height": 150,
+      "params": "",
+      "out": "ok, error",
+      "code": "// block code\nfunction main(out) {\n  \n}"
+    },
+    {
+      "id": "Delay",
+      "component": "block",
+      "title": "Delay component",
+      "x": 561.62,
+      "y": 445.16,
+      "width": 200,
+      "height": 74,
+      "params": "sleep=200ms;",
+      "out": "",
+      "code": "// block code\nfunction main(callback) {\n  // here is a code for delay prototype:\n  // endTask is a special function for async return control\n  setTimeout(() => endTask(callback), this.params.sleep)\n}"
+    },
+    {
+      "id": "block4",
+      "component": "block",
+      "title": "block4",
+      "x": 60.98,
+      "y": 424.57,
+      "width": 76.26,
+      "height": 50,
+      "params": "",
+      "out": "",
+      "code": "// block code"
+    },
+    {
+      "id": "block5",
+      "component": "block",
+      "title": "block5",
+      "x": 192.52,
+      "y": 621.15,
+      "width": 88.44,
+      "height": 50,
+      "params": "",
+      "out": "",
+      "code": "// block code"
+    }
+  ],
+  "links": [
+    {
+      "id": "link1",
+      "component": "link",
+      "source": "start",
+      "sourceOutIndex": 0,
+      "destination": "Check mail",
+      "path": []
+    },
+    {
+      "id": "link5",
+      "component": "link",
+      "source": "Check mail",
+      "sourceOutIndex": 1,
+      "destination": "Check mail",
+      "path": [
+        [
+          502.0335693359375,
+          455.9496765136719
+        ],
+        [
+          503.0335693359375,
+          356.9496765136719
+        ]
+      ]
+    },
+    {
+      "id": "link6",
+      "component": "link",
+      "source": "Check mail",
+      "sourceOutIndex": 0,
+      "destination": "block3",
+      "path": [
+        [
+          374.8887939453125,
+          510.949951171875
+        ],
+        [
+          527.8887939453125,
+          499.949951171875
+        ],
+        [
+          594.8887939453125,
+          147.949951171875
+        ]
+      ]
+    },
+    {
+      "id": "link7",
+      "component": "link",
+      "source": "block3",
+      "sourceOutIndex": 0,
+      "destination": "Delay",
+      "path": []
+    },
+    {
+      "id": "link8",
+      "component": "link",
+      "source": "Delay",
+      "sourceOutIndex": 0,
+      "destination": "Check mail",
+      "path": [
+        [
+          760,
+          622
+        ],
+        [
+          857,
+          516
+        ],
+        [
+          762,
+          87
+        ],
+        [
+          375,
+          161
+        ]
+      ]
+    },
+    {
+      "id": "link9",
+      "component": "link",
+      "source": "Check mail",
+      "sourceOutIndex": 0,
+      "destination": "block4",
+      "path": [
+        [
+          205.84756469726562,
+          432.8153991699219
+        ],
+        [
+          184.54888916015625,
+          357.0987548828125
+        ],
+        [
+          113.37466430664062,
+          370.31683349609375
+        ]
+      ]
+    },
+    {
+      "id": "link10",
+      "component": "link",
+      "source": "block4",
+      "sourceOutIndex": 0,
+      "destination": "block5",
+      "path": [
+        [
+          249.08668518066406,
+          512.2546691894531
+        ],
+        [
+          258.09527587890625,
+          587.62158203125
+        ]
+      ]
+    },
+    {
+      "id": "link11",
+      "component": "link",
+      "source": "block3",
+      "sourceOutIndex": 1,
+      "destination": "Delay",
+      "path": []
+    },
+    {
+      "id": "link12",
+      "component": "link",
+      "source": "block4",
+      "sourceOutIndex": 0,
+      "destination": "block5",
+      "path": [
+        [
+          172.6640625,
+          574.5994262695312
+        ],
+        [
+          226.96434020996094,
+          521.3047485351562
+        ]
+      ]
+    },
+    {
+      "id": "link13",
+      "component": "link",
+      "source": "block4",
+      "sourceOutIndex": 0,
+      "destination": "block5",
+      "path": [
+        [
+          115.34710693359375,
+          552.4771118164062
+        ],
+        [
+          202.83087921142578,
+          564.5438842773438
+        ]
+      ]
+    }
+  ]
+};
+
 module.exports.run = function (svgParentNode) {
     //var diagramData = {component: 'diagram', id: 'diagram1'};
 
     //debug:
-    var diagramData = {component: 'diagram', id: 'diagram1', elements: [{component: 'textbox', id: 'textbox1', text: 'Some big welcome text.\nHello world!\n1\n2', x: 10, y: 10, width: 200, height: 100}]};
+    //var diagramData = {component: 'diagram', id: 'diagram1', elements: [{component: 'textbox', id: 'textbox1', text: 'Some big welcome text.\nHello world!\n1\n2', x: 10, y: 10, width: 200, height: 100}]};
+    var diagramData = data;
 
-    var diagramViewModel = components.ViewModelFactory(diagramData);
+    var diagramViewModel = components.ViewModelFactory('diagram');
+    diagramViewModel.load(diagramData);
     var diagramView = components.ViewFactory(diagramViewModel, svgParentNode);
 
     //debug initialize repaint:
     diagramViewModel.elements.valueHasMutated();
+    diagramViewModel.links.valueHasMutated();
     //debug initialize selection:
     diagramViewModel.elements()[0].commandSelect();
 
     ko.applyBindings(diagramViewModel, $('#params')[0]); //! should be in another place ; consider: ko.applyBindings(diagramViewModel, paramsNode)
 };
+
+
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ }),
@@ -45891,8 +46192,9 @@ module.exports = function (data) {
 
         self.commandAdd = function (x, y, component) {
             var id = genNewId(component);
-            var vm = vmFactory({id: id, component: component, x: x, y: y});  // create ViewModel with default data
+            var vm = vmFactory(component);
             initElementSubscriptions(vm);
+            vm.load({id: id, component: component, x: x, y: y}); // create ViewModel with default data
             self.commandDeselectAll();
             vm.commandSelect();
             self.elements.push(vm);
@@ -45903,6 +46205,7 @@ module.exports = function (data) {
             elementsForDelete.forEach(element => {
                 self.links.remove(link => link.source() == element.id()).forEach(link => link.dispose());
                 self.links.remove(link => link.destination() == element.id()).forEach(link => link.dispose());
+                element.dispose();
             });
             self.elements.remove(element => element.selected());
             self.links.remove(link => link.selected()).forEach(link => link.dispose());
@@ -45948,8 +46251,9 @@ module.exports = function (data) {
 
                 var id = genNewId('link');
                 var linkData = {id: id, component: 'link', source: sourceViewModel.id(), sourceOutIndex: sourceOutIndex};
-                var vm = vmFactory(linkData);  // create ViewModel with default data
+                var vm = vmFactory('link');  // create ViewModel with default data
                 initElementSubscriptions(vm);
+                vm.load(linkData);
                 vm.commandSelect();
                 linking(vm);
                 self.links.push(vm);
@@ -45975,7 +46279,19 @@ module.exports = function (data) {
                 }
                 linking(null);
             }
-        }
+        };
+
+        self.commandSelectAll = function() {
+            self.elements().forEach(element => element.selected(true));
+            self.links().forEach(link => link.selected(true));
+            self.elements.valueHasMutated();
+            self.links.valueHasMutated();
+        };
+
+        self.commandDeleteAll = function() {
+            self.commandSelectAll();
+            self.commandDeleteSelected();
+        };
 
         // public functions:
         self.getViewModelById = (id) => {
@@ -46005,6 +46321,7 @@ module.exports = function (data) {
 
         self.dragging(false);
         self.linking(null);
+        self.commandDeleteAll();
 
         self.id(data.id);
         self.maxThreadCount(data.maxThreadCount || 100);
@@ -46014,8 +46331,9 @@ module.exports = function (data) {
         var _viewModelArray = [];
         if (data.elements) {
             for (var i = 0; i < data.elements.length; i++) {
-                var vm = vmFactory(data.elements[i]);
+                var vm = vmFactory(data.elements[i].component);
                 initElementSubscriptions(vm);
+                vm.load(data.elements[i]);
                 _viewModelArray.push(vm);
             }
         }
@@ -46024,12 +46342,14 @@ module.exports = function (data) {
         var _linksArray = [];
         if (data.links) {
             for (var i = 0; i < data.links.length; i++) {
-                var vm = vmFactory(data.links[i]);
+                var vm = vmFactory('link');
                 initElementSubscriptions(vm);
+                vm.load(data.links[i]);
                 _linksArray.push(vm);
             }
         }
         self.links(_linksArray);
+
     };
 
     function initElementSubscriptions(vm) {
@@ -46112,7 +46432,6 @@ module.exports = function (data) {
     };
 
     self.init();
-    self.load(data);
 };
 
 /***/ }),
@@ -46579,86 +46898,99 @@ module.exports = function(vm, parentNode) {
 
 var ko = __webpack_require__(2);
 
-module.exports = function (data) {
+module.exports = function () {
     var self = this;
 
-    self.id = ko.observable(data.id);
-    self.component = ko.computed(() => data.component); // readonly
-    self.selected = ko.observable(false);
+    self.init = function() {
+        self.id = ko.observable();
+        self.component = ko.computed(() => 'link');
+        self.selected = ko.observable(false);
 
-    self.source = ko.observable(data.source);
-    self.sourceOutIndex = ko.observable(data.sourceOutIndex);
-    self.destination = ko.observable(data.destination);
-    self.path = ko.observableArray(data.path || []);
+        self.source = ko.observable();
+        self.sourceOutIndex = ko.observable();
+        self.destination = ko.observable();
+        self.path = ko.observableArray([]);
 
-    // computed:
-    self.diagramGetViewModelById = (id) => {}; // will be overridden by diagram
+        // computed:
+        self.diagramGetViewModelById = (id) => {}; // will be overridden by diagram
 
-    var _sourceVM = () => self.diagramGetViewModelById(self.source());
-    var _destinationVM = () => self.diagramGetViewModelById(self.destination());
+        var _sourceVM = () => self.diagramGetViewModelById(self.source());
+        var _destinationVM = () => self.diagramGetViewModelById(self.destination());
 
-    self.fullPath = ko.pureComputed(() => {
-        var result = [];
+        self.fullPath = ko.pureComputed(() => {
+            var result = [];
 
-        if (_sourceVM()) {
-            var x1 = _sourceVM().outLinksPoints()[self.sourceOutIndex()].x;
-            var y1 = _sourceVM().outLinksPoints()[self.sourceOutIndex()].y;
-            result.push([x1, y1]);
+            if (_sourceVM()) {
+                var x1 = _sourceVM().outLinksPoints()[self.sourceOutIndex()].x;
+                var y1 = _sourceVM().outLinksPoints()[self.sourceOutIndex()].y;
+                result.push([x1, y1]);
+            };
+
+            result = result.concat(self.path());
+
+            if (_destinationVM()) {
+                var xLast = _destinationVM().inLinkPointViewModel().x;
+                var yLast = _destinationVM().inLinkPointViewModel().y;
+                result.push([xLast, yLast]);
+            }
+
+            return result;
+        });
+
+        // commands:
+
+        self.commandSelect = function() {
+            self.selected(!self.selected());
         };
 
-        result = result.concat(self.path());
+        self.commandCancelLink = () => {}; // will be overridden by diagram
 
-        if (_destinationVM()) {
-            var xLast = _destinationVM().inLinkPointViewModel().x;
-            var yLast = _destinationVM().inLinkPointViewModel().y;
-            result.push([xLast, yLast]);
-        }
+        self.commandSetLastPoint = function(point) {
+            self.path()[self.path().length - 1] = point;
+            self.path.valueHasMutated();
+        };
 
-        return result;
-    });
+        self.commandAddPoint = function(point) {
+            self.path.push(point);
+        };
 
+        //
 
+        self.destination.subscribeChanged(function(newValue, oldValue) {
+            if (!oldValue && newValue) {
+                self.path.pop();
+            }
+        });
 
-    // commands:
+        //
 
-    self.commandSelect = function() {
-        self.selected(!self.selected());
+        self.hash = ko.computed(() => {
+            return [
+                self.selected()
+            ].concat(self.fullPath());
+        });
+
+        self.designerParams = [];
+        self.serializeParams = () => [self.id, self.component, self.source, self.sourceOutIndex, self.destination, self.path];
+
     };
 
-    self.commandCancelLink = () => {}; // will be overridden by diagram
+    self.load = function(data) {
+        self.id(data.id);
+        self.selected(false);
 
-    self.commandSetLastPoint = function(point) {
-        self.path()[self.path().length - 1] = point;
-        self.path.valueHasMutated();
+        self.source(data.source);
+        self.sourceOutIndex(data.sourceOutIndex);
+        self.destination(data.destination);
+        self.path = ko.observableArray(data.path || []);
     };
-
-    self.commandAddPoint = function(point) {
-        self.path.push(point);
-    };
-
-    //
-
-    self.destination.subscribeChanged(function(newValue, oldValue) {
-        if (!oldValue && newValue) {
-            self.path.pop();
-        }
-    });
-
-    //
-
-    self.hash = ko.computed(() => {
-        return [
-            self.selected()
-        ].concat(self.fullPath());
-    });
-
-    self.designerParams = [];
-    self.serializeParams = () => [self.id, self.component, self.source, self.sourceOutIndex, self.destination, self.path];
 
     self.dispose = () => {
         self.fullPath.dispose();
         self.hash.dispose();
     };
+
+    self.init();
 }
 
 /***/ }),
@@ -46707,17 +47039,40 @@ module.exports = function(vm, parentNode) {
 var ko = __webpack_require__(2);
 var inheritBaseComponent = __webpack_require__(6);
 
-module.exports = function (data) {
-    inheritBaseComponent(this, data);
-
+module.exports = function () {
     var self = this;
 
-    self.singleton = ko.observable(data.singleton).extend({dataType: "boolean"});
-    self.params = ko.observable(data.params).extend({dataType: "json"});
-    self.code = ko.observable(data.code || '// block code');
+    inheritBaseComponent(self, 'simpleblock');
 
-    //self.addViewChangers(); // if need
-    self.designerParams.push(self.singleton, self.params);
+    var _init = self.init;
+    self.init = function() {
+        _init.apply(this, arguments);
+
+        self.singleton = ko.observable().extend({dataType: "boolean"});
+        self.params = ko.observable().extend({dataType: "json"});
+        self.code = ko.observable();
+
+        //self.addViewChangers(); // nothing changes  view
+        self.designerParams.push(self.singleton, self.params);
+    }
+
+    var _load = self.load;
+    self.load = function(data) {
+        _load.apply(this, arguments);
+
+        self.singleton(data.singleton);
+        self.params(data.params);
+        self.code(data.code || '// block code');
+    }
+
+    var _dispose = self.dispose;
+    self.dispose = function() {
+        _dispose.apply(this, arguments);
+
+        // no computed
+    }
+
+    self.init();
 };
 
 /***/ }),
@@ -46769,14 +47124,35 @@ module.exports = function(vm, parentNode) {
 var ko = __webpack_require__(2);
 var inheritBaseComponent = __webpack_require__(6);
 
-module.exports = function (data) {
-    inheritBaseComponent(this, data);
-
+module.exports = function () {
     var self = this;
-    self.text = ko.observable(data.text || data.id).extend({dataType: "string"});
+    inheritBaseComponent(this, 'textbox');
 
-    self.addViewChangers(self.text);
-    self.designerParams.splice(0, 0, self.text);
+    var _init = self.init;
+    self.init = function() {
+        _init.apply(this, arguments);
+
+        self.text = ko.observable().extend({dataType: "string"});
+
+        self.addViewChangers(self.text);
+        self.designerParams.splice(0, 0, self.text);
+    }
+
+    var _load = self.load;
+    self.load = function(data) {
+        _load.apply(this, arguments);
+
+        self.text(data.text || data.id);
+    }
+
+    var _dispose = self.dispose;
+    self.dispose = function() {
+        _dispose.apply(this, arguments);
+
+        // no computed
+    }
+
+    self.init();
 };
 
 /***/ }),
