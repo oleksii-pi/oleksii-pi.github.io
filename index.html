@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Block Diagram Builder</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inconsolata">
+    <script type="text/javascript" src="assets/bundle.js" charset="utf-8"></script>
+</head>
+<body>
+    <div class="diagram-builder">
+
+        <div id="diagram" class="split split-horizontal"></div>
+
+        <div id="params" class="split split-horizontal vertical" data-bind="with:selectedElement">
+            <div class="horizontal elementIdDiv">
+                <input class="elementId" data-bind="value: id" />
+                <label class="elementComponent" data-bind="text:component"></label>
+            </div>
+
+            <table id="paramsTable" data-bind="visible: $parent.showParams">
+                <tbody data-bind="foreach: designerParams">
+                <tr>
+                    <td data-bind="text: Object.keys($parent)[ Object.values($parent).indexOf($rawData)]" />
+                    <td>
+                        <div data-bind="if: typeof $rawData.dataType === 'undefined', visible: typeof $rawData.dataType === 'undefined'">
+                            <textArea data-bind="stringValue: $rawData, valueUpdate: 'afterkeydown'"></textArea>
+                        </div>
+
+                        <div data-bind="if: $rawData.dataType == 'string', visible: $rawData.dataType == 'string'">
+                            <textArea data-bind="stringValue: $rawData, valueUpdate: 'afterkeydown'"></textArea>
+                        </div>
+
+                        <div data-bind="if: $rawData.dataType == 'integer', visible: $rawData.dataType == 'integer'">
+                            <input data-bind="integerValue: $rawData" />
+                        </div>
+
+                        <div data-bind="if: $rawData.dataType == 'float', visible: $rawData.dataType == 'float'">
+                            <input data-bind="floatValue: $rawData" />
+                        </div>
+
+                        <div data-bind="if: $rawData.dataType == 'boolean', visible: $rawData.dataType == 'boolean'">
+                            <input type="checkbox" data-bind="checked: $rawData" />
+                        </div>
+
+                        <div data-bind="if: $rawData.dataType == 'javascript', visible: $rawData.dataType == 'javascript'">
+                            <textarea data-bind="value: $rawData, codemirror: {mode: 'javascript', theme: 'default', matchBrackets:true, scrollbarStyle: 'simple', lineNumbers: false}"></textarea>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+            <div id="codeEditorDiv" data-bind="if: typeof ($data.code) !== 'undefined'" >
+                <textarea id="codeEditor" data-bind="value: code, codemirror: {mode: 'javascript', theme: 'default', matchBrackets:true, lineNumbers: false}">// block js</textarea>
+            </div>
+
+            <div id="paramsFooter" class="horizontal">
+                <label><input type="checkbox" data-bind="checked: $parent.showParams" /> params</label>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
