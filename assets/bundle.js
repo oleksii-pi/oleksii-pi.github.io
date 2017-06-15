@@ -45593,9 +45593,10 @@ module.exports = function () {
 
     var _load = self.load;
     self.load = function(data) {
-        _load.apply(this, arguments);
         data.width = data.width || 200;  // default while create new
         data.height = data.height || 150;
+
+        _load.apply(this, arguments);
 
         self.title(data.title || data.id);
         self.singleton(data.singleton);
@@ -45659,256 +45660,213 @@ components.register(
 );
 
 var data =
-{
-  "id": "diagram1",
-  "component": "diagram",
-  "maxThreadCount": 100,
-  "showCage": false,
-  "elements": [
     {
-      "id": "textbox1",
-      "component": "textbox",
-      "text": "You can:\n- add new Block (alt + click)\n- each block can contain code, that will be executed by engine\n- select multiple elements with shift\n- move selected with mouse or keyboard\n  (plus shift for accuracy)\n- delete selected (backspace, del)\n- resize selected with alt \n(plus shift for accuracy)\n- scale with mouse scroll or touch gestures\n- save and load diagram JSON",
-      "x": 23.94,
-      "y": 138.42,
-      "width": 420,
-      "height": 190
-    },
-    {
-      "id": "start",
-      "component": "block",
-      "title": "Start",
-      "x": 339,
-      "y": 64,
-      "width": 212,
-      "height": 84,
-      "params": "url = https://api.domain.com;\nuser = testUser;\n",
-      "out": "",
-      "code": "// block code\nfunction main(out) {\n  // some init code\n  this.context.user = this.params.user;\n  return out;\n}"
-    },
-    {
-      "id": "Check mail",
-      "component": "block",
-      "title": "Check orders",
-      "x": 257.44,
-      "y": 380.02,
-      "width": 276.18,
-      "height": 50,
-      "params": "",
-      "out": "yes, no",
-      "code": "// block code\nfunction main(outYes, outNo) {\n  // some code\n  if (this.context.user) {\n    return outYes;\n  } else {\n    return outNo;\n  }\n}"
-    },
-    {
-      "id": "block3",
-      "component": "block",
-      "title": "Send email",
-      "x": 549,
-      "y": 194,
-      "width": 200,
-      "height": 150,
-      "params": "",
-      "out": "ok, error",
-      "code": "// block code\nfunction main(out) {\n  \n}"
-    },
-    {
-      "id": "Delay",
-      "component": "block",
-      "title": "Delay component",
-      "x": 561.62,
-      "y": 445.16,
-      "width": 200,
-      "height": 74,
-      "params": "sleep=200ms;",
-      "out": "",
-      "code": "// block code\nfunction main(callback) {\n  // here is a code for delay prototype:\n  // endTask is a special function for async return control\n  setTimeout(() => endTask(callback), this.params.sleep)\n}"
-    },
-    {
-      "id": "block4",
-      "component": "block",
-      "title": "block4",
-      "x": 60.98,
-      "y": 424.57,
-      "width": 76.26,
-      "height": 50,
-      "params": "",
-      "out": "",
-      "code": "// block code"
-    },
-    {
-      "id": "block5",
-      "component": "block",
-      "title": "block5",
-      "x": 192.52,
-      "y": 621.15,
-      "width": 88.44,
-      "height": 50,
-      "params": "",
-      "out": "",
-      "code": "// block code"
-    }
-  ],
-  "links": [
-    {
-      "id": "link1",
-      "component": "link",
-      "source": "start",
-      "sourceOutIndex": 0,
-      "destination": "Check mail",
-      "path": []
-    },
-    {
-      "id": "link5",
-      "component": "link",
-      "source": "Check mail",
-      "sourceOutIndex": 1,
-      "destination": "Check mail",
-      "path": [
-        [
-          502.0335693359375,
-          455.9496765136719
+        "id": "diagram1",
+        "component": "diagram",
+        "maxThreadCount": 100,
+        "showCage": true,
+        "elements": [
+            {
+                "id": "textbox1",
+                "component": "textbox",
+                "text": "You can:\n- add new Block (alt + click)\n- each block can contain code, \nthat will be executed by engine\n- select multiple elements with shift\n- move selected with mouse or keyboard\n  (plus shift for accuracy)\n- delete selected (backspace, del)\n- resize selected with alt \n(plus shift for accuracy)\n- scale with mouse scroll or touch gestures\n- save and load diagram JSON",
+                "x": 4.74,
+                "y": 1.98,
+                "width": 300,
+                "height": 220
+            },
+            {
+                "id": "start",
+                "component": "block",
+                "title": "Start",
+                "x": 307.2,
+                "y": 56.8,
+                "width": 212,
+                "height": 84,
+                "params": "url = https://api.domain.com;\nuser = testUser;\n",
+                "out": "",
+                "code": "// block code\nfunction main(out) {\n  // some init code\n  this.context.user = this.params.user;\n  return out;\n}"
+            },
+            {
+                "id": "Check mail",
+                "component": "block",
+                "title": "Check orders",
+                "x": 273,
+                "y": 205.58,
+                "width": 276.18,
+                "height": 50,
+                "params": "",
+                "out": "yes, no",
+                "code": "// block code\nfunction main(outYes, outNo) {\n  // some code\n  if (this.context.user) {\n    return outYes;\n  } else {\n    return outNo;\n  }\n}"
+            },
+            {
+                "id": "block3",
+                "component": "block",
+                "title": "Send email",
+                "x": 306.86,
+                "y": 330.64,
+                "width": 200,
+                "height": 60,
+                "params": "",
+                "out": "ok, error",
+                "code": "// block code\nfunction main(out) {\n  \n}"
+            },
+            {
+                "id": "Delay",
+                "component": "block",
+                "title": "Delay component",
+                "x": 319.83,
+                "y": 455.59,
+                "width": 200,
+                "height": 74,
+                "params": "sleep=200ms;",
+                "out": "",
+                "code": "// block code\nfunction main(callback) {\n  // here is a code for delay prototype:\n  // endTask is a special function for async return control\n  setTimeout(() => endTask(callback), this.params.sleep)\n}"
+            },
+            {
+                "id": "block4",
+                "component": "block",
+                "title": "block4",
+                "x": 188.8,
+                "y": 307.63,
+                "width": 76.26,
+                "height": 50,
+                "params": "",
+                "out": "",
+                "code": "// block code"
+            },
+            {
+                "id": "block5",
+                "component": "block",
+                "title": "block5",
+                "x": 185.13,
+                "y": 413.52,
+                "width": 88.44,
+                "height": 50,
+                "params": "",
+                "out": "",
+                "code": "// block code"
+            }
         ],
-        [
-          503.0335693359375,
-          356.9496765136719
+        "links": [
+            {
+                "id": "link1",
+                "component": "link",
+                "source": "start",
+                "sourceOutIndex": 0,
+                "destination": "Check mail",
+                "path": []
+            },
+            {
+                "id": "link5",
+                "component": "link",
+                "source": "Check mail",
+                "sourceOutIndex": 1,
+                "destination": "Check mail",
+                "path": [
+                    [
+                        553.7589721679688,
+                        274.47723388671875
+                    ],
+                    [
+                        553.7589721679688,
+                        181.434326171875
+                    ]
+                ]
+            },
+            {
+                "id": "link6",
+                "component": "link",
+                "source": "Check mail",
+                "sourceOutIndex": 0,
+                "destination": "block3",
+                "path": []
+            },
+            {
+                "id": "link7",
+                "component": "link",
+                "source": "block3",
+                "sourceOutIndex": 0,
+                "destination": "Delay",
+                "path": []
+            },
+            {
+                "id": "link8",
+                "component": "link",
+                "source": "Delay",
+                "sourceOutIndex": 0,
+                "destination": "Check mail",
+                "path": [
+                    [
+                        494.3604431152344,
+                        579.1610717773438
+                    ],
+                    [
+                        599.4697875976562,
+                        546.5919799804688
+                    ],
+                    [
+                        617.2347412109375,
+                        314.1671142578125
+                    ],
+                    [
+                        580.5247802734375,
+                        138.09927368164062
+                    ]
+                ]
+            },
+            {
+                "id": "link9",
+                "component": "link",
+                "source": "Check mail",
+                "sourceOutIndex": 0,
+                "destination": "block4",
+                "path": []
+            },
+            {
+                "id": "link10",
+                "component": "link",
+                "source": "block4",
+                "sourceOutIndex": 0,
+                "destination": "block5",
+                "path": [
+                    [
+                        251.08668518066406,
+                        382.2546691894531
+                    ]
+                ]
+            },
+            {
+                "id": "link11",
+                "component": "link",
+                "source": "block3",
+                "sourceOutIndex": 1,
+                "destination": "Delay",
+                "path": []
+            },
+            {
+                "id": "link12",
+                "component": "link",
+                "source": "block4",
+                "sourceOutIndex": 0,
+                "destination": "block5",
+                "path": [
+                    [
+                        202.6640625,
+                        384.59942626953125
+                    ]
+                ]
+            },
+            {
+                "id": "link13",
+                "component": "link",
+                "source": "block4",
+                "sourceOutIndex": 0,
+                "destination": "block5",
+                "path": []
+            }
         ]
-      ]
-    },
-    {
-      "id": "link6",
-      "component": "link",
-      "source": "Check mail",
-      "sourceOutIndex": 0,
-      "destination": "block3",
-      "path": [
-        [
-          374.8887939453125,
-          510.949951171875
-        ],
-        [
-          527.8887939453125,
-          499.949951171875
-        ],
-        [
-          594.8887939453125,
-          147.949951171875
-        ]
-      ]
-    },
-    {
-      "id": "link7",
-      "component": "link",
-      "source": "block3",
-      "sourceOutIndex": 0,
-      "destination": "Delay",
-      "path": []
-    },
-    {
-      "id": "link8",
-      "component": "link",
-      "source": "Delay",
-      "sourceOutIndex": 0,
-      "destination": "Check mail",
-      "path": [
-        [
-          760,
-          622
-        ],
-        [
-          857,
-          516
-        ],
-        [
-          762,
-          87
-        ],
-        [
-          375,
-          161
-        ]
-      ]
-    },
-    {
-      "id": "link9",
-      "component": "link",
-      "source": "Check mail",
-      "sourceOutIndex": 0,
-      "destination": "block4",
-      "path": [
-        [
-          205.84756469726562,
-          432.8153991699219
-        ],
-        [
-          184.54888916015625,
-          357.0987548828125
-        ],
-        [
-          113.37466430664062,
-          370.31683349609375
-        ]
-      ]
-    },
-    {
-      "id": "link10",
-      "component": "link",
-      "source": "block4",
-      "sourceOutIndex": 0,
-      "destination": "block5",
-      "path": [
-        [
-          249.08668518066406,
-          512.2546691894531
-        ],
-        [
-          258.09527587890625,
-          587.62158203125
-        ]
-      ]
-    },
-    {
-      "id": "link11",
-      "component": "link",
-      "source": "block3",
-      "sourceOutIndex": 1,
-      "destination": "Delay",
-      "path": []
-    },
-    {
-      "id": "link12",
-      "component": "link",
-      "source": "block4",
-      "sourceOutIndex": 0,
-      "destination": "block5",
-      "path": [
-        [
-          172.6640625,
-          574.5994262695312
-        ],
-        [
-          226.96434020996094,
-          521.3047485351562
-        ]
-      ]
-    },
-    {
-      "id": "link13",
-      "component": "link",
-      "source": "block4",
-      "sourceOutIndex": 0,
-      "destination": "block5",
-      "path": [
-        [
-          115.34710693359375,
-          552.4771118164062
-        ],
-        [
-          202.83087921142578,
-          564.5438842773438
-        ]
-      ]
-    }
-  ]
-};
+    };
 
 module.exports.run = function (svgParentNode) {
     //var diagramData = {component: 'diagram', id: 'diagram1'};
@@ -45918,12 +45876,9 @@ module.exports.run = function (svgParentNode) {
     var diagramData = data;
 
     var diagramViewModel = components.ViewModelFactory('diagram');
-    diagramViewModel.load(diagramData);
     var diagramView = components.ViewFactory(diagramViewModel, svgParentNode);
+    diagramViewModel.load(diagramData);
 
-    //debug initialize repaint:
-    diagramViewModel.elements.valueHasMutated();
-    diagramViewModel.links.valueHasMutated();
     //debug initialize selection:
     diagramViewModel.elements()[0].commandSelect();
 
@@ -45972,9 +45927,54 @@ module.exports = function(vm, parentNode) {
     });
 
     svg.on('keydown', function () {
-        if (d3.event.keyCode === 8) {
+        // backspace/delete
+        if (d3.event.keyCode === 8 || d3.event.keyCode === 46) {
             vm.commandDeleteSelected();
         }
+
+        // ctrl/command + A
+        if (d3.event.keyCode === 65 && (d3.event.ctrlKey || d3.event.metaKey)) {
+            vm.commandSelectAll();
+            if (d3.event) {
+                d3.event.preventDefault();
+                d3.event.stopPropagation();
+            }
+        }
+
+        // ctrl/command + C, V, X
+        if (d3.event.ctrlKey || d3.event.metaKey) {
+            // copy
+            if (d3.event.keyCode == 67) {
+                vm.commandCopySelectedToClipboard();
+
+                if (d3.event) {
+                    d3.event.preventDefault();
+                    d3.event.stopPropagation();
+                }
+            }
+
+            // cut
+            if (d3.event.keyCode == 88) {
+                vm.commandCopySelectedToClipboard();
+                vm.commandDeleteSelected();
+
+                if (d3.event) {
+                    d3.event.preventDefault();
+                    d3.event.stopPropagation();
+                }
+            }
+
+            // paste
+            if (d3.event.keyCode == 86) {
+                vm.commandPasteFromClipboard();
+
+                if (d3.event) {
+                    d3.event.preventDefault();
+                    d3.event.stopPropagation();
+                }
+            }
+        }
+
         var multiplier = 10;
         if (d3.event.shiftKey) {
             multiplier = 1;
@@ -46124,6 +46124,7 @@ module.exports = function(vm, parentNode) {
 var ko = __webpack_require__(2);
 var vmFactory = __webpack_require__(7).ViewModelFactory;
 
+
 module.exports = function (data) {
     var self = this;
 
@@ -46172,7 +46173,7 @@ module.exports = function (data) {
         self.designerParams = [self.maxThreadCount, self.showCage, self.loadingData, self.json];
 
         // commands:
-        function genNewId(component) {
+        var genNewId = function(component) {
             var maxId = 0;
             if (component == 'link') {
                 self.links().forEach(item => {
@@ -46208,7 +46209,9 @@ module.exports = function (data) {
                 element.dispose();
             });
             self.elements.remove(element => element.selected());
-            self.links.remove(link => link.selected()).forEach(link => link.dispose());
+            var linksForDelete = self.links().filter(link => link.selected());
+            linksForDelete.forEach(link => link.dispose());
+            self.links.remove(link => link.selected());
         };
 
         self.commandMoveSelected = function(deltaX, deltaY) {
@@ -46264,6 +46267,7 @@ module.exports = function (data) {
             var linking = self.linking;
             if (linking()) {
                 var linkVM = linking();
+                linkVM.path.pop(); // last point under mouse
                 linkVM.destination(destinationViewModel.id());
                 linking(null);
             }
@@ -46284,13 +46288,90 @@ module.exports = function (data) {
         self.commandSelectAll = function() {
             self.elements().forEach(element => element.selected(true));
             self.links().forEach(link => link.selected(true));
-            self.elements.valueHasMutated();
-            self.links.valueHasMutated();
         };
 
         self.commandDeleteAll = function() {
             self.commandSelectAll();
             self.commandDeleteSelected();
+        };
+
+        // copy & paste:
+
+        var _clipboard;
+
+        self.commandCopySelectedToClipboard = function() {
+            var data = {};
+            data.elements = [];
+            data.links = [];
+
+            self.elements().forEach(element => {
+                if (element.selected()) {
+                    data.elements.push(serializeComponent(element));
+                }
+            });
+            self.links().forEach(link => {
+                if (link.selected()
+                        && link.source()
+                        && link.destination()
+                        && self.getViewModelById(link.source())
+                        && self.getViewModelById(link.destination())
+                        && self.getViewModelById(link.source()).selected()
+                        && self.getViewModelById(link.destination()).selected()
+                    ) {
+                    data.links.push(serializeComponent(link));
+                }
+            });
+
+            var json = JSON.stringify(data, null, 2);
+            _clipboard = json;
+        };
+
+        self.commandPasteFromClipboard = function() {
+            self.commandDeselectAll();
+
+            var data;
+            try {
+                data = JSON.parse(_clipboard);
+            } catch (err) {
+                return;
+            }
+
+            var elementsIdMap = {};
+
+            // loading elements, than links:
+            if (data.elements) {
+                for (var i = 0; i < data.elements.length; i++) {
+                    var elementData = data.elements[i];
+                    var component = elementData.component;
+
+                    var oldId = elementData.id;
+                    var newId = genNewId(component);
+                    elementData.id = newId;
+                    elementsIdMap[oldId] = newId;
+
+                    var vm = vmFactory(component);
+                    initElementSubscriptions(vm);
+                    vm.load(elementData);
+                    vm.selected(true);
+                    self.elements.push(vm);
+                }
+            }
+
+            if (data.links) {
+                for (var i = 0; i < data.links.length; i++) {
+                    var newId = genNewId('link');
+                    var linkData = data.links[i];
+                    linkData.id = newId;
+                    linkData.source = elementsIdMap[linkData.source];
+                    linkData.destination = elementsIdMap[linkData.destination];
+
+                    var vm = vmFactory('link');
+                    initElementSubscriptions(vm);
+                    vm.load(linkData);
+                    vm.selected(true);
+                    self.links.push(vm);
+                }
+            }
         };
 
         // public functions:
@@ -46322,6 +46403,7 @@ module.exports = function (data) {
         self.dragging(false);
         self.linking(null);
         self.commandDeleteAll();
+        ko.tasks.runEarly();
 
         self.id(data.id);
         self.maxThreadCount(data.maxThreadCount || 100);
@@ -46404,17 +46486,17 @@ module.exports = function (data) {
         }
     };
 
-    self.save = function() {
-        function serializeComponent(component) {
-            var result = {};
-            var params = component.serializeParams();
-            params.forEach(param => {
-                var paramName = Object.keys(component)[ Object.values(component).indexOf(param)];
-                result[paramName] = param();
-            })
-            return result;
-        };
+    function serializeComponent(component) {
+        var result = {};
+        var params = component.serializeParams();
+        params.forEach(param => {
+            var paramName = Object.keys(component)[ Object.values(component).indexOf(param)];
+            result[paramName] = param();
+        })
+        return result;
+    };
 
+    self.save = function() {
         var data = serializeComponent(self);
         data.elements = [];
         data.links = [];
@@ -46953,14 +47035,6 @@ module.exports = function () {
         self.commandAddPoint = function(point) {
             self.path.push(point);
         };
-
-        //
-
-        self.destination.subscribeChanged(function(newValue, oldValue) {
-            if (!oldValue && newValue) {
-                self.path.pop();
-            }
-        });
 
         //
 
