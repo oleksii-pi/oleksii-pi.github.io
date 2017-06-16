@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 50);
+/******/ 	return __webpack_require__(__webpack_require__.s = 52);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -195,7 +195,7 @@ var singleton = null;
 var	singletonCounter = 0;
 var	stylesInsertedAtTop = [];
 
-var	fixUrls = __webpack_require__(37);
+var	fixUrls = __webpack_require__(38);
 
 module.exports = function(list, options) {
 	if (typeof DEBUG !== "undefined" && DEBUG) {
@@ -43041,14 +43041,14 @@ module.exports = components;
 /* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
-/* WEBPACK VAR INJECTION */(function($) {__webpack_require__(27);
+/* WEBPACK VAR INJECTION */(function($) {__webpack_require__(28);
 
-__webpack_require__(33);
-__webpack_require__(36);
+__webpack_require__(34);
+__webpack_require__(37);
 
-var split = __webpack_require__(24);
-var compositionRoot = __webpack_require__(40);
-__webpack_require__(51);
+var split = __webpack_require__(25);
+var compositionRoot = __webpack_require__(42);
+__webpack_require__(53);
 
 window.onbeforeunload = function() {
     return "Are you sure you want to navigate away?";
@@ -44340,6 +44340,421 @@ exports.push([module.i, ".split, .split-flex {\n    -webkit-box-sizing: border-b
 
 /***/ }),
 /* 24 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* WEBPACK VAR INJECTION */(function(global) {
+var $scope, conflict, conflictResolution = [];
+if (typeof global === 'object' && global) {
+  $scope = global;
+} else if (typeof window !== 'undefined') {
+  $scope = window;
+} else {
+  $scope = {};
+}
+conflict = $scope.DeepDiff;
+if (conflict) {
+  conflictResolution.push(
+    function() {
+      if ('undefined' !== typeof conflict && $scope.DeepDiff === accumulateDiff) {
+        $scope.DeepDiff = conflict;
+        conflict = undefined;
+      }
+    });
+}
+
+// nodejs compatible on server side and in the browser.
+function inherits(ctor, superCtor) {
+  ctor.super_ = superCtor;
+  ctor.prototype = Object.create(superCtor.prototype, {
+    constructor: {
+      value: ctor,
+      enumerable: false,
+      writable: true,
+      configurable: true
+    }
+  });
+}
+
+function Diff(kind, path) {
+  Object.defineProperty(this, 'kind', {
+    value: kind,
+    enumerable: true
+  });
+  if (path && path.length) {
+    Object.defineProperty(this, 'path', {
+      value: path,
+      enumerable: true
+    });
+  }
+}
+
+function DiffEdit(path, origin, value) {
+  DiffEdit.super_.call(this, 'E', path);
+  Object.defineProperty(this, 'lhs', {
+    value: origin,
+    enumerable: true
+  });
+  Object.defineProperty(this, 'rhs', {
+    value: value,
+    enumerable: true
+  });
+}
+inherits(DiffEdit, Diff);
+
+function DiffNew(path, value) {
+  DiffNew.super_.call(this, 'N', path);
+  Object.defineProperty(this, 'rhs', {
+    value: value,
+    enumerable: true
+  });
+}
+inherits(DiffNew, Diff);
+
+function DiffDeleted(path, value) {
+  DiffDeleted.super_.call(this, 'D', path);
+  Object.defineProperty(this, 'lhs', {
+    value: value,
+    enumerable: true
+  });
+}
+inherits(DiffDeleted, Diff);
+
+function DiffArray(path, index, item) {
+  DiffArray.super_.call(this, 'A', path);
+  Object.defineProperty(this, 'index', {
+    value: index,
+    enumerable: true
+  });
+  Object.defineProperty(this, 'item', {
+    value: item,
+    enumerable: true
+  });
+}
+inherits(DiffArray, Diff);
+
+function arrayRemove(arr, from, to) {
+  var rest = arr.slice((to || from) + 1 || arr.length);
+  arr.length = from < 0 ? arr.length + from : from;
+  arr.push.apply(arr, rest);
+  return arr;
+}
+
+function realTypeOf(subject) {
+  var type = typeof subject;
+  if (type !== 'object') {
+    return type;
+  }
+
+  if (subject === Math) {
+    return 'math';
+  } else if (subject === null) {
+    return 'null';
+  } else if (Array.isArray(subject)) {
+    return 'array';
+  } else if (Object.prototype.toString.call(subject) === '[object Date]') {
+    return 'date';
+  } else if (typeof subject.toString === 'function' && /^\/.*\//.test(subject.toString())) {
+    return 'regexp';
+  }
+  return 'object';
+}
+
+function deepDiff(lhs, rhs, changes, prefilter, path, key, stack) {
+  path = path || [];
+  stack = stack || [];
+  var currentPath = path.slice(0);
+  if (typeof key !== 'undefined') {
+    if (prefilter) {
+      if (typeof(prefilter) === 'function' && prefilter(currentPath, key)) {
+        return; } else if (typeof(prefilter) === 'object') {
+        if (prefilter.prefilter && prefilter.prefilter(currentPath, key)) {
+          return; }
+        if (prefilter.normalize) {
+          var alt = prefilter.normalize(currentPath, key, lhs, rhs);
+          if (alt) {
+            lhs = alt[0];
+            rhs = alt[1];
+          }
+        }
+      }
+    }
+    currentPath.push(key);
+  }
+
+  // Use string comparison for regexes
+  if (realTypeOf(lhs) === 'regexp' && realTypeOf(rhs) === 'regexp') {
+    lhs = lhs.toString();
+    rhs = rhs.toString();
+  }
+
+  var ltype = typeof lhs;
+  var rtype = typeof rhs;
+
+  var ldefined = ltype !== 'undefined' || (stack && stack[stack.length - 1].lhs && stack[stack.length - 1].lhs.hasOwnProperty(key));
+  var rdefined = rtype !== 'undefined' || (stack && stack[stack.length - 1].rhs && stack[stack.length - 1].rhs.hasOwnProperty(key));
+
+  if (!ldefined && rdefined) {
+    changes(new DiffNew(currentPath, rhs));
+  } else if (!rdefined && ldefined) {
+    changes(new DiffDeleted(currentPath, lhs));
+  } else if (realTypeOf(lhs) !== realTypeOf(rhs)) {
+    changes(new DiffEdit(currentPath, lhs, rhs));
+  } else if (realTypeOf(lhs) === 'date' && (lhs - rhs) !== 0) {
+    changes(new DiffEdit(currentPath, lhs, rhs));
+  } else if (ltype === 'object' && lhs !== null && rhs !== null) {
+    if (!stack.filter(function(x) {
+        return x.lhs === lhs; }).length) {
+      stack.push({ lhs: lhs, rhs: rhs });
+      if (Array.isArray(lhs)) {
+        var i, len = lhs.length;
+        for (i = 0; i < lhs.length; i++) {
+          if (i >= rhs.length) {
+            changes(new DiffArray(currentPath, i, new DiffDeleted(undefined, lhs[i])));
+          } else {
+            deepDiff(lhs[i], rhs[i], changes, prefilter, currentPath, i, stack);
+          }
+        }
+        while (i < rhs.length) {
+          changes(new DiffArray(currentPath, i, new DiffNew(undefined, rhs[i++])));
+        }
+      } else {
+        var akeys = Object.keys(lhs);
+        var pkeys = Object.keys(rhs);
+        akeys.forEach(function(k, i) {
+          var other = pkeys.indexOf(k);
+          if (other >= 0) {
+            deepDiff(lhs[k], rhs[k], changes, prefilter, currentPath, k, stack);
+            pkeys = arrayRemove(pkeys, other);
+          } else {
+            deepDiff(lhs[k], undefined, changes, prefilter, currentPath, k, stack);
+          }
+        });
+        pkeys.forEach(function(k) {
+          deepDiff(undefined, rhs[k], changes, prefilter, currentPath, k, stack);
+        });
+      }
+      stack.length = stack.length - 1;
+    } else if (lhs !== rhs) {
+      // lhs is contains a cycle at this element and it differs from rhs
+      changes(new DiffEdit(currentPath, lhs, rhs));
+    }
+  } else if (lhs !== rhs) {
+    if (!(ltype === 'number' && isNaN(lhs) && isNaN(rhs))) {
+      changes(new DiffEdit(currentPath, lhs, rhs));
+    }
+  }
+}
+
+function accumulateDiff(lhs, rhs, prefilter, accum) {
+  accum = accum || [];
+  deepDiff(lhs, rhs,
+    function(diff) {
+      if (diff) {
+        accum.push(diff);
+      }
+    },
+    prefilter);
+  return (accum.length) ? accum : undefined;
+}
+
+function applyArrayChange(arr, index, change) {
+  if (change.path && change.path.length) {
+    var it = arr[index],
+      i, u = change.path.length - 1;
+    for (i = 0; i < u; i++) {
+      it = it[change.path[i]];
+    }
+    switch (change.kind) {
+      case 'A':
+        applyArrayChange(it[change.path[i]], change.index, change.item);
+        break;
+      case 'D':
+        delete it[change.path[i]];
+        break;
+      case 'E':
+      case 'N':
+        it[change.path[i]] = change.rhs;
+        break;
+    }
+  } else {
+    switch (change.kind) {
+      case 'A':
+        applyArrayChange(arr[index], change.index, change.item);
+        break;
+      case 'D':
+        arr = arrayRemove(arr, index);
+        break;
+      case 'E':
+      case 'N':
+        arr[index] = change.rhs;
+        break;
+    }
+  }
+  return arr;
+}
+
+function applyChange(target, source, change) {
+  if (target && source && change && change.kind) {
+    var it = target,
+      i = -1,
+      last = change.path ? change.path.length - 1 : 0;
+    while (++i < last) {
+      if (typeof it[change.path[i]] === 'undefined') {
+        it[change.path[i]] = (typeof change.path[i] === 'number') ? [] : {};
+      }
+      it = it[change.path[i]];
+    }
+    switch (change.kind) {
+      case 'A':
+        applyArrayChange(change.path ? it[change.path[i]] : it, change.index, change.item);
+        break;
+      case 'D':
+        delete it[change.path[i]];
+        break;
+      case 'E':
+      case 'N':
+        it[change.path[i]] = change.rhs;
+        break;
+    }
+  }
+}
+
+function revertArrayChange(arr, index, change) {
+  if (change.path && change.path.length) {
+    // the structure of the object at the index has changed...
+    var it = arr[index],
+      i, u = change.path.length - 1;
+    for (i = 0; i < u; i++) {
+      it = it[change.path[i]];
+    }
+    switch (change.kind) {
+      case 'A':
+        revertArrayChange(it[change.path[i]], change.index, change.item);
+        break;
+      case 'D':
+        it[change.path[i]] = change.lhs;
+        break;
+      case 'E':
+        it[change.path[i]] = change.lhs;
+        break;
+      case 'N':
+        delete it[change.path[i]];
+        break;
+    }
+  } else {
+    // the array item is different...
+    switch (change.kind) {
+      case 'A':
+        revertArrayChange(arr[index], change.index, change.item);
+        break;
+      case 'D':
+        arr[index] = change.lhs;
+        break;
+      case 'E':
+        arr[index] = change.lhs;
+        break;
+      case 'N':
+        arr = arrayRemove(arr, index);
+        break;
+    }
+  }
+  return arr;
+}
+
+function revertChange(target, source, change) {
+  if (target && source && change && change.kind) {
+    var it = target,
+      i, u;
+    u = change.path.length - 1;
+    for (i = 0; i < u; i++) {
+      if (typeof it[change.path[i]] === 'undefined') {
+        it[change.path[i]] = {};
+      }
+      it = it[change.path[i]];
+    }
+    switch (change.kind) {
+      case 'A':
+        // Array was modified...
+        // it will be an array...
+        revertArrayChange(it[change.path[i]], change.index, change.item);
+        break;
+      case 'D':
+        // Item was deleted...
+        it[change.path[i]] = change.lhs;
+        break;
+      case 'E':
+        // Item was edited...
+        it[change.path[i]] = change.lhs;
+        break;
+      case 'N':
+        // Item is new...
+        delete it[change.path[i]];
+        break;
+    }
+  }
+}
+
+function applyDiff(target, source, filter) {
+  if (target && source) {
+    var onChange = function(change) {
+      if (!filter || filter(target, source, change)) {
+        applyChange(target, source, change);
+      }
+    };
+    deepDiff(target, source, onChange);
+  }
+}
+
+Object.defineProperties(accumulateDiff, {
+
+  diff: {
+    value: accumulateDiff,
+    enumerable: true
+  },
+  observableDiff: {
+    value: deepDiff,
+    enumerable: true
+  },
+  applyDiff: {
+    value: applyDiff,
+    enumerable: true
+  },
+  applyChange: {
+    value: applyChange,
+    enumerable: true
+  },
+  revertChange: {
+    value: revertChange,
+    enumerable: true
+  },
+  isConflict: {
+    value: function() {
+      return 'undefined' !== typeof conflict;
+    },
+    enumerable: true
+  },
+  noConflict: {
+    value: function() {
+      if (conflictResolution) {
+        conflictResolution.forEach(function(it) {
+          it();
+        });
+        conflictResolution = null;
+      }
+      return accumulateDiff;
+    },
+    enumerable: true
+  }
+});
+
+/* harmony default export */ __webpack_exports__["default"] = (accumulateDiff);
+
+/* WEBPACK VAR INJECTION */}.call(__webpack_exports__, __webpack_require__(39)))
+
+/***/ }),
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /*! Split.js - v1.3.4 */
@@ -44895,7 +45310,7 @@ return Split;
 
 
 /***/ }),
-/* 25 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
@@ -44926,7 +45341,7 @@ if(false) {
 }
 
 /***/ }),
-/* 26 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
@@ -44957,7 +45372,7 @@ if(false) {
 }
 
 /***/ }),
-/* 27 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
@@ -44988,7 +45403,7 @@ if(false) {
 }
 
 /***/ }),
-/* 28 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
@@ -45019,7 +45434,7 @@ if(false) {
 }
 
 /***/ }),
-/* 29 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
@@ -45050,7 +45465,7 @@ if(false) {
 }
 
 /***/ }),
-/* 30 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
@@ -45081,7 +45496,7 @@ if(false) {
 }
 
 /***/ }),
-/* 31 */
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
@@ -45112,7 +45527,7 @@ if(false) {
 }
 
 /***/ }),
-/* 32 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
@@ -45143,7 +45558,7 @@ if(false) {
 }
 
 /***/ }),
-/* 33 */
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
@@ -45174,7 +45589,7 @@ if(false) {
 }
 
 /***/ }),
-/* 34 */
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
@@ -45205,7 +45620,7 @@ if(false) {
 }
 
 /***/ }),
-/* 35 */
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
@@ -45236,7 +45651,7 @@ if(false) {
 }
 
 /***/ }),
-/* 36 */
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
@@ -45267,7 +45682,7 @@ if(false) {
 }
 
 /***/ }),
-/* 37 */
+/* 38 */
 /***/ (function(module, exports) {
 
 
@@ -45362,11 +45777,38 @@ module.exports = function (css) {
 
 
 /***/ }),
-/* 38 */
+/* 39 */
+/***/ (function(module, exports) {
+
+var g;
+
+// This works in non-strict mode
+g = (function() {
+	return this;
+})();
+
+try {
+	// This works if eval is allowed (see CSP)
+	g = g || Function("return this")() || (1,eval)("this");
+} catch(e) {
+	// This works if the window reference is available
+	if(typeof window === "object")
+		g = window;
+}
+
+// g can still be undefined, but nothing to do about it...
+// We return undefined, instead of nothing here, so it's
+// easier to handle this case. if(!global) { ...}
+
+module.exports = g;
+
+
+/***/ }),
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var d3 = __webpack_require__(3);
-__webpack_require__(28);
+__webpack_require__(29);
 var ko = __webpack_require__(2);
 
 const margin = 4;
@@ -45510,7 +45952,7 @@ module.exports = function(vm, parentNode) {
 };
 
 /***/ }),
-/* 39 */
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var ko = __webpack_require__(2);
@@ -45626,41 +46068,41 @@ module.exports = function () {
 };
 
 /***/ }),
-/* 40 */
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function($) {var components = __webpack_require__(7);
 var ko = __webpack_require__(2);
-__webpack_require__(43);
+__webpack_require__(45);
 
 components.register(
     'diagram',
-    __webpack_require__(42),
-    __webpack_require__(41)
+    __webpack_require__(44),
+    __webpack_require__(43)
 );
 
 components.register(
     'simpleblock',
-    __webpack_require__(47),
-    __webpack_require__(46)
-);
-
-components.register(
-    'textbox',
     __webpack_require__(49),
     __webpack_require__(48)
 );
 
 components.register(
+    'textbox',
+    __webpack_require__(51),
+    __webpack_require__(50)
+);
+
+components.register(
     'block',
-    __webpack_require__(39),
-    __webpack_require__(38)
+    __webpack_require__(41),
+    __webpack_require__(40)
 );
 
 components.register(
     'link',
-    __webpack_require__(45),
-    __webpack_require__(44)
+    __webpack_require__(47),
+    __webpack_require__(46)
 );
 
 var data =
@@ -45847,11 +46289,11 @@ module.exports.run = function (svgParentNode) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ }),
-/* 41 */
+/* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var d3 = __webpack_require__(3);
-__webpack_require__(29);
+__webpack_require__(30);
 var vFactory = __webpack_require__(7).ViewFactory;
 
 module.exports = function(vm, parentNode) {
@@ -45890,12 +46332,27 @@ module.exports = function(vm, parentNode) {
             vm.commandDeleteSelected();
         }
 
-        // ctrl/command + A
-        if (d3.event.keyCode === 65 && (d3.event.ctrlKey || d3.event.metaKey)) {
-            vm.commandSelectAll();
-            if (d3.event) {
-                d3.event.preventDefault();
-                d3.event.stopPropagation();
+        if (d3.event.ctrlKey || d3.event.metaKey) {
+            // ctrl/command + A
+            if (d3.event.keyCode === 65) {
+                vm.commandSelectAll();
+                if (d3.event) {
+                    d3.event.preventDefault();
+                    d3.event.stopPropagation();
+                }
+            }
+
+            // ctrl/command + Z
+            if (d3.event.keyCode === 90) {
+                if (d3.event.shiftKey) {
+                    vm.commandRedo();
+                } else {
+                    vm.commandUndo();
+                }
+                if (d3.event) {
+                    d3.event.preventDefault();
+                    d3.event.stopPropagation();
+                }
             }
         }
 
@@ -46076,12 +46533,14 @@ module.exports = function(vm, parentNode) {
 }
 
 /***/ }),
-/* 42 */
+/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var ko = __webpack_require__(2);
 var vmFactory = __webpack_require__(7).ViewModelFactory;
+var jsonDiff = __webpack_require__(24).default;
 
+const saveDiagramInterval = 1000;
 
 module.exports = function (data) {
     var self = this;
@@ -46101,6 +46560,11 @@ module.exports = function (data) {
         self.showParams = ko.observable(true);
         self.dragging = ko.observable(false);
         self.linking = ko.observable(null);
+
+        self.undoRedo = ko.observable(false);
+        self.maxUndoCount = ko.observable(100);
+        self.undoActions = ko.observableArray([]);
+        self.redoActions = ko.observableArray([]);
 
         self.serializeParams = () => [self.id, self.component, self.maxThreadCount, self.showCage, self.straightLinks];
 
@@ -46126,12 +46590,13 @@ module.exports = function (data) {
                     self.load(value);
                 }
             }
-        }).extend({dataType: 'javascript'});
+        }).extend({ rateLimit: { timeout: saveDiagramInterval, method: "notifyWhenChangesStop" } }).extend({dataType: 'string'});
 
         // view params:
         self.designerParams = [self.maxThreadCount, self.showCage, self.straightLinks, self.loadingData, self.json];
 
         // commands:
+
         var genNewId = function(component) {
             var maxId = 0;
             if (component == 'link') {
@@ -46250,8 +46715,10 @@ module.exports = function (data) {
         };
 
         self.commandDeleteAll = function() {
-            self.commandSelectAll();
-            self.commandDeleteSelected();
+            self.links().forEach(link => link.dispose());
+            self.links.removeAll();
+            self.elements().forEach(element => element.dispose());
+            self.elements.removeAll();
         };
 
         // copy & paste:
@@ -46333,6 +46800,81 @@ module.exports = function (data) {
             }
         };
 
+        // undo, redo:
+
+        // auto save, undo, redo:
+
+        var operationFinished = function(newValue) {
+            if (!newValue) {
+                self.json.notifySubscribersImmediately(self.json());
+            }
+        };
+
+        self.dragging.subscribe(operationFinished);
+        self.linking.subscribe(operationFinished);
+
+        var _json;
+        self.json.subscribe(function(newValue) {
+            // can be called multiple times with the same newValue (after dragging, linking)
+
+            if (self.undoRedo()) {
+                _json = newValue;
+                self.undoRedo(false);
+                return;
+            }
+
+            if (!self.dragging() && !self.linking() && _json != newValue) {
+                console.log('json changed');
+
+                if (_json) {
+                    var oldObj = JSON.parse(_json);
+                    var newObj = JSON.parse(newValue);
+
+                    var difference = jsonDiff.diff(oldObj, newObj);
+                    if (difference) {
+                        self.undoActions.push(difference);
+                        if (self.undoActions.length > self.maxUndoCount()) {
+                            self.undoActions = self.undoActions.slice(-self.maxUndoCount());
+                        }
+                        self.redoActions([]);
+                    } else
+                        console.error('Unsuspected undefined difference between diagram json old and new values');
+                }
+
+                _json = newValue;
+            }
+        });
+
+        self.commandUndo = function() {
+            var difference = self.undoActions.pop();
+            if (difference) {
+                self.redoActions.push(difference);
+                var json = JSON.parse(self.json());
+                difference.reverse();
+                difference.forEach(change => jsonDiff.revertChange(json, {}, change));
+                var jsonString = JSON.stringify(json);
+
+                self.undoRedo(true);
+                self.loadingData(true);
+                self.json(jsonString);
+            }
+        };
+
+        self.commandRedo = function() {
+            var difference = self.redoActions.pop();
+            if (difference) {
+                self.undoActions.push(difference);
+                var json = JSON.parse(self.json());
+                difference.reverse();
+                difference.forEach(change => jsonDiff.applyChange(json, {}, change));
+                var jsonString = JSON.stringify(json);
+
+                self.undoRedo(true);
+                self.loadingData(true);
+                self.json(jsonString);
+            }
+        };
+
         // public functions:
         self.getViewModelById = (id) => {
             if (id == null || typeof id === 'undefined') {
@@ -46362,7 +46904,8 @@ module.exports = function (data) {
         self.dragging(false);
         self.linking(null);
         self.commandDeleteAll();
-        ko.tasks.runEarly();
+
+        ko.tasks.runEarly(); // force view update for deleting data
 
         self.id(data.id);
         self.maxThreadCount(data.maxThreadCount || 100);
@@ -46390,7 +46933,6 @@ module.exports = function (data) {
             }
         }
         self.links(_linksArray);
-
     };
 
     function initElementSubscriptions(vm) {
@@ -46480,323 +47022,368 @@ module.exports = function (data) {
 };
 
 /***/ }),
-/* 43 */
+/* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
-/* WEBPACK VAR INJECTION */(function($) {var ko = __webpack_require__(2);
+/* WEBPACK VAR INJECTION */(function($) {var CodeMirror = __webpack_require__(5);
+var ko = __webpack_require__(2);
 
-ko.options.deferUpdates = true;
+module.exports = function() {
 
-//
+    ko.options.deferUpdates = true;
 
-ko.subscribable.fn.subscribeChanged = function (callback) {
-    var _oldValue;
-    var self = this;
+    //
 
-    this.subscribe(function (oldValue) {
-        _oldValue = oldValue;
-    }, this, 'beforeChange');
+    ko.subscribable.fn.subscribeChanged = function (callback) {
+        var _oldValue;
+        var self = this;
 
-    this.subscribe(function (newValue) {
-        callback.call(self, newValue, _oldValue);
-    });
-};
+        this.subscribe(function (oldValue) {
+            _oldValue = oldValue;
+        }, this, 'beforeChange');
 
-//// extenders:
+        this.subscribe(function (newValue) {
+            callback.call(self, newValue, _oldValue);
+        });
+    };
 
-ko.extenders.logChange = function(target, option) {
-    target.subscribe(function(newValue) {
-        console.log(option + ": " + newValue);
-        if (option === 'debugger') {
-            debugger;
-        }
-    });
-    return target;
-};
+    //// extenders:
 
-ko.extenders.beforeChange = function (target, condition){
-    var result = ko.computed({
-        read: target,
-        write: function (newValue){
-            var oldValue = target();
-            var finalValue = (condition && !condition()(newValue, oldValue)) ? oldValue : newValue;
-            target(finalValue);
-            if (newValue != finalValue) {
-                target.notifySubscribers(finalValue);
+    ko.extenders.logChange = function (target, option) {
+        target.subscribe(function (newValue) {
+            console.log(option + ": " + newValue);
+            if (option === 'debugger') {
+                debugger;
             }
-        }
-    }).extend({ notify: 'always'});
-    result(target());
-    return result;
-}
-
-// if next extender will replace original observable
-// dataType should be reassigned
-// newObservable.dataType = originalObservable.dataType; // fix "forgetting" dataType
-
-ko.extenders.dataType = function(target, option) {
-    target.dataType = option;
-    if (target.dataType == 'integer') {
-        var result = createIntegerInterceptor(target);
-        result.dataType = target.dataType;
-        return result;
-    } else {
+        });
         return target;
+    };
+
+    ko.extenders.beforeChange = function (target, condition) {
+        var result = ko.computed({
+            read: target,
+            write: function (newValue) {
+                var oldValue = target();
+                var finalValue = (condition && !condition()(newValue, oldValue)) ? oldValue : newValue;
+                target(finalValue);
+                if (newValue != finalValue) {
+                    target.notifySubscribers(finalValue);
+                }
+            }
+        }).extend({notify: 'always'});
+        result(target());
+        return result;
     }
-};
 
-// https://gist.github.com/hereswhatidid/8205263
-var createIntegerInterceptor = function (target) {
-    var result = ko.computed({
-        read: target,  //always return the original observables value
-        write: function (newValue) {
-            var current = target(),
-                newValueAsInteger = isNaN(newValue) ? 0 : parseInt(+newValue, 10);
-
-            //only write if it changed
-            if (newValueAsInteger !== current) {
-                target(newValueAsInteger);
-            } else {
-                //if the tested value is the same, but a different value was written, force a notification for the current field
-                if (newValue !== current) {
-                    target.notifySubscribers(newValueAsInteger);
-                }
-            }
-        }
-    }).extend({notify: 'always'});
-
-    //initialize with current value to make sure it is rounded appropriately
-    result(target());
-    return result;
-};
-
-ko.extenders.range = function(target, paramRange) {
-    //create a writable computed observable to intercept writes to our observable
-    var result = ko.pureComputed({
-        read: target,  //always return the original observables value
-        write: function(newValue) {
-            var current = target();
-            var valueToWrite = newValue;
-            if (typeof paramRange.min !== 'undefined' && (valueToWrite < paramRange.min)) {
-                valueToWrite = paramRange.min;
-            }
-            if (typeof paramRange.max !== 'undefined'  && (valueToWrite > paramRange.max)) {
-                valueToWrite = paramRange.max;
-            }
-
-            //only write if it changed
-            if (valueToWrite !== current) {
-                target(valueToWrite);
-            } else {
-                //if the rounded value is the same, but a different value was written, force a notification for the current field
-                if (newValue !== current) {
-                    target.notifySubscribers(valueToWrite);
-                }
-            }
-        }
-    }).extend({ notify: 'always' });
-
-    //initialize with current value to make sure it is rounded appropriately
-    result(target());
-
-    result.dataType = target.dataType; // fix "forgetting" dataType
-
-    //return the new computed observable
-    return result;
-};
-
-ko.extenders.precision = function(target, paramPrecision) {
-    //create a writable computed observable to intercept writes to our observable
-    var result = ko.pureComputed({
-        read: target,  //always return the original observables value
-        write: function(newValue) {
-            var current = target(),
-                roundingMultiplier = Math.pow(10, paramPrecision),
-                newValueAsNum = isNaN(newValue) ? 0 : +newValue,
-                valueToWrite = Math.round(newValueAsNum * roundingMultiplier) / roundingMultiplier;
-
-            //only write if it changed
-            if (valueToWrite !== current) {
-                target(valueToWrite);
-            } else {
-                //if the rounded value is the same, but a different value was written, force a notification for the current field
-                if (newValue !== current) {
-                    target.notifySubscribers(valueToWrite);
-                }
-            }
-        }
-    }).extend({ notify: 'always' });
-
-    //initialize with current value to make sure it is rounded appropriately
-    result(target());
-
-    result.dataType = target.dataType; // fix "forgetting" dataType
-
-    //return the new computed observable
-    return result;
-};
-
-//// bindingHandlers
-
-ko.bindingHandlers.stringValue = {
-    init : function(element, valueAccessor, allBindings, viewModel, bindingContext) {
-        var value = ko.unwrap(valueAccessor());
-
-        var fixHeight = function () {
-            this.style.height = 'auto';
-            this.style.height = (this.scrollHeight)+'px'
-        };
-        element.setAttribute('rows', '1');
-
-        $(element).val(value);
-        fixHeight.call(element);
-
-        // case 1: inherit valueUpdate binding, base subscriptions to propertychange, focus, blur
-        //ko.bindingHandlers.value.init(element, valueAccessor, allBindings);
-        // OR
-        // case 2: manual subscribe to changes that you are interested to as you like to do it
-        $(element).on('input', function() {
-            valueAccessor()($(this).val());
-        });
-    },
-    update : function(element, valueAccessor, allBindings, viewModel, bindingContext) {
-        var value = ko.unwrap(valueAccessor());
-        $(element).val(value);
-
-        var fixHeight = function () {
-            this.style.height = 'auto';
-            this.style.height = (this.scrollHeight)+'px'
-        };
-        fixHeight.call(element);
+    // https://github.com/knockout/knockout/issues/1627
+    var _originalRateLimit = ko.extenders.rateLimit;
+    ko.extenders.rateLimit = function (target, options) {
+        target.notifySubscribersImmediately = target._origNotifySubscribers || target.notifySubscribers;
+        return _originalRateLimit(target, options);
     }
-};
 
-ko.bindingHandlers.integerValue = {
-    init : function(element, valueAccessor, allBindingsAccessor) {
+    // if next extender will replace original observable
+    // dataType should be reassigned
+    // newObservable.dataType = originalObservable.dataType; // fix "forgetting" dataType
 
-        $(element).on("keydown", function (event) {
-            var key = event.keyCode;
-            //console.log(key);
+    ko.extenders.dataType = function (target, option) {
+        target.dataType = option;
+        if (target.dataType == 'integer') {
+            var result = createIntegerInterceptor(target);
+            result.dataType = target.dataType;
+            return result;
+        } else {
+            return target;
+        }
+    };
+
+    // https://gist.github.com/hereswhatidid/8205263
+    var createIntegerInterceptor = function (target) {
+        var result = ko.computed({
+            read: target,  //always return the original observables value
+            write: function (newValue) {
+                var current = target(),
+                    newValueAsInteger = isNaN(newValue) ? 0 : parseInt(+newValue, 10);
+
+                //only write if it changed
+                if (newValueAsInteger !== current) {
+                    target(newValueAsInteger);
+                } else {
+                    //if the tested value is the same, but a different value was written, force a notification for the current field
+                    if (newValue !== current) {
+                        target.notifySubscribers(newValueAsInteger);
+                    }
+                }
+            }
+        }).extend({notify: 'always'});
+
+        //initialize with current value to make sure it is rounded appropriately
+        result(target());
+        return result;
+    };
+
+    ko.extenders.range = function (target, paramRange) {
+        //create a writable computed observable to intercept writes to our observable
+        var result = ko.pureComputed({
+            read: target,  //always return the original observables value
+            write: function (newValue) {
+                var current = target();
+                var valueToWrite = newValue;
+                if (typeof paramRange.min !== 'undefined' && (valueToWrite < paramRange.min)) {
+                    valueToWrite = paramRange.min;
+                }
+                if (typeof paramRange.max !== 'undefined' && (valueToWrite > paramRange.max)) {
+                    valueToWrite = paramRange.max;
+                }
+
+                //only write if it changed
+                if (valueToWrite !== current) {
+                    target(valueToWrite);
+                } else {
+                    //if the rounded value is the same, but a different value was written, force a notification for the current field
+                    if (newValue !== current) {
+                        target.notifySubscribers(valueToWrite);
+                    }
+                }
+            }
+        }).extend({notify: 'always'});
+
+        //initialize with current value to make sure it is rounded appropriately
+        result(target());
+
+        result.dataType = target.dataType; // fix "forgetting" dataType
+
+        //return the new computed observable
+        return result;
+    };
+
+    ko.extenders.precision = function (target, paramPrecision) {
+        //create a writable computed observable to intercept writes to our observable
+        var result = ko.pureComputed({
+            read: target,  //always return the original observables value
+            write: function (newValue) {
+                var current = target(),
+                    roundingMultiplier = Math.pow(10, paramPrecision),
+                    newValueAsNum = isNaN(newValue) ? 0 : +newValue,
+                    valueToWrite = Math.round(newValueAsNum * roundingMultiplier) / roundingMultiplier;
+
+                //only write if it changed
+                if (valueToWrite !== current) {
+                    target(valueToWrite);
+                } else {
+                    //if the rounded value is the same, but a different value was written, force a notification for the current field
+                    if (newValue !== current) {
+                        target.notifySubscribers(valueToWrite);
+                    }
+                }
+            }
+        }).extend({notify: 'always'});
+
+        //initialize with current value to make sure it is rounded appropriately
+        result(target());
+
+        result.dataType = target.dataType; // fix "forgetting" dataType
+
+        //return the new computed observable
+        return result;
+    };
+
+    //// bindingHandlers
+
+    // https://stackoverflow.com/a/17489451/3818473
+    ko.bindingHandlers.codemirror = {
+        init: function (element, valueAccessor, allBindingsAccessor, viewModel) {
+            var options = valueAccessor();
+            var editor = CodeMirror.fromTextArea(element, options);
+
+            editor.on('change', function(cm) {
+                allBindingsAccessor().value(cm.getValue());
+            });
+
+            element.editor = editor;
+
+            if (allBindingsAccessor().value()) {
+                editor.setValue(allBindingsAccessor().value());
+            }
+            editor.refresh();
+
+            var wrapperElement = $(editor.getWrapperElement());
+            ko.utils.domNodeDisposal.addDisposeCallback(element, function () {
+                wrapperElement.remove();
+            });
+        },
+        update: function (element, valueAccessor) {
+            if(element.editor)
+                element.editor.refresh();
+        }
+    };
+
+    ko.bindingHandlers.stringValue = {
+        init: function (element, valueAccessor, allBindings, viewModel, bindingContext) {
             var value = ko.unwrap(valueAccessor());
-            var intValue = parseInt(value);
 
-            // up
-            if (key == 38) {
-                valueAccessor()(intValue + 1);
-                return;
-            }
-            // down
-            if (key == 40) {
-                valueAccessor()(intValue - 1);
-                return;
-            }
+            var fixHeight = function () {
+                this.style.height = 'auto';
+                this.style.height = (this.scrollHeight) + 'px'
+            };
+            element.setAttribute('rows', '1');
 
-            // Allow: backspace, delete, tab, escape, enter, minus
-            if (key == 46 || key == 8 || key == 9 || key == 27 || key == 13 || key == 189 ||
-                // Allow: Ctrl/Command + A, C, V, X, Z
-                ((event.ctrlKey || event.metaKey) && [65, 67, 86, 88, 90].indexOf(key) != -1) ||
-                // Allow: . ,
-                //(key == 188 || key == 190 || key == 110) ||
-                // Allow: home, end, left, right
-                (key >= 35 && key <= 39)) {
-                // let it happen, don't do anything
-                return;
-            } else {
-                // Ensure that it is a number and stop the keypress
-                if (event.shiftKey || (key < 48 || key > 57) && (key < 96 || key > 105)) {
-                    event.preventDefault();
+            $(element).val(value);
+            fixHeight.call(element);
+
+            // case 1: inherit valueUpdate binding, base subscriptions to propertychange, focus, blur
+            //ko.bindingHandlers.value.init(element, valueAccessor, allBindings);
+            // OR
+            // case 2: manual subscribe to changes that you are interested to as you like to do it
+            $(element).on('input', function () {
+                valueAccessor()($(this).val());
+            });
+        },
+        update: function (element, valueAccessor, allBindings, viewModel, bindingContext) {
+            var value = ko.unwrap(valueAccessor());
+            $(element).val(value);
+
+            var fixHeight = function () {
+                this.style.height = 'auto';
+                this.style.height = (this.scrollHeight) + 'px'
+            };
+            fixHeight.call(element);
+        }
+    };
+
+    ko.bindingHandlers.integerValue = {
+        init: function (element, valueAccessor, allBindingsAccessor) {
+
+            $(element).on("keydown", function (event) {
+                var key = event.keyCode;
+                //console.log(key);
+                var value = ko.unwrap(valueAccessor());
+                var intValue = parseInt(value);
+
+                // up
+                if (key == 38) {
+                    valueAccessor()(intValue + 1);
+                    return;
                 }
-            }
-        });
-
-        var underlyingObservable = valueAccessor();
-        var interceptor = ko.pureComputed({
-            read: underlyingObservable,
-            write: function(newValue) {
-                if (newValue == '-' || newValue == '') {
-                    underlyingObservable(0);
+                // down
+                if (key == 40) {
+                    valueAccessor()(intValue - 1);
                     return;
                 }
 
-                if (!isNaN(newValue) && !isNaN(parseInt(newValue))) {
-                    underlyingObservable(parseInt(newValue));
+                // Allow: backspace, delete, tab, escape, enter, minus
+                if (key == 46 || key == 8 || key == 9 || key == 27 || key == 13 || key == 189 ||
+                    // Allow: Ctrl/Command + A, C, V, X, Z
+                    ((event.ctrlKey || event.metaKey) && [65, 67, 86, 88, 90].indexOf(key) != -1) ||
+                    // Allow: . ,
+                    //(key == 188 || key == 190 || key == 110) ||
+                    // Allow: home, end, left, right
+                    (key >= 35 && key <= 39)) {
+                    // let it happen, don't do anything
+                    return;
                 } else {
-                    underlyingObservable(0);
-                    underlyingObservable.notifySubscribers();
+                    // Ensure that it is a number and stop the keypress
+                    if (event.shiftKey || (key < 48 || key > 57) && (key < 96 || key > 105)) {
+                        event.preventDefault();
+                    }
                 }
-            }
-        }).extend({ notify: 'always' });
-        ko.bindingHandlers.value.init(element, function() { return interceptor }, allBindingsAccessor);
-    },
-    update : ko.bindingHandlers.value.update
-};
+            });
 
-ko.bindingHandlers.floatValue = {
-    init : function(element, valueAccessor, allBindingsAccessor) {
+            var underlyingObservable = valueAccessor();
+            var interceptor = ko.pureComputed({
+                read: underlyingObservable,
+                write: function (newValue) {
+                    if (newValue == '-' || newValue == '') {
+                        underlyingObservable(0);
+                        return;
+                    }
 
-        $(element).on("keydown", function (event) {
-            var key = event.keyCode;
-
-            var value = ko.unwrap(valueAccessor());
-            var floatValue = parseFloat(value);
-
-            // up
-            if (key == 38) {
-                valueAccessor()(floatValue + 1);
-                return;
-            }
-            // down
-            if (key == 40) {
-                valueAccessor()(floatValue - 1);
-                return;
-            }
-
-            // Allow: backspace, delete, tab, escape, and enter
-            if (key == 46 || key == 8 || key == 9 || key == 27 || key == 13 || key == 189 ||
-                // Allow: Ctrl/Command + A, C, V, X, Z
-                ((event.ctrlKey || event.metaKey) && [65, 67, 86, 88, 90].indexOf(key) != -1) ||
-                // Allow: . ,
-                (key == 188 || key == 190 || key == 110) ||
-                // Allow: home, end, left, right
-                (key >= 35 && key <= 39)) {
-                // let it happen, don't do anything
-                return;
-            } else {
-                // Ensure that it is a number and stop the keypress
-                if (event.shiftKey || (key < 48 || key > 57) && (key < 96 || key > 105)) {
-                    event.preventDefault();
+                    if (!isNaN(newValue) && !isNaN(parseInt(newValue))) {
+                        underlyingObservable(parseInt(newValue));
+                    } else {
+                        underlyingObservable(0);
+                        underlyingObservable.notifySubscribers();
+                    }
                 }
-            }
-        });
+            }).extend({notify: 'always'});
+            ko.bindingHandlers.value.init(element, function () {
+                return interceptor
+            }, allBindingsAccessor);
+        },
+        update: ko.bindingHandlers.value.update
+    };
 
-        var underlyingObservable = valueAccessor();
-        var interceptor = ko.pureComputed({
-            read: underlyingObservable,
-            write: function(newValue) {
-                if (newValue == '-' || newValue == '') {
-                    underlyingObservable(0);
+    ko.bindingHandlers.floatValue = {
+        init: function (element, valueAccessor, allBindingsAccessor) {
+
+            $(element).on("keydown", function (event) {
+                var key = event.keyCode;
+
+                var value = ko.unwrap(valueAccessor());
+                var floatValue = parseFloat(value);
+
+                // up
+                if (key == 38) {
+                    valueAccessor()(floatValue + 1);
                     return;
                 }
-                if (!isNaN(newValue) && !isNaN(parseFloat(newValue))) {
-                    underlyingObservable(parseFloat(newValue));
-                } else {
-                    underlyingObservable(0);
-                    underlyingObservable.notifySubscribers(0);
+                // down
+                if (key == 40) {
+                    valueAccessor()(floatValue - 1);
+                    return;
                 }
-            }
-        }).extend({ notify: 'always' });
-        ko.bindingHandlers.value.init(element, function() { return interceptor }, allBindingsAccessor);
-    },
-    update : ko.bindingHandlers.value.update
+
+                // Allow: backspace, delete, tab, escape, and enter
+                if (key == 46 || key == 8 || key == 9 || key == 27 || key == 13 || key == 189 ||
+                    // Allow: Ctrl/Command + A, C, V, X, Z
+                    ((event.ctrlKey || event.metaKey) && [65, 67, 86, 88, 90].indexOf(key) != -1) ||
+                    // Allow: . ,
+                    (key == 188 || key == 190 || key == 110) ||
+                    // Allow: home, end, left, right
+                    (key >= 35 && key <= 39)) {
+                    // let it happen, don't do anything
+                    return;
+                } else {
+                    // Ensure that it is a number and stop the keypress
+                    if (event.shiftKey || (key < 48 || key > 57) && (key < 96 || key > 105)) {
+                        event.preventDefault();
+                    }
+                }
+            });
+
+            var underlyingObservable = valueAccessor();
+            var interceptor = ko.pureComputed({
+                read: underlyingObservable,
+                write: function (newValue) {
+                    if (newValue == '-' || newValue == '') {
+                        underlyingObservable(0);
+                        return;
+                    }
+                    if (!isNaN(newValue) && !isNaN(parseFloat(newValue))) {
+                        underlyingObservable(parseFloat(newValue));
+                    } else {
+                        underlyingObservable(0);
+                        underlyingObservable.notifySubscribers(0);
+                    }
+                }
+            }).extend({notify: 'always'});
+            ko.bindingHandlers.value.init(element, function () {
+                return interceptor
+            }, allBindingsAccessor);
+        },
+        update: ko.bindingHandlers.value.update
+    };
 };
+
+module.exports();
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ }),
-/* 44 */
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function($) {var d3 = __webpack_require__(3);
-__webpack_require__(30);
+__webpack_require__(31);
 
 module.exports = function(vm, parentNode) {
     var g = d3.select(parentNode);
@@ -46941,7 +47528,7 @@ module.exports = function(vm, parentNode) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ }),
-/* 45 */
+/* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var ko = __webpack_require__(2);
@@ -47037,11 +47624,11 @@ module.exports = function () {
 }
 
 /***/ }),
-/* 46 */
+/* 48 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var d3 = __webpack_require__(3);
-__webpack_require__(31);
+__webpack_require__(32);
 
 module.exports = function(vm, parentNode) {
     var g = d3.select(parentNode);
@@ -47076,7 +47663,7 @@ module.exports = function(vm, parentNode) {
 };
 
 /***/ }),
-/* 47 */
+/* 49 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var ko = __webpack_require__(2);
@@ -47119,11 +47706,11 @@ module.exports = function () {
 };
 
 /***/ }),
-/* 48 */
+/* 50 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var d3 = __webpack_require__(3);
-__webpack_require__(32);
+__webpack_require__(33);
 
 const margin = 4;
 
@@ -47161,7 +47748,7 @@ module.exports = function(vm, parentNode) {
 };
 
 /***/ }),
-/* 49 */
+/* 51 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var ko = __webpack_require__(2);
@@ -47199,56 +47786,24 @@ module.exports = function () {
 };
 
 /***/ }),
-/* 50 */
+/* 52 */
 /***/ (function(module, exports, __webpack_require__) {
 
 __webpack_require__(8);
 
 /***/ }),
-/* 51 */
+/* 53 */
 /***/ (function(module, exports, __webpack_require__) {
 
-/* WEBPACK VAR INJECTION */(function($) {var CodeMirror = __webpack_require__(5);
-
-__webpack_require__(26);
+__webpack_require__(27);
 __webpack_require__(11);
 __webpack_require__(9);
 __webpack_require__(10);
-__webpack_require__(25);
-
-var ko = __webpack_require__(2);
-
+__webpack_require__(26);
+__webpack_require__(36);
 __webpack_require__(35);
-__webpack_require__(34);
 
-// https://stackoverflow.com/a/17489451/3818473
-ko.bindingHandlers.codemirror = {
-    init: function (element, valueAccessor, allBindingsAccessor, viewModel) {
-        var options = valueAccessor();
-        var editor = CodeMirror.fromTextArea(element, options);
 
-        editor.on('change', function(cm) {
-            allBindingsAccessor().value(cm.getValue());
-        });
-
-        element.editor = editor;
-
-        if (allBindingsAccessor().value()) {
-            editor.setValue(allBindingsAccessor().value());
-        }
-        editor.refresh();
-
-        var wrapperElement = $(editor.getWrapperElement());
-        ko.utils.domNodeDisposal.addDisposeCallback(element, function () {
-            wrapperElement.remove();
-        });
-    },
-    update: function (element, valueAccessor) {
-        if(element.editor)
-            element.editor.refresh();
-    }
-};
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ })
 /******/ ]);
