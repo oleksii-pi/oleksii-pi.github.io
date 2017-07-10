@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 52);
+/******/ 	return __webpack_require__(__webpack_require__.s = 54);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -195,7 +195,7 @@ var singleton = null;
 var	singletonCounter = 0;
 var	stylesInsertedAtTop = [];
 
-var	fixUrls = __webpack_require__(38);
+var	fixUrls = __webpack_require__(40);
 
 module.exports = function(list, options) {
 	if (typeof DEBUG !== "undefined" && DEBUG) {
@@ -43041,14 +43041,16 @@ module.exports = components;
 /* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
-/* WEBPACK VAR INJECTION */(function($) {__webpack_require__(28);
+/* WEBPACK VAR INJECTION */(function($) {__webpack_require__(29);
 
-__webpack_require__(34);
-__webpack_require__(37);
+__webpack_require__(35);
+__webpack_require__(36);
+var menu = __webpack_require__(55);
+__webpack_require__(39);
 
-var split = __webpack_require__(25);
-var compositionRoot = __webpack_require__(42);
-__webpack_require__(53);
+var split = __webpack_require__(26);
+var compositionRoot = __webpack_require__(44);
+__webpack_require__(56);
 
 window.onbeforeunload = function() {
     return "Are you sure you want to navigate away?";
@@ -43059,6 +43061,7 @@ $(document).ready(function() {
         sizes: [70, 30],
         minSize: 200
     });
+    menu.init();
     compositionRoot.run($('#diagram')[0]);
 });
 
@@ -44291,7 +44294,7 @@ exports = module.exports = __webpack_require__(0)(true);
 
 
 // module
-exports.push([module.i, ".diagram-builder {\n    position: fixed;\n    height: 100vh;\n    width: 100vw;\n}\n\ninput:focus, textarea:focus {\n    outline: 1px solid lightskyblue;\n}", "", {"version":3,"sources":["/projects/block-diagram-builder/bdb-front/src/main/main.css"],"names":[],"mappings":"AAAA;IACI,gBAAgB;IAChB,cAAc;IACd,aAAa;CAChB;;AAED;IACI,gCAAgC;CACnC","file":"main.css","sourcesContent":[".diagram-builder {\n    position: fixed;\n    height: 100vh;\n    width: 100vw;\n}\n\ninput:focus, textarea:focus {\n    outline: 1px solid lightskyblue;\n}"],"sourceRoot":""}]);
+exports.push([module.i, "html,\nbody {\n    height: 100%;\n    margin: 0\n}\n\n.vbox {\n    display: flex;\n    flex-flow: column;\n    height: 100%;\n}\n\n.vbox .row.header {\n    flex: 0 1 auto;\n    /* The above is shorthand for:\n    flex-grow: 0,\n    flex-shrink: 1,\n    flex-basis: auto\n    */\n}\n\n.vbox .row.content {\n    flex: 1 1 auto;\n}\n\n.vbox .row.footer {\n    flex: 0 1 20px;\n}\n\n.diagram-builder {\n    height: 90vh;\n    width: 100%;\n}\n\ninput:focus, textarea:focus {\n    outline: 1px solid lightskyblue;\n}", "", {"version":3,"sources":["/projects/block-diagram-builder/bdb-front/src/main/main.css"],"names":[],"mappings":"AAAA;;IAEI,aAAa;IACb,SAAS;CACZ;;AAED;IACI,cAAc;IACd,kBAAkB;IAClB,aAAa;CAChB;;AAED;IACI,eAAe;IACf;;;;MAIE;CACL;;AAED;IACI,eAAe;CAClB;;AAED;IACI,eAAe;CAClB;;AAED;IACI,aAAa;IACb,YAAY;CACf;;AAED;IACI,gCAAgC;CACnC","file":"main.css","sourcesContent":["html,\nbody {\n    height: 100%;\n    margin: 0\n}\n\n.vbox {\n    display: flex;\n    flex-flow: column;\n    height: 100%;\n}\n\n.vbox .row.header {\n    flex: 0 1 auto;\n    /* The above is shorthand for:\n    flex-grow: 0,\n    flex-shrink: 1,\n    flex-basis: auto\n    */\n}\n\n.vbox .row.content {\n    flex: 1 1 auto;\n}\n\n.vbox .row.footer {\n    flex: 0 1 20px;\n}\n\n.diagram-builder {\n    height: 90vh;\n    width: 100%;\n}\n\ninput:focus, textarea:focus {\n    outline: 1px solid lightskyblue;\n}"],"sourceRoot":""}]);
 
 // exports
 
@@ -44305,7 +44308,7 @@ exports = module.exports = __webpack_require__(0)(true);
 
 
 // module
-exports.push([module.i, ".CodeMirror.cm-s-default {\n    background: white;\n    height: 100%;\n    min-height: 50px;\n}\n\n.cm-tab {\n    display: inline-block;\n    text-decoration: inherit\n}\n\n.CodeMirror-rulers {\n    position: absolute;\n    left: 0;\n    right: 0;\n    top: -50px;\n    bottom: -20px;\n    overflow: hidden\n}\n\n.CodeMirror-ruler {\n    border-left: 1px solid #ccc;\n    top: 0;\n    bottom: 0\n}\n\n.CodeMirror,\n.CodeMirror-sizer {\n    position: relative\n}\n\n.CodeMirror-composing {\n    border-bottom: 2px solid\n}\n\n.CodeMirror-matchingtag {\n    background: rgba(255, 150, 0, .3)\n}\n\n.CodeMirror-activeline-background {\n    background: #e8f2ff\n}\n\n.CodeMirror-scroll {\n    overflow: scroll!important;\n    margin-bottom: -30px;\n    margin-right: -30px;\n    padding-bottom: 30px;\n    height: 100%;\n    outline: 0;\n    position: relative\n}\n\n.CodeMirror-sizer {\n    border-right: 30px solid transparent\n}\n\n.CodeMirror-gutter-filler,\n.CodeMirror-hscrollbar,\n.CodeMirror-scrollbar-filler,\n.CodeMirror-vscrollbar {\n    position: absolute;\n    z-index: 6;\n    display: none\n}\n\n.CodeMirror-vscrollbar {\n    right: 0;\n    top: 0;\n    overflow-x: hidden;\n    overflow-y: scroll\n}\n\n.CodeMirror-hscrollbar {\n    bottom: 0;\n    left: 0;\n    overflow-y: hidden;\n    overflow-x: scroll\n}\n\n.CodeMirror-scrollbar-filler {\n    right: 0;\n    bottom: 0\n}\n\n.CodeMirror-gutter-filler {\n    left: 0;\n    bottom: 0\n}\n\n.CodeMirror-gutters {\n    position: absolute;\n    left: 0;\n    top: 0;\n    min-height: 100%;\n    z-index: 3\n}\n\n.CodeMirror-gutter {\n    white-space: normal;\n    height: 100%;\n    display: inline-block;\n    vertical-align: top;\n    margin-bottom: -30px\n}\n\n.CodeMirror-gutter-wrapper {\n    position: absolute;\n    z-index: 4;\n    background: 0 0!important;\n    border: none!important;\n    -webkit-user-select: none;\n    -moz-user-select: none;\n    user-select: none\n}\n\n.CodeMirror-gutter-background {\n    position: absolute;\n    top: 0;\n    bottom: 0;\n    z-index: 4\n}\n\n.CodeMirror-gutter-elt {\n    position: absolute;\n    cursor: default;\n    z-index: 4\n}\n\n.CodeMirror-lines {\n    cursor: text;\n    min-height: 1px\n}\n\n.CodeMirror pre {\n    -moz-border-radius: 0;\n    -webkit-border-radius: 0;\n    border-radius: 0;\n    border-width: 0;\n    background: 0 0;\n    font-family: inherit;\n    font-size: inherit;\n    margin: 0;\n    white-space: pre;\n    word-wrap: normal;\n    line-height: inherit;\n    color: inherit;\n    z-index: 2;\n    position: relative;\n    overflow: visible;\n    -webkit-tap-highlight-color: transparent;\n    -webkit-font-variant-ligatures: none;\n    font-variant-ligatures: none\n}\n\n.CodeMirror-wrap pre {\n    word-wrap: break-word;\n    white-space: pre-wrap;\n    word-break: normal\n}\n\n.CodeMirror-linebackground {\n    position: absolute;\n    left: 0;\n    right: 0;\n    top: 0;\n    bottom: 0;\n    z-index: 0\n}\n\n.CodeMirror-linewidget {\n    position: relative;\n    z-index: 2;\n    overflow: auto\n}\n\n.CodeMirror-code {\n    outline: 0\n}\n\n.CodeMirror-gutter,\n.CodeMirror-gutters,\n.CodeMirror-linenumber,\n.CodeMirror-scroll,\n.CodeMirror-sizer {\n    -moz-box-sizing: content-box;\n    box-sizing: content-box\n}\n\n.CodeMirror-measure {\n    position: absolute;\n    width: 100%;\n    height: 0;\n    overflow: hidden;\n    visibility: hidden\n}\n\n.CodeMirror-cursor {\n    position: absolute\n}\n\n.CodeMirror-measure pre {\n    position: static\n}\n\ndiv.CodeMirror-cursors {\n    visibility: hidden;\n    position: relative;\n    z-index: 3\n}\n\n.CodeMirror-focused div.CodeMirror-cursors,\ndiv.CodeMirror-dragcursors {\n    visibility: visible\n}\n\n.CodeMirror-selected {\n    background: #d9d9d9\n}\n\n.CodeMirror-focused .CodeMirror-selected {\n    background: #d7d4f0\n}\n\n.CodeMirror-crosshair {\n    cursor: crosshair\n}\n\n.CodeMirror-line::selection,\n.CodeMirror-line>span::selection,\n.CodeMirror-line>span>span::selection {\n    background: #d7d4f0\n}\n\n.CodeMirror-line::-moz-selection,\n.CodeMirror-line>span::-moz-selection,\n.CodeMirror-line>span>span::-moz-selection {\n    background: #d7d4f0\n}\n\n.cm-searching {\n    background: #ffa;\n    background: rgba(255, 255, 0, .4)\n}\n\n.cm-force-border {\n    padding-right: .1px\n}\n\n@media print {\n    .CodeMirror div.CodeMirror-cursors {\n        visibility: hidden\n    }\n}\n\n.cm-tab-wrap-hack:after {\n    content: ''\n}\n\nspan.CodeMirror-selectedtext {\n    background: 0 0\n}\n\n.cm-s-default .cm-header {\n    color: #00f\n}\n\n.cm-s-default .cm-quote {\n    color: #36ac3b\n}\n\n.cm-negative {\n    color: #FF4D4D\n}\n\n.cm-positive {\n    color: #36ac3b\n}\n\n.cm-em {\n    font-style: italic\n}\n\n.cm-link {\n    text-decoration: underline\n}\n\n.cm-strikethrough {\n    text-decoration: line-through\n}\n\n.cm-s-default .cm-keyword {\n    color: #a151d2\n}\n\n.cm-s-default .cm-atom {\n    color: #219\n}\n\n.cm-s-default .cm-number {\n    color: #ED5C65\n}\n\n.cm-s-default .cm-def {\n    color: #f18c16\n}\n\n.cm-s-default .cm-variable,\n.cm-s-default .cm-variable-2 {\n    color: #2795EE\n}\n\n.cm-s-default .cm-variable-3 {\n    color: #249D7F\n}\n\n.cm-s-default .cm-comment {\n    color: #A0A1A7\n}\n\n.cm-s-default .cm-string {\n    color: #249D7F\n}\n\n.cm-s-default .cm-string-2 {\n    color: #ED5C65\n}\n\n.cm-s-default .cm-meta {\n    color: #39464E\n}\n\n.cm-s-default .cm-builtin,\n.cm-s-default .cm-qualifier {\n    color: #f18c16\n}\n\n.cm-s-default .cm-tag {\n    color: #2795EE\n}\n\n.cm-s-default .cm-bracket {\n    color: #39464E\n}\n\n.cm-s-default .cm-attribute {\n    color: #f18c16\n}\n\n.cm-s-default .cm-hr {\n    color: #999\n}\n\n.cm-s-default .cm-link {\n    color: #2795EE\n}\n\n.cm-invalidchar,\n.cm-s-default .cm-error,\ndiv.CodeMirror span.CodeMirror-nonmatchingbracket {\n    background: #ED5C65;\n    color: #fff;\n    border-radius: 2px\n}\n\ndiv.CodeMirror span.CodeMirror-matchingbracket {\n    color: inherit;\n    border-bottom: solid 2px rgba(36, 157, 127, .8)\n}\n\n.CodeMirror {\n    line-height: 1.4em;\n    font-size: 14px;\n    font-family: Inconsolata, Monaco, \"Andale Mono\", \"Lucida Console\", \"Bitstream Vera Sans Mono\", \"Courier New\", Courier, monospace;\n    overflow: hidden;\n    background: 0 0;\n    color: #39464E\n}\n\n.CodeMirror-gutter-elt .CodeMirror-line-error {\n    color: #FF4D4D;\n    cursor: help;\n    height: 100%;\n    padding: 0 3px\n}\n\n.CodeMirror-error-tooltip {\n    display: none;\n    position: absolute;\n    top: 0;\n    left: 0;\n    background: #fff;\n    font-size: 13px;\n    opacity: .95;\n    line-height: 1.4em;\n    padding: 10px;\n    max-width: 300px;\n    box-shadow: 0 2px 20px rgba(0, 0, 0, .3);\n    z-index: 20;\n    border: 1px solid #ACB3B9\n}\n\n.CodeMirror-error-tooltip:after {\n    content: ' ';\n    display: block;\n    position: absolute;\n    bottom: -6px;\n    left: 50%;\n    margin-left: -6px;\n    border-right: 6px solid transparent;\n    border-left: 6px solid transparent;\n    border-top: 6px solid #838383\n}\n\n.CodeMirror-gutters {\n    background-color: rgba(57, 70, 78, 0);\n    min-width: 2em;\n    height: 100%;\n    border-right: solid 1px #e6e9eb\n}\n\n.CodeMirror-linenumber {\n    padding: 1px 8px 0 5px;\n    color: #c8d2d7;\n    font-size: 10px\n}", "", {"version":3,"sources":["/projects/block-diagram-builder/bdb-front/src/main/params/codemirror-theme.css"],"names":[],"mappings":"AAAA;IACI,kBAAkB;IAClB,aAAa;IACb,iBAAiB;CACpB;;AAED;IACI,sBAAsB;IACtB,wBAAwB;CAC3B;;AAED;IACI,mBAAmB;IACnB,QAAQ;IACR,SAAS;IACT,WAAW;IACX,cAAc;IACd,gBAAgB;CACnB;;AAED;IACI,4BAA4B;IAC5B,OAAO;IACP,SAAS;CACZ;;AAED;;IAEI,kBAAkB;CACrB;;AAED;IACI,wBAAwB;CAC3B;;AAED;IACI,iCAAiC;CACpC;;AAED;IACI,mBAAmB;CACtB;;AAED;IACI,2BAA2B;IAC3B,qBAAqB;IACrB,oBAAoB;IACpB,qBAAqB;IACrB,aAAa;IACb,WAAW;IACX,kBAAkB;CACrB;;AAED;IACI,oCAAoC;CACvC;;AAED;;;;IAII,mBAAmB;IACnB,WAAW;IACX,aAAa;CAChB;;AAED;IACI,SAAS;IACT,OAAO;IACP,mBAAmB;IACnB,kBAAkB;CACrB;;AAED;IACI,UAAU;IACV,QAAQ;IACR,mBAAmB;IACnB,kBAAkB;CACrB;;AAED;IACI,SAAS;IACT,SAAS;CACZ;;AAED;IACI,QAAQ;IACR,SAAS;CACZ;;AAED;IACI,mBAAmB;IACnB,QAAQ;IACR,OAAO;IACP,iBAAiB;IACjB,UAAU;CACb;;AAED;IACI,oBAAoB;IACpB,aAAa;IACb,sBAAsB;IACtB,oBAAoB;IACpB,oBAAoB;CACvB;;AAED;IACI,mBAAmB;IACnB,WAAW;IACX,0BAA0B;IAC1B,uBAAuB;IACvB,0BAA0B;IAC1B,uBAAuB;IACvB,iBAAiB;CACpB;;AAED;IACI,mBAAmB;IACnB,OAAO;IACP,UAAU;IACV,UAAU;CACb;;AAED;IACI,mBAAmB;IACnB,gBAAgB;IAChB,UAAU;CACb;;AAED;IACI,aAAa;IACb,eAAe;CAClB;;AAED;IACI,sBAAsB;IACtB,yBAAyB;IACzB,iBAAiB;IACjB,gBAAgB;IAChB,gBAAgB;IAChB,qBAAqB;IACrB,mBAAmB;IACnB,UAAU;IACV,iBAAiB;IACjB,kBAAkB;IAClB,qBAAqB;IACrB,eAAe;IACf,WAAW;IACX,mBAAmB;IACnB,kBAAkB;IAClB,yCAAyC;IACzC,qCAAqC;IACrC,4BAA4B;CAC/B;;AAED;IACI,sBAAsB;IACtB,sBAAsB;IACtB,kBAAkB;CACrB;;AAED;IACI,mBAAmB;IACnB,QAAQ;IACR,SAAS;IACT,OAAO;IACP,UAAU;IACV,UAAU;CACb;;AAED;IACI,mBAAmB;IACnB,WAAW;IACX,cAAc;CACjB;;AAED;IACI,UAAU;CACb;;AAED;;;;;IAKI,6BAA6B;IAC7B,uBAAuB;CAC1B;;AAED;IACI,mBAAmB;IACnB,YAAY;IACZ,UAAU;IACV,iBAAiB;IACjB,kBAAkB;CACrB;;AAED;IACI,kBAAkB;CACrB;;AAED;IACI,gBAAgB;CACnB;;AAED;IACI,mBAAmB;IACnB,mBAAmB;IACnB,UAAU;CACb;;AAED;;IAEI,mBAAmB;CACtB;;AAED;IACI,mBAAmB;CACtB;;AAED;IACI,mBAAmB;CACtB;;AAED;IACI,iBAAiB;CACpB;;AAED;;;IAGI,mBAAmB;CACtB;;AAED;;;IAGI,mBAAmB;CACtB;;AAED;IACI,iBAAiB;IACjB,iCAAiC;CACpC;;AAED;IACI,mBAAmB;CACtB;;AAED;IACI;QACI,kBAAkB;KACrB;CACJ;;AAED;IACI,WAAW;CACd;;AAED;IACI,eAAe;CAClB;;AAED;IACI,WAAW;CACd;;AAED;IACI,cAAc;CACjB;;AAED;IACI,cAAc;CACjB;;AAED;IACI,cAAc;CACjB;;AAED;IACI,kBAAkB;CACrB;;AAED;IACI,0BAA0B;CAC7B;;AAED;IACI,6BAA6B;CAChC;;AAED;IACI,cAAc;CACjB;;AAED;IACI,WAAW;CACd;;AAED;IACI,cAAc;CACjB;;AAED;IACI,cAAc;CACjB;;AAED;;IAEI,cAAc;CACjB;;AAED;IACI,cAAc;CACjB;;AAED;IACI,cAAc;CACjB;;AAED;IACI,cAAc;CACjB;;AAED;IACI,cAAc;CACjB;;AAED;IACI,cAAc;CACjB;;AAED;;IAEI,cAAc;CACjB;;AAED;IACI,cAAc;CACjB;;AAED;IACI,cAAc;CACjB;;AAED;IACI,cAAc;CACjB;;AAED;IACI,WAAW;CACd;;AAED;IACI,cAAc;CACjB;;AAED;;;IAGI,oBAAoB;IACpB,YAAY;IACZ,kBAAkB;CACrB;;AAED;IACI,eAAe;IACf,+CAA+C;CAClD;;AAED;IACI,mBAAmB;IACnB,gBAAgB;IAChB,iIAAiI;IACjI,iBAAiB;IACjB,gBAAgB;IAChB,cAAc;CACjB;;AAED;IACI,eAAe;IACf,aAAa;IACb,aAAa;IACb,cAAc;CACjB;;AAED;IACI,cAAc;IACd,mBAAmB;IACnB,OAAO;IACP,QAAQ;IACR,iBAAiB;IACjB,gBAAgB;IAChB,aAAa;IACb,mBAAmB;IACnB,cAAc;IACd,iBAAiB;IACjB,yCAAyC;IACzC,YAAY;IACZ,yBAAyB;CAC5B;;AAED;IACI,aAAa;IACb,eAAe;IACf,mBAAmB;IACnB,aAAa;IACb,UAAU;IACV,kBAAkB;IAClB,oCAAoC;IACpC,mCAAmC;IACnC,6BAA6B;CAChC;;AAED;IACI,sCAAsC;IACtC,eAAe;IACf,aAAa;IACb,+BAA+B;CAClC;;AAED;IACI,uBAAuB;IACvB,eAAe;IACf,eAAe;CAClB","file":"codemirror-theme.css","sourcesContent":[".CodeMirror.cm-s-default {\n    background: white;\n    height: 100%;\n    min-height: 50px;\n}\n\n.cm-tab {\n    display: inline-block;\n    text-decoration: inherit\n}\n\n.CodeMirror-rulers {\n    position: absolute;\n    left: 0;\n    right: 0;\n    top: -50px;\n    bottom: -20px;\n    overflow: hidden\n}\n\n.CodeMirror-ruler {\n    border-left: 1px solid #ccc;\n    top: 0;\n    bottom: 0\n}\n\n.CodeMirror,\n.CodeMirror-sizer {\n    position: relative\n}\n\n.CodeMirror-composing {\n    border-bottom: 2px solid\n}\n\n.CodeMirror-matchingtag {\n    background: rgba(255, 150, 0, .3)\n}\n\n.CodeMirror-activeline-background {\n    background: #e8f2ff\n}\n\n.CodeMirror-scroll {\n    overflow: scroll!important;\n    margin-bottom: -30px;\n    margin-right: -30px;\n    padding-bottom: 30px;\n    height: 100%;\n    outline: 0;\n    position: relative\n}\n\n.CodeMirror-sizer {\n    border-right: 30px solid transparent\n}\n\n.CodeMirror-gutter-filler,\n.CodeMirror-hscrollbar,\n.CodeMirror-scrollbar-filler,\n.CodeMirror-vscrollbar {\n    position: absolute;\n    z-index: 6;\n    display: none\n}\n\n.CodeMirror-vscrollbar {\n    right: 0;\n    top: 0;\n    overflow-x: hidden;\n    overflow-y: scroll\n}\n\n.CodeMirror-hscrollbar {\n    bottom: 0;\n    left: 0;\n    overflow-y: hidden;\n    overflow-x: scroll\n}\n\n.CodeMirror-scrollbar-filler {\n    right: 0;\n    bottom: 0\n}\n\n.CodeMirror-gutter-filler {\n    left: 0;\n    bottom: 0\n}\n\n.CodeMirror-gutters {\n    position: absolute;\n    left: 0;\n    top: 0;\n    min-height: 100%;\n    z-index: 3\n}\n\n.CodeMirror-gutter {\n    white-space: normal;\n    height: 100%;\n    display: inline-block;\n    vertical-align: top;\n    margin-bottom: -30px\n}\n\n.CodeMirror-gutter-wrapper {\n    position: absolute;\n    z-index: 4;\n    background: 0 0!important;\n    border: none!important;\n    -webkit-user-select: none;\n    -moz-user-select: none;\n    user-select: none\n}\n\n.CodeMirror-gutter-background {\n    position: absolute;\n    top: 0;\n    bottom: 0;\n    z-index: 4\n}\n\n.CodeMirror-gutter-elt {\n    position: absolute;\n    cursor: default;\n    z-index: 4\n}\n\n.CodeMirror-lines {\n    cursor: text;\n    min-height: 1px\n}\n\n.CodeMirror pre {\n    -moz-border-radius: 0;\n    -webkit-border-radius: 0;\n    border-radius: 0;\n    border-width: 0;\n    background: 0 0;\n    font-family: inherit;\n    font-size: inherit;\n    margin: 0;\n    white-space: pre;\n    word-wrap: normal;\n    line-height: inherit;\n    color: inherit;\n    z-index: 2;\n    position: relative;\n    overflow: visible;\n    -webkit-tap-highlight-color: transparent;\n    -webkit-font-variant-ligatures: none;\n    font-variant-ligatures: none\n}\n\n.CodeMirror-wrap pre {\n    word-wrap: break-word;\n    white-space: pre-wrap;\n    word-break: normal\n}\n\n.CodeMirror-linebackground {\n    position: absolute;\n    left: 0;\n    right: 0;\n    top: 0;\n    bottom: 0;\n    z-index: 0\n}\n\n.CodeMirror-linewidget {\n    position: relative;\n    z-index: 2;\n    overflow: auto\n}\n\n.CodeMirror-code {\n    outline: 0\n}\n\n.CodeMirror-gutter,\n.CodeMirror-gutters,\n.CodeMirror-linenumber,\n.CodeMirror-scroll,\n.CodeMirror-sizer {\n    -moz-box-sizing: content-box;\n    box-sizing: content-box\n}\n\n.CodeMirror-measure {\n    position: absolute;\n    width: 100%;\n    height: 0;\n    overflow: hidden;\n    visibility: hidden\n}\n\n.CodeMirror-cursor {\n    position: absolute\n}\n\n.CodeMirror-measure pre {\n    position: static\n}\n\ndiv.CodeMirror-cursors {\n    visibility: hidden;\n    position: relative;\n    z-index: 3\n}\n\n.CodeMirror-focused div.CodeMirror-cursors,\ndiv.CodeMirror-dragcursors {\n    visibility: visible\n}\n\n.CodeMirror-selected {\n    background: #d9d9d9\n}\n\n.CodeMirror-focused .CodeMirror-selected {\n    background: #d7d4f0\n}\n\n.CodeMirror-crosshair {\n    cursor: crosshair\n}\n\n.CodeMirror-line::selection,\n.CodeMirror-line>span::selection,\n.CodeMirror-line>span>span::selection {\n    background: #d7d4f0\n}\n\n.CodeMirror-line::-moz-selection,\n.CodeMirror-line>span::-moz-selection,\n.CodeMirror-line>span>span::-moz-selection {\n    background: #d7d4f0\n}\n\n.cm-searching {\n    background: #ffa;\n    background: rgba(255, 255, 0, .4)\n}\n\n.cm-force-border {\n    padding-right: .1px\n}\n\n@media print {\n    .CodeMirror div.CodeMirror-cursors {\n        visibility: hidden\n    }\n}\n\n.cm-tab-wrap-hack:after {\n    content: ''\n}\n\nspan.CodeMirror-selectedtext {\n    background: 0 0\n}\n\n.cm-s-default .cm-header {\n    color: #00f\n}\n\n.cm-s-default .cm-quote {\n    color: #36ac3b\n}\n\n.cm-negative {\n    color: #FF4D4D\n}\n\n.cm-positive {\n    color: #36ac3b\n}\n\n.cm-em {\n    font-style: italic\n}\n\n.cm-link {\n    text-decoration: underline\n}\n\n.cm-strikethrough {\n    text-decoration: line-through\n}\n\n.cm-s-default .cm-keyword {\n    color: #a151d2\n}\n\n.cm-s-default .cm-atom {\n    color: #219\n}\n\n.cm-s-default .cm-number {\n    color: #ED5C65\n}\n\n.cm-s-default .cm-def {\n    color: #f18c16\n}\n\n.cm-s-default .cm-variable,\n.cm-s-default .cm-variable-2 {\n    color: #2795EE\n}\n\n.cm-s-default .cm-variable-3 {\n    color: #249D7F\n}\n\n.cm-s-default .cm-comment {\n    color: #A0A1A7\n}\n\n.cm-s-default .cm-string {\n    color: #249D7F\n}\n\n.cm-s-default .cm-string-2 {\n    color: #ED5C65\n}\n\n.cm-s-default .cm-meta {\n    color: #39464E\n}\n\n.cm-s-default .cm-builtin,\n.cm-s-default .cm-qualifier {\n    color: #f18c16\n}\n\n.cm-s-default .cm-tag {\n    color: #2795EE\n}\n\n.cm-s-default .cm-bracket {\n    color: #39464E\n}\n\n.cm-s-default .cm-attribute {\n    color: #f18c16\n}\n\n.cm-s-default .cm-hr {\n    color: #999\n}\n\n.cm-s-default .cm-link {\n    color: #2795EE\n}\n\n.cm-invalidchar,\n.cm-s-default .cm-error,\ndiv.CodeMirror span.CodeMirror-nonmatchingbracket {\n    background: #ED5C65;\n    color: #fff;\n    border-radius: 2px\n}\n\ndiv.CodeMirror span.CodeMirror-matchingbracket {\n    color: inherit;\n    border-bottom: solid 2px rgba(36, 157, 127, .8)\n}\n\n.CodeMirror {\n    line-height: 1.4em;\n    font-size: 14px;\n    font-family: Inconsolata, Monaco, \"Andale Mono\", \"Lucida Console\", \"Bitstream Vera Sans Mono\", \"Courier New\", Courier, monospace;\n    overflow: hidden;\n    background: 0 0;\n    color: #39464E\n}\n\n.CodeMirror-gutter-elt .CodeMirror-line-error {\n    color: #FF4D4D;\n    cursor: help;\n    height: 100%;\n    padding: 0 3px\n}\n\n.CodeMirror-error-tooltip {\n    display: none;\n    position: absolute;\n    top: 0;\n    left: 0;\n    background: #fff;\n    font-size: 13px;\n    opacity: .95;\n    line-height: 1.4em;\n    padding: 10px;\n    max-width: 300px;\n    box-shadow: 0 2px 20px rgba(0, 0, 0, .3);\n    z-index: 20;\n    border: 1px solid #ACB3B9\n}\n\n.CodeMirror-error-tooltip:after {\n    content: ' ';\n    display: block;\n    position: absolute;\n    bottom: -6px;\n    left: 50%;\n    margin-left: -6px;\n    border-right: 6px solid transparent;\n    border-left: 6px solid transparent;\n    border-top: 6px solid #838383\n}\n\n.CodeMirror-gutters {\n    background-color: rgba(57, 70, 78, 0);\n    min-width: 2em;\n    height: 100%;\n    border-right: solid 1px #e6e9eb\n}\n\n.CodeMirror-linenumber {\n    padding: 1px 8px 0 5px;\n    color: #c8d2d7;\n    font-size: 10px\n}"],"sourceRoot":""}]);
+exports.push([module.i, "/*| Navigation |*/\n\nnav {\n    top: 0;\n    left: 0;\n    width: 100%;\n    background: #fff;\n    border: 1px solid rgba(0, 0, 0, .1);\n}\n\nnav ul {\n    list-style: none;\n    position: relative;\n    float: left;\n    display: inline-table;\n\n    -webkit-box-sizing: border-box;\n    -moz-box-sizing: border-box;\n    box-sizing: border-box;\n    padding: 0;\n    margin: 0;\n    font-family: arial, sans-serif;\n}\n\nnav ul li {\n    float: left;\n}\n\nnav ul li:hover {\n    background: #eee;\n}\n\nnav ul li:hover > ul {\n    display: block;\n}\n\n/* nav ul li:hover > ul:active {\n  display: none;\n} */\n\n\nnav ul li span {\n    display: block;\n    padding: 16px 16px;\n    color: #222;\n    font-size: .9em;\n    letter-spacing: 1px;\n    text-decoration: none;\n    cursor: default;\n}\n\nnav ul li span[data-bind]  {\n    cursor: pointer;\n}\n\nnav ul ul {\n    display: none;\n    background: #fff;\n    position: absolute;\n    top: 100%;\n    box-shadow: -3px 3px 10px -2px rgba(0, 0, 0, .1);\n    border: 1px solid rgba(0, 0, 0, .1);\n}\n\nnav ul ul li {\n    float: none;\n    position: relative;\n}\n\nnav ul ul ul {\n    position: absolute;\n    left: 100%;\n    top: 0;\n}\n\ndiv.separator {\n    margin: 4px 0px;\n    border-bottom: 1px solid rgba(0, 0, 0, .1);\n}\n\nli input[type='checkbox'] {\n    float: right;\n    margin-left: 8px;\n}\n\nspan.submenuSign {\n    color: #aaa;\n    float: right;\n    padding: 0;\n    margin-right: -12px;\n}", "", {"version":3,"sources":["/projects/block-diagram-builder/bdb-front/src/main/menu/menu.css"],"names":[],"mappings":"AAAA,kBAAkB;;AAElB;IACI,OAAO;IACP,QAAQ;IACR,YAAY;IACZ,iBAAiB;IACjB,oCAAoC;CACvC;;AAED;IACI,iBAAiB;IACjB,mBAAmB;IACnB,YAAY;IACZ,sBAAsB;;IAEtB,+BAA+B;IAC/B,4BAA4B;IAC5B,uBAAuB;IACvB,WAAW;IACX,UAAU;IACV,+BAA+B;CAClC;;AAED;IACI,YAAY;CACf;;AAED;IACI,iBAAiB;CACpB;;AAED;IACI,eAAe;CAClB;;AAED;;IAEI;;;AAGJ;IACI,eAAe;IACf,mBAAmB;IACnB,YAAY;IACZ,gBAAgB;IAChB,oBAAoB;IACpB,sBAAsB;IACtB,gBAAgB;CACnB;;AAED;IACI,gBAAgB;CACnB;;AAED;IACI,cAAc;IACd,iBAAiB;IACjB,mBAAmB;IACnB,UAAU;IACV,iDAAiD;IACjD,oCAAoC;CACvC;;AAED;IACI,YAAY;IACZ,mBAAmB;CACtB;;AAED;IACI,mBAAmB;IACnB,WAAW;IACX,OAAO;CACV;;AAED;IACI,gBAAgB;IAChB,2CAA2C;CAC9C;;AAED;IACI,aAAa;IACb,iBAAiB;CACpB;;AAED;IACI,YAAY;IACZ,aAAa;IACb,WAAW;IACX,oBAAoB;CACvB","file":"menu.css","sourcesContent":["/*| Navigation |*/\n\nnav {\n    top: 0;\n    left: 0;\n    width: 100%;\n    background: #fff;\n    border: 1px solid rgba(0, 0, 0, .1);\n}\n\nnav ul {\n    list-style: none;\n    position: relative;\n    float: left;\n    display: inline-table;\n\n    -webkit-box-sizing: border-box;\n    -moz-box-sizing: border-box;\n    box-sizing: border-box;\n    padding: 0;\n    margin: 0;\n    font-family: arial, sans-serif;\n}\n\nnav ul li {\n    float: left;\n}\n\nnav ul li:hover {\n    background: #eee;\n}\n\nnav ul li:hover > ul {\n    display: block;\n}\n\n/* nav ul li:hover > ul:active {\n  display: none;\n} */\n\n\nnav ul li span {\n    display: block;\n    padding: 16px 16px;\n    color: #222;\n    font-size: .9em;\n    letter-spacing: 1px;\n    text-decoration: none;\n    cursor: default;\n}\n\nnav ul li span[data-bind]  {\n    cursor: pointer;\n}\n\nnav ul ul {\n    display: none;\n    background: #fff;\n    position: absolute;\n    top: 100%;\n    box-shadow: -3px 3px 10px -2px rgba(0, 0, 0, .1);\n    border: 1px solid rgba(0, 0, 0, .1);\n}\n\nnav ul ul li {\n    float: none;\n    position: relative;\n}\n\nnav ul ul ul {\n    position: absolute;\n    left: 100%;\n    top: 0;\n}\n\ndiv.separator {\n    margin: 4px 0px;\n    border-bottom: 1px solid rgba(0, 0, 0, .1);\n}\n\nli input[type='checkbox'] {\n    float: right;\n    margin-left: 8px;\n}\n\nspan.submenuSign {\n    color: #aaa;\n    float: right;\n    padding: 0;\n    margin-right: -12px;\n}"],"sourceRoot":""}]);
 
 // exports
 
@@ -44319,7 +44322,7 @@ exports = module.exports = __webpack_require__(0)(true);
 
 
 // module
-exports.push([module.i, "#params {\n    padding-right: 4px;\n    background: whitesmoke;\n}\n\n#params div.horizontal {\n    display: flex;\n    flex-direction: row;\n}\n\n#params div.vertical, #params {\n    display: flex;\n    flex-direction: column;\n}\n\n#params .elementIdDiv {\n    min-height: 40px;\n}\n\n#params input.elementId {\n    margin: 0;\n    font-size: 24px;\n    padding: 4px;\n    border: 0;\n    border-bottom: 1px solid #ddd;\n    width: 100%;\n}\n\n#params .elementComponent {\n    color: #aaa;\n    background: white;\n    padding: 0 4px;\n}\n/*#params input {*/\n    /*width: 50px;*/\n    /*border: 1px solid #eee;*/\n/*}*/\n\n\n#paramsTable input {\n    margin: 0;\n    padding: 4px;\n    border: 0;\n\n}\n\n#paramsTable textarea {\n    margin: 0;\n    padding: 4px;\n    border: 0;\n    max-height: 100px;\n}\n\n#paramsTable {\n    border-collapse: collapse;\n    width: 100%;\n    border-style: hidden;\n}\n\n#paramsTable td {\n    border: 1px solid #ddd;\n}\n\n#paramsTable td * {\n    width: 100%;\n}\n\n#paramsTable td:nth-child(1) {\n    color: orange;\n    text-align: right;\n    padding: 4px;\n    width: 20px;\n}\n\n#paramsTable td:nth-child(2) {\n    background: white;\n}\n\n#paramsFooter {\n    align-self: flex-end;\n     width: 100%;\n     height: auto;\n }\n\n#codeEditorDiv {\n    border: 1px solid #ddd;\n    flex-grow: 1;\n}", "", {"version":3,"sources":["/projects/block-diagram-builder/bdb-front/src/main/params/params.css"],"names":[],"mappings":"AAAA;IACI,mBAAmB;IACnB,uBAAuB;CAC1B;;AAED;IACI,cAAc;IACd,oBAAoB;CACvB;;AAED;IACI,cAAc;IACd,uBAAuB;CAC1B;;AAED;IACI,iBAAiB;CACpB;;AAED;IACI,UAAU;IACV,gBAAgB;IAChB,aAAa;IACb,UAAU;IACV,8BAA8B;IAC9B,YAAY;CACf;;AAED;IACI,YAAY;IACZ,kBAAkB;IAClB,eAAe;CAClB;AACD,mBAAmB;IACf,gBAAgB;IAChB,2BAA2B;AAC/B,KAAK;;;AAGL;IACI,UAAU;IACV,aAAa;IACb,UAAU;;CAEb;;AAED;IACI,UAAU;IACV,aAAa;IACb,UAAU;IACV,kBAAkB;CACrB;;AAED;IACI,0BAA0B;IAC1B,YAAY;IACZ,qBAAqB;CACxB;;AAED;IACI,uBAAuB;CAC1B;;AAED;IACI,YAAY;CACf;;AAED;IACI,cAAc;IACd,kBAAkB;IAClB,aAAa;IACb,YAAY;CACf;;AAED;IACI,kBAAkB;CACrB;;AAED;IACI,qBAAqB;KACpB,YAAY;KACZ,aAAa;EAChB;;AAEF;IACI,uBAAuB;IACvB,aAAa;CAChB","file":"params.css","sourcesContent":["#params {\n    padding-right: 4px;\n    background: whitesmoke;\n}\n\n#params div.horizontal {\n    display: flex;\n    flex-direction: row;\n}\n\n#params div.vertical, #params {\n    display: flex;\n    flex-direction: column;\n}\n\n#params .elementIdDiv {\n    min-height: 40px;\n}\n\n#params input.elementId {\n    margin: 0;\n    font-size: 24px;\n    padding: 4px;\n    border: 0;\n    border-bottom: 1px solid #ddd;\n    width: 100%;\n}\n\n#params .elementComponent {\n    color: #aaa;\n    background: white;\n    padding: 0 4px;\n}\n/*#params input {*/\n    /*width: 50px;*/\n    /*border: 1px solid #eee;*/\n/*}*/\n\n\n#paramsTable input {\n    margin: 0;\n    padding: 4px;\n    border: 0;\n\n}\n\n#paramsTable textarea {\n    margin: 0;\n    padding: 4px;\n    border: 0;\n    max-height: 100px;\n}\n\n#paramsTable {\n    border-collapse: collapse;\n    width: 100%;\n    border-style: hidden;\n}\n\n#paramsTable td {\n    border: 1px solid #ddd;\n}\n\n#paramsTable td * {\n    width: 100%;\n}\n\n#paramsTable td:nth-child(1) {\n    color: orange;\n    text-align: right;\n    padding: 4px;\n    width: 20px;\n}\n\n#paramsTable td:nth-child(2) {\n    background: white;\n}\n\n#paramsFooter {\n    align-self: flex-end;\n     width: 100%;\n     height: auto;\n }\n\n#codeEditorDiv {\n    border: 1px solid #ddd;\n    flex-grow: 1;\n}"],"sourceRoot":""}]);
+exports.push([module.i, ".CodeMirror.cm-s-default {\n    background: white;\n    height: 100%;\n    min-height: 50px;\n}\n\n.cm-tab {\n    display: inline-block;\n    text-decoration: inherit\n}\n\n.CodeMirror-rulers {\n    position: absolute;\n    left: 0;\n    right: 0;\n    top: -50px;\n    bottom: -20px;\n    overflow: hidden\n}\n\n.CodeMirror-ruler {\n    border-left: 1px solid #ccc;\n    top: 0;\n    bottom: 0\n}\n\n.CodeMirror,\n.CodeMirror-sizer {\n    position: relative\n}\n\n.CodeMirror-composing {\n    border-bottom: 2px solid\n}\n\n.CodeMirror-matchingtag {\n    background: rgba(255, 150, 0, .3)\n}\n\n.CodeMirror-activeline-background {\n    background: #e8f2ff\n}\n\n.CodeMirror-scroll {\n    overflow: scroll!important;\n    margin-bottom: -30px;\n    margin-right: -30px;\n    padding-bottom: 30px;\n    height: 100%;\n    outline: 0;\n    position: relative\n}\n\n.CodeMirror-sizer {\n    border-right: 30px solid transparent\n}\n\n.CodeMirror-gutter-filler,\n.CodeMirror-hscrollbar,\n.CodeMirror-scrollbar-filler,\n.CodeMirror-vscrollbar {\n    position: absolute;\n    z-index: 6;\n    display: none\n}\n\n.CodeMirror-vscrollbar {\n    right: 0;\n    top: 0;\n    overflow-x: hidden;\n    overflow-y: scroll\n}\n\n.CodeMirror-hscrollbar {\n    bottom: 0;\n    left: 0;\n    overflow-y: hidden;\n    overflow-x: scroll\n}\n\n.CodeMirror-scrollbar-filler {\n    right: 0;\n    bottom: 0\n}\n\n.CodeMirror-gutter-filler {\n    left: 0;\n    bottom: 0\n}\n\n.CodeMirror-gutters {\n    position: absolute;\n    left: 0;\n    top: 0;\n    min-height: 100%;\n    z-index: 3\n}\n\n.CodeMirror-gutter {\n    white-space: normal;\n    height: 100%;\n    display: inline-block;\n    vertical-align: top;\n    margin-bottom: -30px\n}\n\n.CodeMirror-gutter-wrapper {\n    position: absolute;\n    z-index: 4;\n    background: 0 0!important;\n    border: none!important;\n    -webkit-user-select: none;\n    -moz-user-select: none;\n    user-select: none\n}\n\n.CodeMirror-gutter-background {\n    position: absolute;\n    top: 0;\n    bottom: 0;\n    z-index: 4\n}\n\n.CodeMirror-gutter-elt {\n    position: absolute;\n    cursor: default;\n    z-index: 4\n}\n\n.CodeMirror-lines {\n    cursor: text;\n    min-height: 1px\n}\n\n.CodeMirror pre {\n    -moz-border-radius: 0;\n    -webkit-border-radius: 0;\n    border-radius: 0;\n    border-width: 0;\n    background: 0 0;\n    font-family: inherit;\n    font-size: inherit;\n    margin: 0;\n    white-space: pre;\n    word-wrap: normal;\n    line-height: inherit;\n    color: inherit;\n    z-index: 2;\n    position: relative;\n    overflow: visible;\n    -webkit-tap-highlight-color: transparent;\n    -webkit-font-variant-ligatures: none;\n    font-variant-ligatures: none\n}\n\n.CodeMirror-wrap pre {\n    word-wrap: break-word;\n    white-space: pre-wrap;\n    word-break: normal\n}\n\n.CodeMirror-linebackground {\n    position: absolute;\n    left: 0;\n    right: 0;\n    top: 0;\n    bottom: 0;\n    z-index: 0\n}\n\n.CodeMirror-linewidget {\n    position: relative;\n    z-index: 2;\n    overflow: auto\n}\n\n.CodeMirror-code {\n    outline: 0\n}\n\n.CodeMirror-gutter,\n.CodeMirror-gutters,\n.CodeMirror-linenumber,\n.CodeMirror-scroll,\n.CodeMirror-sizer {\n    -moz-box-sizing: content-box;\n    box-sizing: content-box\n}\n\n.CodeMirror-measure {\n    position: absolute;\n    width: 100%;\n    height: 0;\n    overflow: hidden;\n    visibility: hidden\n}\n\n.CodeMirror-cursor {\n    position: absolute\n}\n\n.CodeMirror-measure pre {\n    position: static\n}\n\ndiv.CodeMirror-cursors {\n    visibility: hidden;\n    position: relative;\n    z-index: 3\n}\n\n.CodeMirror-focused div.CodeMirror-cursors,\ndiv.CodeMirror-dragcursors {\n    visibility: visible\n}\n\n.CodeMirror-selected {\n    background: #d9d9d9\n}\n\n.CodeMirror-focused .CodeMirror-selected {\n    background: #d7d4f0\n}\n\n.CodeMirror-crosshair {\n    cursor: crosshair\n}\n\n.CodeMirror-line::selection,\n.CodeMirror-line>span::selection,\n.CodeMirror-line>span>span::selection {\n    background: #d7d4f0\n}\n\n.CodeMirror-line::-moz-selection,\n.CodeMirror-line>span::-moz-selection,\n.CodeMirror-line>span>span::-moz-selection {\n    background: #d7d4f0\n}\n\n.cm-searching {\n    background: #ffa;\n    background: rgba(255, 255, 0, .4)\n}\n\n.cm-force-border {\n    padding-right: .1px\n}\n\n@media print {\n    .CodeMirror div.CodeMirror-cursors {\n        visibility: hidden\n    }\n}\n\n.cm-tab-wrap-hack:after {\n    content: ''\n}\n\nspan.CodeMirror-selectedtext {\n    background: 0 0\n}\n\n.cm-s-default .cm-header {\n    color: #00f\n}\n\n.cm-s-default .cm-quote {\n    color: #36ac3b\n}\n\n.cm-negative {\n    color: #FF4D4D\n}\n\n.cm-positive {\n    color: #36ac3b\n}\n\n.cm-em {\n    font-style: italic\n}\n\n.cm-link {\n    text-decoration: underline\n}\n\n.cm-strikethrough {\n    text-decoration: line-through\n}\n\n.cm-s-default .cm-keyword {\n    color: #a151d2\n}\n\n.cm-s-default .cm-atom {\n    color: #219\n}\n\n.cm-s-default .cm-number {\n    color: #ED5C65\n}\n\n.cm-s-default .cm-def {\n    color: #f18c16\n}\n\n.cm-s-default .cm-variable,\n.cm-s-default .cm-variable-2 {\n    color: #2795EE\n}\n\n.cm-s-default .cm-variable-3 {\n    color: #249D7F\n}\n\n.cm-s-default .cm-comment {\n    color: #A0A1A7\n}\n\n.cm-s-default .cm-string {\n    color: #249D7F\n}\n\n.cm-s-default .cm-string-2 {\n    color: #ED5C65\n}\n\n.cm-s-default .cm-meta {\n    color: #39464E\n}\n\n.cm-s-default .cm-builtin,\n.cm-s-default .cm-qualifier {\n    color: #f18c16\n}\n\n.cm-s-default .cm-tag {\n    color: #2795EE\n}\n\n.cm-s-default .cm-bracket {\n    color: #39464E\n}\n\n.cm-s-default .cm-attribute {\n    color: #f18c16\n}\n\n.cm-s-default .cm-hr {\n    color: #999\n}\n\n.cm-s-default .cm-link {\n    color: #2795EE\n}\n\n.cm-invalidchar,\n.cm-s-default .cm-error,\ndiv.CodeMirror span.CodeMirror-nonmatchingbracket {\n    background: #ED5C65;\n    color: #fff;\n    border-radius: 2px\n}\n\ndiv.CodeMirror span.CodeMirror-matchingbracket {\n    color: inherit;\n    border-bottom: solid 2px rgba(36, 157, 127, .8)\n}\n\n.CodeMirror {\n    line-height: 1.4em;\n    font-size: 14px;\n    font-family: Inconsolata, Monaco, \"Andale Mono\", \"Lucida Console\", \"Bitstream Vera Sans Mono\", \"Courier New\", Courier, monospace;\n    overflow: hidden;\n    background: 0 0;\n    color: #39464E\n}\n\n.CodeMirror-gutter-elt .CodeMirror-line-error {\n    color: #FF4D4D;\n    cursor: help;\n    height: 100%;\n    padding: 0 3px\n}\n\n.CodeMirror-error-tooltip {\n    display: none;\n    position: absolute;\n    top: 0;\n    left: 0;\n    background: #fff;\n    font-size: 13px;\n    opacity: .95;\n    line-height: 1.4em;\n    padding: 10px;\n    max-width: 300px;\n    box-shadow: 0 2px 20px rgba(0, 0, 0, .3);\n    z-index: 20;\n    border: 1px solid #ACB3B9\n}\n\n.CodeMirror-error-tooltip:after {\n    content: ' ';\n    display: block;\n    position: absolute;\n    bottom: -6px;\n    left: 50%;\n    margin-left: -6px;\n    border-right: 6px solid transparent;\n    border-left: 6px solid transparent;\n    border-top: 6px solid #838383\n}\n\n.CodeMirror-gutters {\n    background-color: rgba(57, 70, 78, 0);\n    min-width: 2em;\n    height: 100%;\n    border-right: solid 1px #e6e9eb\n}\n\n.CodeMirror-linenumber {\n    padding: 1px 8px 0 5px;\n    color: #c8d2d7;\n    font-size: 10px\n}", "", {"version":3,"sources":["/projects/block-diagram-builder/bdb-front/src/main/params/codemirror-theme.css"],"names":[],"mappings":"AAAA;IACI,kBAAkB;IAClB,aAAa;IACb,iBAAiB;CACpB;;AAED;IACI,sBAAsB;IACtB,wBAAwB;CAC3B;;AAED;IACI,mBAAmB;IACnB,QAAQ;IACR,SAAS;IACT,WAAW;IACX,cAAc;IACd,gBAAgB;CACnB;;AAED;IACI,4BAA4B;IAC5B,OAAO;IACP,SAAS;CACZ;;AAED;;IAEI,kBAAkB;CACrB;;AAED;IACI,wBAAwB;CAC3B;;AAED;IACI,iCAAiC;CACpC;;AAED;IACI,mBAAmB;CACtB;;AAED;IACI,2BAA2B;IAC3B,qBAAqB;IACrB,oBAAoB;IACpB,qBAAqB;IACrB,aAAa;IACb,WAAW;IACX,kBAAkB;CACrB;;AAED;IACI,oCAAoC;CACvC;;AAED;;;;IAII,mBAAmB;IACnB,WAAW;IACX,aAAa;CAChB;;AAED;IACI,SAAS;IACT,OAAO;IACP,mBAAmB;IACnB,kBAAkB;CACrB;;AAED;IACI,UAAU;IACV,QAAQ;IACR,mBAAmB;IACnB,kBAAkB;CACrB;;AAED;IACI,SAAS;IACT,SAAS;CACZ;;AAED;IACI,QAAQ;IACR,SAAS;CACZ;;AAED;IACI,mBAAmB;IACnB,QAAQ;IACR,OAAO;IACP,iBAAiB;IACjB,UAAU;CACb;;AAED;IACI,oBAAoB;IACpB,aAAa;IACb,sBAAsB;IACtB,oBAAoB;IACpB,oBAAoB;CACvB;;AAED;IACI,mBAAmB;IACnB,WAAW;IACX,0BAA0B;IAC1B,uBAAuB;IACvB,0BAA0B;IAC1B,uBAAuB;IACvB,iBAAiB;CACpB;;AAED;IACI,mBAAmB;IACnB,OAAO;IACP,UAAU;IACV,UAAU;CACb;;AAED;IACI,mBAAmB;IACnB,gBAAgB;IAChB,UAAU;CACb;;AAED;IACI,aAAa;IACb,eAAe;CAClB;;AAED;IACI,sBAAsB;IACtB,yBAAyB;IACzB,iBAAiB;IACjB,gBAAgB;IAChB,gBAAgB;IAChB,qBAAqB;IACrB,mBAAmB;IACnB,UAAU;IACV,iBAAiB;IACjB,kBAAkB;IAClB,qBAAqB;IACrB,eAAe;IACf,WAAW;IACX,mBAAmB;IACnB,kBAAkB;IAClB,yCAAyC;IACzC,qCAAqC;IACrC,4BAA4B;CAC/B;;AAED;IACI,sBAAsB;IACtB,sBAAsB;IACtB,kBAAkB;CACrB;;AAED;IACI,mBAAmB;IACnB,QAAQ;IACR,SAAS;IACT,OAAO;IACP,UAAU;IACV,UAAU;CACb;;AAED;IACI,mBAAmB;IACnB,WAAW;IACX,cAAc;CACjB;;AAED;IACI,UAAU;CACb;;AAED;;;;;IAKI,6BAA6B;IAC7B,uBAAuB;CAC1B;;AAED;IACI,mBAAmB;IACnB,YAAY;IACZ,UAAU;IACV,iBAAiB;IACjB,kBAAkB;CACrB;;AAED;IACI,kBAAkB;CACrB;;AAED;IACI,gBAAgB;CACnB;;AAED;IACI,mBAAmB;IACnB,mBAAmB;IACnB,UAAU;CACb;;AAED;;IAEI,mBAAmB;CACtB;;AAED;IACI,mBAAmB;CACtB;;AAED;IACI,mBAAmB;CACtB;;AAED;IACI,iBAAiB;CACpB;;AAED;;;IAGI,mBAAmB;CACtB;;AAED;;;IAGI,mBAAmB;CACtB;;AAED;IACI,iBAAiB;IACjB,iCAAiC;CACpC;;AAED;IACI,mBAAmB;CACtB;;AAED;IACI;QACI,kBAAkB;KACrB;CACJ;;AAED;IACI,WAAW;CACd;;AAED;IACI,eAAe;CAClB;;AAED;IACI,WAAW;CACd;;AAED;IACI,cAAc;CACjB;;AAED;IACI,cAAc;CACjB;;AAED;IACI,cAAc;CACjB;;AAED;IACI,kBAAkB;CACrB;;AAED;IACI,0BAA0B;CAC7B;;AAED;IACI,6BAA6B;CAChC;;AAED;IACI,cAAc;CACjB;;AAED;IACI,WAAW;CACd;;AAED;IACI,cAAc;CACjB;;AAED;IACI,cAAc;CACjB;;AAED;;IAEI,cAAc;CACjB;;AAED;IACI,cAAc;CACjB;;AAED;IACI,cAAc;CACjB;;AAED;IACI,cAAc;CACjB;;AAED;IACI,cAAc;CACjB;;AAED;IACI,cAAc;CACjB;;AAED;;IAEI,cAAc;CACjB;;AAED;IACI,cAAc;CACjB;;AAED;IACI,cAAc;CACjB;;AAED;IACI,cAAc;CACjB;;AAED;IACI,WAAW;CACd;;AAED;IACI,cAAc;CACjB;;AAED;;;IAGI,oBAAoB;IACpB,YAAY;IACZ,kBAAkB;CACrB;;AAED;IACI,eAAe;IACf,+CAA+C;CAClD;;AAED;IACI,mBAAmB;IACnB,gBAAgB;IAChB,iIAAiI;IACjI,iBAAiB;IACjB,gBAAgB;IAChB,cAAc;CACjB;;AAED;IACI,eAAe;IACf,aAAa;IACb,aAAa;IACb,cAAc;CACjB;;AAED;IACI,cAAc;IACd,mBAAmB;IACnB,OAAO;IACP,QAAQ;IACR,iBAAiB;IACjB,gBAAgB;IAChB,aAAa;IACb,mBAAmB;IACnB,cAAc;IACd,iBAAiB;IACjB,yCAAyC;IACzC,YAAY;IACZ,yBAAyB;CAC5B;;AAED;IACI,aAAa;IACb,eAAe;IACf,mBAAmB;IACnB,aAAa;IACb,UAAU;IACV,kBAAkB;IAClB,oCAAoC;IACpC,mCAAmC;IACnC,6BAA6B;CAChC;;AAED;IACI,sCAAsC;IACtC,eAAe;IACf,aAAa;IACb,+BAA+B;CAClC;;AAED;IACI,uBAAuB;IACvB,eAAe;IACf,eAAe;CAClB","file":"codemirror-theme.css","sourcesContent":[".CodeMirror.cm-s-default {\n    background: white;\n    height: 100%;\n    min-height: 50px;\n}\n\n.cm-tab {\n    display: inline-block;\n    text-decoration: inherit\n}\n\n.CodeMirror-rulers {\n    position: absolute;\n    left: 0;\n    right: 0;\n    top: -50px;\n    bottom: -20px;\n    overflow: hidden\n}\n\n.CodeMirror-ruler {\n    border-left: 1px solid #ccc;\n    top: 0;\n    bottom: 0\n}\n\n.CodeMirror,\n.CodeMirror-sizer {\n    position: relative\n}\n\n.CodeMirror-composing {\n    border-bottom: 2px solid\n}\n\n.CodeMirror-matchingtag {\n    background: rgba(255, 150, 0, .3)\n}\n\n.CodeMirror-activeline-background {\n    background: #e8f2ff\n}\n\n.CodeMirror-scroll {\n    overflow: scroll!important;\n    margin-bottom: -30px;\n    margin-right: -30px;\n    padding-bottom: 30px;\n    height: 100%;\n    outline: 0;\n    position: relative\n}\n\n.CodeMirror-sizer {\n    border-right: 30px solid transparent\n}\n\n.CodeMirror-gutter-filler,\n.CodeMirror-hscrollbar,\n.CodeMirror-scrollbar-filler,\n.CodeMirror-vscrollbar {\n    position: absolute;\n    z-index: 6;\n    display: none\n}\n\n.CodeMirror-vscrollbar {\n    right: 0;\n    top: 0;\n    overflow-x: hidden;\n    overflow-y: scroll\n}\n\n.CodeMirror-hscrollbar {\n    bottom: 0;\n    left: 0;\n    overflow-y: hidden;\n    overflow-x: scroll\n}\n\n.CodeMirror-scrollbar-filler {\n    right: 0;\n    bottom: 0\n}\n\n.CodeMirror-gutter-filler {\n    left: 0;\n    bottom: 0\n}\n\n.CodeMirror-gutters {\n    position: absolute;\n    left: 0;\n    top: 0;\n    min-height: 100%;\n    z-index: 3\n}\n\n.CodeMirror-gutter {\n    white-space: normal;\n    height: 100%;\n    display: inline-block;\n    vertical-align: top;\n    margin-bottom: -30px\n}\n\n.CodeMirror-gutter-wrapper {\n    position: absolute;\n    z-index: 4;\n    background: 0 0!important;\n    border: none!important;\n    -webkit-user-select: none;\n    -moz-user-select: none;\n    user-select: none\n}\n\n.CodeMirror-gutter-background {\n    position: absolute;\n    top: 0;\n    bottom: 0;\n    z-index: 4\n}\n\n.CodeMirror-gutter-elt {\n    position: absolute;\n    cursor: default;\n    z-index: 4\n}\n\n.CodeMirror-lines {\n    cursor: text;\n    min-height: 1px\n}\n\n.CodeMirror pre {\n    -moz-border-radius: 0;\n    -webkit-border-radius: 0;\n    border-radius: 0;\n    border-width: 0;\n    background: 0 0;\n    font-family: inherit;\n    font-size: inherit;\n    margin: 0;\n    white-space: pre;\n    word-wrap: normal;\n    line-height: inherit;\n    color: inherit;\n    z-index: 2;\n    position: relative;\n    overflow: visible;\n    -webkit-tap-highlight-color: transparent;\n    -webkit-font-variant-ligatures: none;\n    font-variant-ligatures: none\n}\n\n.CodeMirror-wrap pre {\n    word-wrap: break-word;\n    white-space: pre-wrap;\n    word-break: normal\n}\n\n.CodeMirror-linebackground {\n    position: absolute;\n    left: 0;\n    right: 0;\n    top: 0;\n    bottom: 0;\n    z-index: 0\n}\n\n.CodeMirror-linewidget {\n    position: relative;\n    z-index: 2;\n    overflow: auto\n}\n\n.CodeMirror-code {\n    outline: 0\n}\n\n.CodeMirror-gutter,\n.CodeMirror-gutters,\n.CodeMirror-linenumber,\n.CodeMirror-scroll,\n.CodeMirror-sizer {\n    -moz-box-sizing: content-box;\n    box-sizing: content-box\n}\n\n.CodeMirror-measure {\n    position: absolute;\n    width: 100%;\n    height: 0;\n    overflow: hidden;\n    visibility: hidden\n}\n\n.CodeMirror-cursor {\n    position: absolute\n}\n\n.CodeMirror-measure pre {\n    position: static\n}\n\ndiv.CodeMirror-cursors {\n    visibility: hidden;\n    position: relative;\n    z-index: 3\n}\n\n.CodeMirror-focused div.CodeMirror-cursors,\ndiv.CodeMirror-dragcursors {\n    visibility: visible\n}\n\n.CodeMirror-selected {\n    background: #d9d9d9\n}\n\n.CodeMirror-focused .CodeMirror-selected {\n    background: #d7d4f0\n}\n\n.CodeMirror-crosshair {\n    cursor: crosshair\n}\n\n.CodeMirror-line::selection,\n.CodeMirror-line>span::selection,\n.CodeMirror-line>span>span::selection {\n    background: #d7d4f0\n}\n\n.CodeMirror-line::-moz-selection,\n.CodeMirror-line>span::-moz-selection,\n.CodeMirror-line>span>span::-moz-selection {\n    background: #d7d4f0\n}\n\n.cm-searching {\n    background: #ffa;\n    background: rgba(255, 255, 0, .4)\n}\n\n.cm-force-border {\n    padding-right: .1px\n}\n\n@media print {\n    .CodeMirror div.CodeMirror-cursors {\n        visibility: hidden\n    }\n}\n\n.cm-tab-wrap-hack:after {\n    content: ''\n}\n\nspan.CodeMirror-selectedtext {\n    background: 0 0\n}\n\n.cm-s-default .cm-header {\n    color: #00f\n}\n\n.cm-s-default .cm-quote {\n    color: #36ac3b\n}\n\n.cm-negative {\n    color: #FF4D4D\n}\n\n.cm-positive {\n    color: #36ac3b\n}\n\n.cm-em {\n    font-style: italic\n}\n\n.cm-link {\n    text-decoration: underline\n}\n\n.cm-strikethrough {\n    text-decoration: line-through\n}\n\n.cm-s-default .cm-keyword {\n    color: #a151d2\n}\n\n.cm-s-default .cm-atom {\n    color: #219\n}\n\n.cm-s-default .cm-number {\n    color: #ED5C65\n}\n\n.cm-s-default .cm-def {\n    color: #f18c16\n}\n\n.cm-s-default .cm-variable,\n.cm-s-default .cm-variable-2 {\n    color: #2795EE\n}\n\n.cm-s-default .cm-variable-3 {\n    color: #249D7F\n}\n\n.cm-s-default .cm-comment {\n    color: #A0A1A7\n}\n\n.cm-s-default .cm-string {\n    color: #249D7F\n}\n\n.cm-s-default .cm-string-2 {\n    color: #ED5C65\n}\n\n.cm-s-default .cm-meta {\n    color: #39464E\n}\n\n.cm-s-default .cm-builtin,\n.cm-s-default .cm-qualifier {\n    color: #f18c16\n}\n\n.cm-s-default .cm-tag {\n    color: #2795EE\n}\n\n.cm-s-default .cm-bracket {\n    color: #39464E\n}\n\n.cm-s-default .cm-attribute {\n    color: #f18c16\n}\n\n.cm-s-default .cm-hr {\n    color: #999\n}\n\n.cm-s-default .cm-link {\n    color: #2795EE\n}\n\n.cm-invalidchar,\n.cm-s-default .cm-error,\ndiv.CodeMirror span.CodeMirror-nonmatchingbracket {\n    background: #ED5C65;\n    color: #fff;\n    border-radius: 2px\n}\n\ndiv.CodeMirror span.CodeMirror-matchingbracket {\n    color: inherit;\n    border-bottom: solid 2px rgba(36, 157, 127, .8)\n}\n\n.CodeMirror {\n    line-height: 1.4em;\n    font-size: 14px;\n    font-family: Inconsolata, Monaco, \"Andale Mono\", \"Lucida Console\", \"Bitstream Vera Sans Mono\", \"Courier New\", Courier, monospace;\n    overflow: hidden;\n    background: 0 0;\n    color: #39464E\n}\n\n.CodeMirror-gutter-elt .CodeMirror-line-error {\n    color: #FF4D4D;\n    cursor: help;\n    height: 100%;\n    padding: 0 3px\n}\n\n.CodeMirror-error-tooltip {\n    display: none;\n    position: absolute;\n    top: 0;\n    left: 0;\n    background: #fff;\n    font-size: 13px;\n    opacity: .95;\n    line-height: 1.4em;\n    padding: 10px;\n    max-width: 300px;\n    box-shadow: 0 2px 20px rgba(0, 0, 0, .3);\n    z-index: 20;\n    border: 1px solid #ACB3B9\n}\n\n.CodeMirror-error-tooltip:after {\n    content: ' ';\n    display: block;\n    position: absolute;\n    bottom: -6px;\n    left: 50%;\n    margin-left: -6px;\n    border-right: 6px solid transparent;\n    border-left: 6px solid transparent;\n    border-top: 6px solid #838383\n}\n\n.CodeMirror-gutters {\n    background-color: rgba(57, 70, 78, 0);\n    min-width: 2em;\n    height: 100%;\n    border-right: solid 1px #e6e9eb\n}\n\n.CodeMirror-linenumber {\n    padding: 1px 8px 0 5px;\n    color: #c8d2d7;\n    font-size: 10px\n}"],"sourceRoot":""}]);
 
 // exports
 
@@ -44333,13 +44336,27 @@ exports = module.exports = __webpack_require__(0)(true);
 
 
 // module
-exports.push([module.i, ".split, .split-flex {\n    -webkit-box-sizing: border-box;\n    -moz-box-sizing: border-box;\n    box-sizing: border-box;\n\n    overflow-y: auto;\n    overflow-x: hidden;\n}\n\n\n.gutter {\n    background-color: #eee;\n\n    background-repeat: no-repeat;\n    background-position: 50%;\n}\n\n.gutter.gutter-horizontal {\n    background-image:  url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAeCAYAAADkftS9AAAAIklEQVQoU2M4c+bMfxAGAgYYmwGrIIiDjrELjpo5aiZeMwF+yNnOs5KSvgAAAABJRU5ErkJggg==');\n    cursor: ew-resize;\n}\n\n.gutter.gutter-vertical {\n    background-image:  url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAFAQMAAABo7865AAAABlBMVEVHcEzMzMzyAv2sAAAAAXRSTlMAQObYZgAAABBJREFUeF5jOAMEEAIEEFwAn3kMwcB6I2AAAAAASUVORK5CYII=');\n    cursor: ns-resize;\n}\n\n.split.split-horizontal, .gutter.gutter-horizontal {\n    height: 100%;\n    float: left;\n}\n", "", {"version":3,"sources":["/projects/block-diagram-builder/bdb-front/src/main/split.css"],"names":[],"mappings":"AAAA;IACI,+BAA+B;IAC/B,4BAA4B;IAC5B,uBAAuB;;IAEvB,iBAAiB;IACjB,mBAAmB;CACtB;;;AAGD;IACI,uBAAuB;;IAEvB,6BAA6B;IAC7B,yBAAyB;CAC5B;;AAED;IACI,6KAA6K;IAC7K,kBAAkB;CACrB;;AAED;IACI,6LAA6L;IAC7L,kBAAkB;CACrB;;AAED;IACI,aAAa;IACb,YAAY;CACf","file":"split.css","sourcesContent":[".split, .split-flex {\n    -webkit-box-sizing: border-box;\n    -moz-box-sizing: border-box;\n    box-sizing: border-box;\n\n    overflow-y: auto;\n    overflow-x: hidden;\n}\n\n\n.gutter {\n    background-color: #eee;\n\n    background-repeat: no-repeat;\n    background-position: 50%;\n}\n\n.gutter.gutter-horizontal {\n    background-image:  url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAeCAYAAADkftS9AAAAIklEQVQoU2M4c+bMfxAGAgYYmwGrIIiDjrELjpo5aiZeMwF+yNnOs5KSvgAAAABJRU5ErkJggg==');\n    cursor: ew-resize;\n}\n\n.gutter.gutter-vertical {\n    background-image:  url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAFAQMAAABo7865AAAABlBMVEVHcEzMzMzyAv2sAAAAAXRSTlMAQObYZgAAABBJREFUeF5jOAMEEAIEEFwAn3kMwcB6I2AAAAAASUVORK5CYII=');\n    cursor: ns-resize;\n}\n\n.split.split-horizontal, .gutter.gutter-horizontal {\n    height: 100%;\n    float: left;\n}\n"],"sourceRoot":""}]);
+exports.push([module.i, "#params {\n    padding-right: 4px;\n    background: whitesmoke;\n}\n\n#params div.horizontal {\n    display: flex;\n    flex-direction: row;\n}\n\n#params div.vertical, #params {\n    display: flex;\n    flex-direction: column;\n}\n\n#params .elementIdDiv {\n    min-height: 40px;\n}\n\n#params input.elementId {\n    margin: 0;\n    font-size: 24px;\n    padding: 4px;\n    border: 0;\n    border-bottom: 1px solid #ddd;\n    width: 100%;\n}\n\n#params .elementComponent {\n    color: #aaa;\n    background: white;\n    padding: 0 4px;\n}\n/*#params input {*/\n    /*width: 50px;*/\n    /*border: 1px solid #eee;*/\n/*}*/\n\n\n#paramsTable input {\n    margin: 0;\n    padding: 4px;\n    border: 0;\n\n}\n\n#paramsTable textarea {\n    margin: 0;\n    padding: 4px;\n    border: 0;\n    max-height: 100px;\n}\n\n#paramsTable {\n    border-collapse: collapse;\n    width: 100%;\n    border-style: hidden;\n}\n\n#paramsTable td {\n    border: 1px solid #ddd;\n}\n\n#paramsTable td * {\n    width: 100%;\n}\n\n#paramsTable td:nth-child(1) {\n    color: orange;\n    text-align: right;\n    padding: 4px;\n    width: 20px;\n}\n\n#paramsTable td:nth-child(2) {\n    background: white;\n}\n\n#paramsFooter {\n    align-self: flex-end;\n     width: 100%;\n     height: auto;\n }\n\n#codeEditorDiv {\n    border: 1px solid #ddd;\n    flex-grow: 1;\n}", "", {"version":3,"sources":["/projects/block-diagram-builder/bdb-front/src/main/params/params.css"],"names":[],"mappings":"AAAA;IACI,mBAAmB;IACnB,uBAAuB;CAC1B;;AAED;IACI,cAAc;IACd,oBAAoB;CACvB;;AAED;IACI,cAAc;IACd,uBAAuB;CAC1B;;AAED;IACI,iBAAiB;CACpB;;AAED;IACI,UAAU;IACV,gBAAgB;IAChB,aAAa;IACb,UAAU;IACV,8BAA8B;IAC9B,YAAY;CACf;;AAED;IACI,YAAY;IACZ,kBAAkB;IAClB,eAAe;CAClB;AACD,mBAAmB;IACf,gBAAgB;IAChB,2BAA2B;AAC/B,KAAK;;;AAGL;IACI,UAAU;IACV,aAAa;IACb,UAAU;;CAEb;;AAED;IACI,UAAU;IACV,aAAa;IACb,UAAU;IACV,kBAAkB;CACrB;;AAED;IACI,0BAA0B;IAC1B,YAAY;IACZ,qBAAqB;CACxB;;AAED;IACI,uBAAuB;CAC1B;;AAED;IACI,YAAY;CACf;;AAED;IACI,cAAc;IACd,kBAAkB;IAClB,aAAa;IACb,YAAY;CACf;;AAED;IACI,kBAAkB;CACrB;;AAED;IACI,qBAAqB;KACpB,YAAY;KACZ,aAAa;EAChB;;AAEF;IACI,uBAAuB;IACvB,aAAa;CAChB","file":"params.css","sourcesContent":["#params {\n    padding-right: 4px;\n    background: whitesmoke;\n}\n\n#params div.horizontal {\n    display: flex;\n    flex-direction: row;\n}\n\n#params div.vertical, #params {\n    display: flex;\n    flex-direction: column;\n}\n\n#params .elementIdDiv {\n    min-height: 40px;\n}\n\n#params input.elementId {\n    margin: 0;\n    font-size: 24px;\n    padding: 4px;\n    border: 0;\n    border-bottom: 1px solid #ddd;\n    width: 100%;\n}\n\n#params .elementComponent {\n    color: #aaa;\n    background: white;\n    padding: 0 4px;\n}\n/*#params input {*/\n    /*width: 50px;*/\n    /*border: 1px solid #eee;*/\n/*}*/\n\n\n#paramsTable input {\n    margin: 0;\n    padding: 4px;\n    border: 0;\n\n}\n\n#paramsTable textarea {\n    margin: 0;\n    padding: 4px;\n    border: 0;\n    max-height: 100px;\n}\n\n#paramsTable {\n    border-collapse: collapse;\n    width: 100%;\n    border-style: hidden;\n}\n\n#paramsTable td {\n    border: 1px solid #ddd;\n}\n\n#paramsTable td * {\n    width: 100%;\n}\n\n#paramsTable td:nth-child(1) {\n    color: orange;\n    text-align: right;\n    padding: 4px;\n    width: 20px;\n}\n\n#paramsTable td:nth-child(2) {\n    background: white;\n}\n\n#paramsFooter {\n    align-self: flex-end;\n     width: 100%;\n     height: auto;\n }\n\n#codeEditorDiv {\n    border: 1px solid #ddd;\n    flex-grow: 1;\n}"],"sourceRoot":""}]);
 
 // exports
 
 
 /***/ }),
 /* 24 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(0)(true);
+// imports
+
+
+// module
+exports.push([module.i, ".split, .split-flex {\n    -webkit-box-sizing: border-box;\n    -moz-box-sizing: border-box;\n    box-sizing: border-box;\n\n    overflow-y: auto;\n    overflow-x: hidden;\n}\n\n\n.gutter {\n    background-color: #eee;\n\n    background-repeat: no-repeat;\n    background-position: 50%;\n}\n\n.gutter.gutter-horizontal {\n    background-image:  url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAeCAYAAADkftS9AAAAIklEQVQoU2M4c+bMfxAGAgYYmwGrIIiDjrELjpo5aiZeMwF+yNnOs5KSvgAAAABJRU5ErkJggg==');\n    cursor: ew-resize;\n}\n\n.gutter.gutter-vertical {\n    background-image:  url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAFAQMAAABo7865AAAABlBMVEVHcEzMzMzyAv2sAAAAAXRSTlMAQObYZgAAABBJREFUeF5jOAMEEAIEEFwAn3kMwcB6I2AAAAAASUVORK5CYII=');\n    cursor: ns-resize;\n}\n\n.split.split-horizontal, .gutter.gutter-horizontal {\n    height: 100%;\n    float: left;\n}\n", "", {"version":3,"sources":["/projects/block-diagram-builder/bdb-front/src/main/split.css"],"names":[],"mappings":"AAAA;IACI,+BAA+B;IAC/B,4BAA4B;IAC5B,uBAAuB;;IAEvB,iBAAiB;IACjB,mBAAmB;CACtB;;;AAGD;IACI,uBAAuB;;IAEvB,6BAA6B;IAC7B,yBAAyB;CAC5B;;AAED;IACI,6KAA6K;IAC7K,kBAAkB;CACrB;;AAED;IACI,6LAA6L;IAC7L,kBAAkB;CACrB;;AAED;IACI,aAAa;IACb,YAAY;CACf","file":"split.css","sourcesContent":[".split, .split-flex {\n    -webkit-box-sizing: border-box;\n    -moz-box-sizing: border-box;\n    box-sizing: border-box;\n\n    overflow-y: auto;\n    overflow-x: hidden;\n}\n\n\n.gutter {\n    background-color: #eee;\n\n    background-repeat: no-repeat;\n    background-position: 50%;\n}\n\n.gutter.gutter-horizontal {\n    background-image:  url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAeCAYAAADkftS9AAAAIklEQVQoU2M4c+bMfxAGAgYYmwGrIIiDjrELjpo5aiZeMwF+yNnOs5KSvgAAAABJRU5ErkJggg==');\n    cursor: ew-resize;\n}\n\n.gutter.gutter-vertical {\n    background-image:  url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAFAQMAAABo7865AAAABlBMVEVHcEzMzMzyAv2sAAAAAXRSTlMAQObYZgAAABBJREFUeF5jOAMEEAIEEFwAn3kMwcB6I2AAAAAASUVORK5CYII=');\n    cursor: ns-resize;\n}\n\n.split.split-horizontal, .gutter.gutter-horizontal {\n    height: 100%;\n    float: left;\n}\n"],"sourceRoot":""}]);
+
+// exports
+
+
+/***/ }),
+/* 25 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -44751,10 +44768,10 @@ Object.defineProperties(accumulateDiff, {
 
 /* harmony default export */ __webpack_exports__["default"] = (accumulateDiff);
 
-/* WEBPACK VAR INJECTION */}.call(__webpack_exports__, __webpack_require__(39)))
+/* WEBPACK VAR INJECTION */}.call(__webpack_exports__, __webpack_require__(41)))
 
 /***/ }),
-/* 25 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /*! Split.js - v1.3.4 */
@@ -45310,7 +45327,7 @@ return Split;
 
 
 /***/ }),
-/* 26 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
@@ -45341,7 +45358,7 @@ if(false) {
 }
 
 /***/ }),
-/* 27 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
@@ -45372,7 +45389,7 @@ if(false) {
 }
 
 /***/ }),
-/* 28 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
@@ -45403,7 +45420,7 @@ if(false) {
 }
 
 /***/ }),
-/* 29 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
@@ -45434,7 +45451,7 @@ if(false) {
 }
 
 /***/ }),
-/* 30 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
@@ -45465,7 +45482,7 @@ if(false) {
 }
 
 /***/ }),
-/* 31 */
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
@@ -45496,7 +45513,7 @@ if(false) {
 }
 
 /***/ }),
-/* 32 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
@@ -45527,7 +45544,7 @@ if(false) {
 }
 
 /***/ }),
-/* 33 */
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
@@ -45558,7 +45575,7 @@ if(false) {
 }
 
 /***/ }),
-/* 34 */
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
@@ -45589,13 +45606,44 @@ if(false) {
 }
 
 /***/ }),
-/* 35 */
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
 var content = __webpack_require__(21);
+if(typeof content === 'string') content = [[module.i, content, '']];
+// Prepare cssTransformation
+var transform;
+
+var options = {}
+options.transform = transform
+// add the styles to the DOM
+var update = __webpack_require__(1)(content, options);
+if(content.locals) module.exports = content.locals;
+// Hot Module Replacement
+if(false) {
+	// When the styles change, update the <style> tags
+	if(!content.locals) {
+		module.hot.accept("!!../../../node_modules/css-loader/index.js?sourceMap!./menu.css", function() {
+			var newContent = require("!!../../../node_modules/css-loader/index.js?sourceMap!./menu.css");
+			if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+			update(newContent);
+		});
+	}
+	// When the module is disposed, remove the <style> tags
+	module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+/* 37 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(22);
 if(typeof content === 'string') content = [[module.i, content, '']];
 // Prepare cssTransformation
 var transform;
@@ -45620,13 +45668,13 @@ if(false) {
 }
 
 /***/ }),
-/* 36 */
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(22);
+var content = __webpack_require__(23);
 if(typeof content === 'string') content = [[module.i, content, '']];
 // Prepare cssTransformation
 var transform;
@@ -45651,13 +45699,13 @@ if(false) {
 }
 
 /***/ }),
-/* 37 */
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(23);
+var content = __webpack_require__(24);
 if(typeof content === 'string') content = [[module.i, content, '']];
 // Prepare cssTransformation
 var transform;
@@ -45682,7 +45730,7 @@ if(false) {
 }
 
 /***/ }),
-/* 38 */
+/* 40 */
 /***/ (function(module, exports) {
 
 
@@ -45777,7 +45825,7 @@ module.exports = function (css) {
 
 
 /***/ }),
-/* 39 */
+/* 41 */
 /***/ (function(module, exports) {
 
 var g;
@@ -45804,11 +45852,11 @@ module.exports = g;
 
 
 /***/ }),
-/* 40 */
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var d3 = __webpack_require__(3);
-__webpack_require__(29);
+__webpack_require__(30);
 var ko = __webpack_require__(2);
 
 const margin = 4;
@@ -45952,7 +46000,7 @@ module.exports = function(vm, parentNode) {
 };
 
 /***/ }),
-/* 41 */
+/* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var ko = __webpack_require__(2);
@@ -46068,41 +46116,41 @@ module.exports = function () {
 };
 
 /***/ }),
-/* 42 */
+/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function($) {var components = __webpack_require__(7);
 var ko = __webpack_require__(2);
-__webpack_require__(45);
+__webpack_require__(47);
 
 components.register(
     'diagram',
-    __webpack_require__(44),
-    __webpack_require__(43)
+    __webpack_require__(46),
+    __webpack_require__(45)
 );
 
 components.register(
     'simpleblock',
-    __webpack_require__(49),
-    __webpack_require__(48)
-);
-
-components.register(
-    'textbox',
     __webpack_require__(51),
     __webpack_require__(50)
 );
 
 components.register(
+    'textbox',
+    __webpack_require__(53),
+    __webpack_require__(52)
+);
+
+components.register(
     'block',
-    __webpack_require__(41),
-    __webpack_require__(40)
+    __webpack_require__(43),
+    __webpack_require__(42)
 );
 
 components.register(
     'link',
-    __webpack_require__(47),
-    __webpack_require__(46)
+    __webpack_require__(49),
+    __webpack_require__(48)
 );
 
 var data =
@@ -46111,15 +46159,16 @@ var data =
         "component": "diagram",
         "maxThreadCount": 100,
         "showCage": true,
+        "straightLinks": false,
         "elements": [
             {
                 "id": "textbox1",
                 "component": "textbox",
-                "text": "You can:\n- add new Block (alt + click)\n- each block can contain code, \nthat will be executed by engine\n- select multiple elements with shift\n- move selected with mouse or keyboard\n  (plus shift for accuracy)\n- delete selected (backspace, del)\n- resize selected with alt \n(plus shift for accuracy)\n- scale with mouse scroll or touch gestures\n- save and load diagram JSON",
+                "text": "You can:\n- add new Block (alt + click)\n- each block can contain code, \nthat will be executed by engine\n- select multiple elements with shift\n- move selected with mouse or keyboard\n  (plus shift for accuracy)\n- delete selected (backspace, del)\n- resize selected with alt \n(plus shift for accuracy)\n- scale with mouse scroll or touch gestures\n- save and load diagram JSON\n- ctrl + C, V, X, A\n- undo/redo (ctrl/command + [shift] + Z)",
                 "x": 21.74,
                 "y": 7.98,
                 "width": 300,
-                "height": 220
+                "height": 250
             },
             {
                 "id": "start",
@@ -46271,8 +46320,6 @@ var data =
 module.exports.run = function (svgParentNode) {
     //var diagramData = {component: 'diagram', id: 'diagram1'};
 
-    //debug:
-    //var diagramData = {component: 'diagram', id: 'diagram1', elements: [{component: 'textbox', id: 'textbox1', text: 'Some big welcome text.\nHello world!\n1\n2', x: 10, y: 10, width: 200, height: 100}]};
     var diagramData = data;
 
     var diagramViewModel = components.ViewModelFactory('diagram');
@@ -46280,20 +46327,21 @@ module.exports.run = function (svgParentNode) {
     diagramViewModel.load(diagramData);
 
     //debug initialize selection:
-    diagramViewModel.elements()[0].commandSelect();
+    //diagramViewModel.elements()[0].commandSelect();
 
     ko.applyBindings(diagramViewModel, $('#params')[0]); //! should be in another place ; consider: ko.applyBindings(diagramViewModel, paramsNode)
+    ko.applyBindings(diagramViewModel, $('nav')[0]);
 };
 
 
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ }),
-/* 43 */
+/* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var d3 = __webpack_require__(3);
-__webpack_require__(30);
+__webpack_require__(31);
 var vFactory = __webpack_require__(7).ViewFactory;
 
 module.exports = function(vm, parentNode) {
@@ -46304,10 +46352,43 @@ module.exports = function(vm, parentNode) {
         .attr('tabindex', 1)
     ;
 
-    var rootGroup = svg.append('g').classed('root', true);
-    var cageGroup = rootGroup.append('g').classed('cage', true);
-    var linksGroup = rootGroup.append('g').classed('links', true);
-    var elementsGroup = rootGroup.append('g').classed('elements', true);
+    var rootScalableGroup = svg.append('g').classed('root', true);
+    var cageGroup = rootScalableGroup.append('g').classed('cage', true);
+    var linksGroup = rootScalableGroup.append('g').classed('links', true);
+    var elementsGroup = rootScalableGroup.append('g').classed('elements', true);
+
+    // menu and saving indicator:
+
+    var menusGroup = svg.append('g').classed('menus', true);
+    var indicatorGroup = menusGroup.append('g').classed('indicator', true);
+
+    indicatorGroup
+        .append('rect')
+        .attr('fill', 'white')
+        .attr('x', 10)
+        .attr('y', 0)
+        .attr('width', 60)
+        .attr('height', 14)
+    ;
+
+    indicatorGroup
+        .append('text')
+        .attr('fill', 'gray')
+        .attr('x', 10)
+        .attr('y', 10)
+        .text('saving...')
+    ;
+
+    vm.saving.subscribe(newValue => {
+        indicatorGroup
+            .attr('visibility', 'visible')
+            .transition()
+            .delay(500)
+            .duration(100)
+            .attr('visibility', 'hidden');
+    });
+
+    // end menu and saving indicator:
 
     var focusDiagram = () => svg.node().focus();
     focusDiagram();
@@ -46425,12 +46506,10 @@ module.exports = function(vm, parentNode) {
 
 
 
-
-
     svg.call(d3.zoom()
         .scaleExtent([0.3, 8])
         .on("zoom", function() {
-            rootGroup.attr("transform", d3.event.transform);
+            rootScalableGroup.attr("transform", d3.event.transform);
         }));
 
     function update(data, parentGroup) {
@@ -46496,18 +46575,25 @@ module.exports = function(vm, parentNode) {
     vm.showCage.subscribe(newValue => {
         if (newValue) {
             var svgBounds = svg.node().getBoundingClientRect();
-            var width = ~~svgBounds.width; // ~~ = round
-            var height = ~~svgBounds.height; // ~~ = round
+
+            // ~~ = round:
+            var width = ~~svgBounds.width;
+            var height = ~~svgBounds.height;
+
+            var left = -width;
+            var top = -height;
+            width = width * 3;
+            height = height * 3;
 
             cageGroup.insert("g", 'g')
                 .attr("class", "x axis")
                 .selectAll("line")
-                .data(d3.range(0, width, 10))
+                .data(d3.range(left, width, 10))
                 .enter().append("line")
                 .attr("x1", function (d) {
                     return d;
                 })
-                .attr("y1", 0)
+                .attr("y1", top)
                 .attr("x2", function (d) {
                     return d;
                 })
@@ -46516,9 +46602,9 @@ module.exports = function(vm, parentNode) {
             cageGroup.insert("g", 'g')
                 .attr("class", "y axis")
                 .selectAll("line")
-                .data(d3.range(0, height, 10))
+                .data(d3.range(top, height, 10))
                 .enter().append("line")
-                .attr("x1", 0)
+                .attr("x1", left)
                 .attr("y1", function (d) {
                     return d;
                 })
@@ -46533,14 +46619,14 @@ module.exports = function(vm, parentNode) {
 }
 
 /***/ }),
-/* 44 */
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var ko = __webpack_require__(2);
 var vmFactory = __webpack_require__(7).ViewModelFactory;
-var jsonDiff = __webpack_require__(24).default;
+var jsonDiff = __webpack_require__(25).default;
 
-const saveDiagramInterval = 1000;
+const saveDiagramInterval = 300;
 
 module.exports = function (data) {
     var self = this;
@@ -46551,7 +46637,7 @@ module.exports = function (data) {
         self.maxThreadCount = ko.observable(100).extend({dataType: "integer", range: {min: 1, max: 500}});
         self.showCage = ko.observable(false).extend({dataType: "boolean"});
         self.straightLinks = ko.observable(false).extend({dataType: "boolean"});
-        self.loadingData = ko.observable(false).extend({dataType: "boolean"});
+        self.loadingData = ko.observable(false).extend({dataType: "boolean"}); //! get rid of this
 
         self.elements = ko.observableArray([]);
         self.links = ko.observableArray([]);
@@ -46562,6 +46648,7 @@ module.exports = function (data) {
         self.linking = ko.observable(null);
 
         self.undoRedo = ko.observable(false);
+        self.saving = ko.observable(false).extend({ notify: 'always' });;
         self.maxUndoCount = ko.observable(100);
         self.undoActions = ko.observableArray([]);
         self.redoActions = ko.observableArray([]);
@@ -46800,6 +46887,16 @@ module.exports = function (data) {
             }
         };
 
+        self.commandCut = function() {
+            self.commandCopySelectedToClipboard();
+            self.commandDeleteSelected();
+        };
+
+        self.commandDuplicate = function() {
+            self.commandCopySelectedToClipboard();
+            self.commandPasteFromClipboard();
+        };
+
         // undo, redo:
 
         // auto save, undo, redo:
@@ -46815,7 +46912,7 @@ module.exports = function (data) {
 
         var _json;
         self.json.subscribe(function(newValue) {
-            // can be called multiple times with the same newValue (after dragging, linking)
+            // can be called multiple times with the same newValue (after dragging, linking: they force immediate update)
 
             if (self.undoRedo()) {
                 _json = newValue;
@@ -46824,8 +46921,6 @@ module.exports = function (data) {
             }
 
             if (!self.dragging() && !self.linking() && _json != newValue) {
-                console.log('json changed');
-
                 if (_json) {
                     var oldObj = JSON.parse(_json);
                     var newObj = JSON.parse(newValue);
@@ -46833,12 +46928,12 @@ module.exports = function (data) {
                     var difference = jsonDiff.diff(oldObj, newObj);
                     if (difference) {
                         self.undoActions.push(difference);
-                        if (self.undoActions.length > self.maxUndoCount()) {
-                            self.undoActions = self.undoActions.slice(-self.maxUndoCount());
+                        if (self.undoActions().length > self.maxUndoCount()) {
+                            self.undoActions(self.undoActions.slice(-self.maxUndoCount()));
                         }
                         self.redoActions([]);
                     } else
-                        console.error('Unsuspected undefined difference between diagram json old and new values');
+                        console.error('Unexpected undefined difference between diagram json old and new values');
                 }
 
                 _json = newValue;
@@ -46848,7 +46943,7 @@ module.exports = function (data) {
         self.commandUndo = function() {
             var difference = self.undoActions.pop();
             if (difference) {
-                self.redoActions.push(difference);
+                self.redoActions.push(difference.slice());
                 var json = JSON.parse(self.json());
                 difference.reverse();
                 difference.forEach(change => jsonDiff.revertChange(json, {}, change));
@@ -46863,7 +46958,7 @@ module.exports = function (data) {
         self.commandRedo = function() {
             var difference = self.redoActions.pop();
             if (difference) {
-                self.undoActions.push(difference);
+                self.undoActions.push(difference.slice());
                 var json = JSON.parse(self.json());
                 difference.reverse();
                 difference.forEach(change => jsonDiff.applyChange(json, {}, change));
@@ -46933,6 +47028,8 @@ module.exports = function (data) {
             }
         }
         self.links(_linksArray);
+
+        self.json.notifySubscribersImmediately(self.json()); // fix of initial undo saving
     };
 
     function initElementSubscriptions(vm) {
@@ -47005,11 +47102,12 @@ module.exports = function (data) {
         var data = serializeComponent(self);
         data.elements = [];
         data.links = [];
-
         self.elements().forEach(element => data.elements.push(serializeComponent(element)));
         self.links().forEach(link => data.links.push(serializeComponent(link)));
-
         var json = JSON.stringify(data, null, 2);
+
+        self.saving(true);
+
         return json;
     };
 
@@ -47019,10 +47117,11 @@ module.exports = function (data) {
     };
 
     self.init();
+
 };
 
 /***/ }),
-/* 45 */
+/* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function($) {var CodeMirror = __webpack_require__(5);
@@ -47379,11 +47478,11 @@ module.exports();
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ }),
-/* 46 */
+/* 48 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function($) {var d3 = __webpack_require__(3);
-__webpack_require__(31);
+__webpack_require__(32);
 
 module.exports = function(vm, parentNode) {
     var g = d3.select(parentNode);
@@ -47528,7 +47627,7 @@ module.exports = function(vm, parentNode) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ }),
-/* 47 */
+/* 49 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var ko = __webpack_require__(2);
@@ -47624,11 +47723,11 @@ module.exports = function () {
 }
 
 /***/ }),
-/* 48 */
+/* 50 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var d3 = __webpack_require__(3);
-__webpack_require__(32);
+__webpack_require__(33);
 
 module.exports = function(vm, parentNode) {
     var g = d3.select(parentNode);
@@ -47663,7 +47762,7 @@ module.exports = function(vm, parentNode) {
 };
 
 /***/ }),
-/* 49 */
+/* 51 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var ko = __webpack_require__(2);
@@ -47706,11 +47805,11 @@ module.exports = function () {
 };
 
 /***/ }),
-/* 50 */
+/* 52 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var d3 = __webpack_require__(3);
-__webpack_require__(33);
+__webpack_require__(34);
 
 const margin = 4;
 
@@ -47748,7 +47847,7 @@ module.exports = function(vm, parentNode) {
 };
 
 /***/ }),
-/* 51 */
+/* 53 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var ko = __webpack_require__(2);
@@ -47786,22 +47885,62 @@ module.exports = function () {
 };
 
 /***/ }),
-/* 52 */
+/* 54 */
 /***/ (function(module, exports, __webpack_require__) {
 
 __webpack_require__(8);
 
 /***/ }),
-/* 53 */
+/* 55 */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(27);
+/* WEBPACK VAR INJECTION */(function($) {// https://jsfiddle.net/tolexis/m50wvdgz/1/
+
+module.exports.init = function () {
+
+    var isTouchDevice = function () {
+        return 'ontouchstart' in window        // works on most browsers
+            || navigator.maxTouchPoints;       // works on IE10/11 and Surface
+    };
+
+    var touchMode = isTouchDevice();
+
+    var initDesktopMode = function() {
+        $('nav li').hover(
+            function(event) {
+                $(this).find('ul').first().css('display', 'block');
+            },
+            function(event) {
+                $(this).find('ul').first().css('display', 'none');
+        });
+
+        $('nav span:not(.uncloseMenu)').click(function(event) {
+
+            $('nav ul li > ul').hide();
+        });
+    };
+
+
+    if (touchMode) {
+        //initTouchMode();
+    } else {
+        initDesktopMode();
+    }
+
+}
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
+
+/***/ }),
+/* 56 */
+/***/ (function(module, exports, __webpack_require__) {
+
+__webpack_require__(28);
 __webpack_require__(11);
 __webpack_require__(9);
 __webpack_require__(10);
-__webpack_require__(26);
-__webpack_require__(36);
-__webpack_require__(35);
+__webpack_require__(27);
+__webpack_require__(38);
+__webpack_require__(37);
 
 
 

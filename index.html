@@ -5,58 +5,132 @@
     <title>Block Diagram Builder</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inconsolata">
     <script type="text/javascript" src="assets/bundle.js" charset="utf-8"></script>
+
+    <meta name="viewport"
+          content="
+    height = device-height,
+    width = device-width,
+    initial-scale = 1.0,
+    minimum-scale = 1.0,
+    maximum-scale = 1.0,
+    user-scalable = no,
+    target-densitydpi = device-dpi
+    " />
 </head>
-<body>
-    <div class="diagram-builder">
+<body class="body">
+    <div class="vbox">
+        <div class="row header">
+            <nav role='navigation'>
+            <ul>
+                <li><span>File</span>
+                    <ul>
+                        <li><span>New</span></li>
+                        <li><span>Make a copy...</span></li>
+                    </ul>
+                </li>
+                <li><span>Edit</span>
+                    <ul>
+                        <li><span class='uncloseMenu' data-bind="click: commandUndo">Undo</span></li>
+                        <li><span class='uncloseMenu' data-bind="click: commandRedo">Redo</span></li>
+                        <div class="separator"></div>
+                        <li><span data-bind="click: commandCut">Cut</span></li>
+                        <li><span data-bind="click: commandCopySelectedToClipboard">Copy</span></li>
+                        <li><span data-bind="click: commandPasteFromClipboard">Paste</span></li>
+                        <li><span data-bind="click: commandDeleteSelected">Delete</span></li>
+                        <li><span data-bind="click: commandDuplicate">Duplicate</span></li>
+                        <div class="separator"></div>
+                        <li><span data-bind="click: commandSelectAll">Select all</span></li>
+                    </ul>
+                </li>
+                <li><span>View</span>
+                    <ul>
+                        <li><span class='uncloseMenu'>50%</span></li>
+                        <li><span class='uncloseMenu'>100%</span></li>
+                        <li><span class='uncloseMenu'>200%</span></li>
+                        <div class="separator"></div>
+                        <li><span class='uncloseMenu'>Touch mode <input type="checkbox"></span></li>
+                        <li><span class='uncloseMenu'>Cage <input type="checkbox"></span></li>
+                        <li><span class='uncloseMenu'>Straight links <input type="checkbox"></span></li>
+                        <li><span class='uncloseMenu'>Params <input type="checkbox"></span></li>
+                    </ul>
+                </li>
+                <li><span>Insert</span>
+                    <ul>
+                        <li><span>Block</span></li>
+                        <li><span>Text box</span></li>
+                        <div class="separator"></div>
+                        <li><span>Library...</span></li>
+                    </ul>
+                </li>
+                <li><span>Run</span>
+                    <ul>
+                        <li><span>Execute</span></li>
+                        <li><span>Debug</span></li>
+                        <li><span>Stop</span></li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+        </div>
 
-        <div id="diagram" class="split split-horizontal"></div>
+        <div class="row content">
+            <div class="diagram-builder">
 
-        <div id="params" class="split split-horizontal vertical" data-bind="with:selectedElement">
-            <div class="horizontal elementIdDiv">
-                <input class="elementId" data-bind="value: id" />
-                <label class="elementComponent" data-bind="text:component"></label>
+                <div id="diagram" class="split split-horizontal"></div>
+
+                <div id="params" class="split split-horizontal vertical" data-bind="with:selectedElement">
+                    <div class="horizontal elementIdDiv">
+                        <input class="elementId" data-bind="value: id" />
+                        <label class="elementComponent" data-bind="text:component"></label>
+                    </div>
+
+                    <table id="paramsTable" data-bind="visible: $parent.showParams">
+                        <tbody data-bind="foreach: designerParams">
+                        <tr>
+                            <td data-bind="text: Object.keys($parent)[ Object.values($parent).indexOf($rawData)]" />
+                            <td>
+                                <div data-bind="if: typeof $rawData.dataType === 'undefined', visible: typeof $rawData.dataType === 'undefined'">
+                                    <textArea data-bind="stringValue: $rawData, valueUpdate: 'afterkeydown'"></textArea>
+                                </div>
+
+                                <div data-bind="if: $rawData.dataType == 'string', visible: $rawData.dataType == 'string'">
+                                    <textArea data-bind="stringValue: $rawData, valueUpdate: 'afterkeydown'"></textArea>
+                                </div>
+
+                                <div data-bind="if: $rawData.dataType == 'integer', visible: $rawData.dataType == 'integer'">
+                                    <input data-bind="integerValue: $rawData" />
+                                </div>
+
+                                <div data-bind="if: $rawData.dataType == 'float', visible: $rawData.dataType == 'float'">
+                                    <input data-bind="floatValue: $rawData" />
+                                </div>
+
+                                <div data-bind="if: $rawData.dataType == 'boolean', visible: $rawData.dataType == 'boolean'">
+                                    <input type="checkbox" data-bind="checked: $rawData" />
+                                </div>
+
+                                <div data-bind="if: $rawData.dataType == 'javascript', visible: $rawData.dataType == 'javascript'">
+                                    <textarea data-bind="value: $rawData, codemirror: {mode: 'javascript', theme: 'default', matchBrackets:true, scrollbarStyle: 'simple', lineNumbers: false}"></textarea>
+                                </div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+
+                    <div id="codeEditorDiv" data-bind="if: typeof ($data.code) !== 'undefined'" >
+                        <textarea id="codeEditor" data-bind="value: code, codemirror: {mode: 'javascript', theme: 'default', matchBrackets:true, lineNumbers: false}">// block js</textarea>
+                    </div>
+
+                    <div id="paramsFooter" class="horizontal">
+                        <label><input type="checkbox" data-bind="checked: $parent.showParams" /> params</label>
+                    </div>
+                </div>
+
             </div>
+        </div>
 
-            <table id="paramsTable" data-bind="visible: $parent.showParams">
-                <tbody data-bind="foreach: designerParams">
-                <tr>
-                    <td data-bind="text: Object.keys($parent)[ Object.values($parent).indexOf($rawData)]" />
-                    <td>
-                        <div data-bind="if: typeof $rawData.dataType === 'undefined', visible: typeof $rawData.dataType === 'undefined'">
-                            <textArea data-bind="stringValue: $rawData, valueUpdate: 'afterkeydown'"></textArea>
-                        </div>
+        <div class="row footer">
 
-                        <div data-bind="if: $rawData.dataType == 'string', visible: $rawData.dataType == 'string'">
-                            <textArea data-bind="stringValue: $rawData, valueUpdate: 'afterkeydown'"></textArea>
-                        </div>
-
-                        <div data-bind="if: $rawData.dataType == 'integer', visible: $rawData.dataType == 'integer'">
-                            <input data-bind="integerValue: $rawData" />
-                        </div>
-
-                        <div data-bind="if: $rawData.dataType == 'float', visible: $rawData.dataType == 'float'">
-                            <input data-bind="floatValue: $rawData" />
-                        </div>
-
-                        <div data-bind="if: $rawData.dataType == 'boolean', visible: $rawData.dataType == 'boolean'">
-                            <input type="checkbox" data-bind="checked: $rawData" />
-                        </div>
-
-                        <div data-bind="if: $rawData.dataType == 'javascript', visible: $rawData.dataType == 'javascript'">
-                            <textarea data-bind="value: $rawData, codemirror: {mode: 'javascript', theme: 'default', matchBrackets:true, scrollbarStyle: 'simple', lineNumbers: false}"></textarea>
-                        </div>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-
-            <div id="codeEditorDiv" data-bind="if: typeof ($data.code) !== 'undefined'" >
-                <textarea id="codeEditor" data-bind="value: code, codemirror: {mode: 'javascript', theme: 'default', matchBrackets:true, lineNumbers: false}">// block js</textarea>
-            </div>
-
-            <div id="paramsFooter" class="horizontal">
-                <label><input type="checkbox" data-bind="checked: $parent.showParams" /> params</label>
-            </div>
         </div>
     </div>
 </body>
