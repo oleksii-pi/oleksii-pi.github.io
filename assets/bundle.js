@@ -43049,6 +43049,10 @@ var menu = __webpack_require__(55);
 __webpack_require__(39);
 
 var split = __webpack_require__(26);
+
+var ko = __webpack_require__(2);
+__webpack_require__(47);
+
 var compositionRoot = __webpack_require__(44);
 __webpack_require__(56);
 
@@ -43057,12 +43061,33 @@ window.onbeforeunload = function() {
 }
 
 $(document).ready(function() {
-    split(['#diagram', '#params'], {
+    var splitter = split(['#diagram', '#params'], {
         sizes: [70, 30],
         minSize: 200
     });
-    menu.init();
-    compositionRoot.run($('#diagram')[0]);
+
+    compositionRoot.init();
+
+    var diagramViewModel = compositionRoot.run($('#diagram')[0]);
+
+    //diagramViewModel.elements()[0].commandSelect();
+
+    ko.applyBindings(diagramViewModel, $('#params')[0]);
+    ko.applyBindings(diagramViewModel, $('nav')[0]);
+
+    diagramViewModel.showParamsPanel.subscribe(function(newValue) {
+        if (newValue) {
+            splitter.setSizes([70, 30]);
+        } else {
+            splitter.collapse(1);
+        }
+    });
+
+    diagramViewModel.touchMode.subscribe(function(newValue) {
+        menu.initTouch(newValue);
+    });
+    var isTouch = menu.isTouchDevice();
+    diagramViewModel.touchMode(isTouch);
 });
 
 
@@ -44308,7 +44333,7 @@ exports = module.exports = __webpack_require__(0)(true);
 
 
 // module
-exports.push([module.i, "/*| Navigation |*/\n\nnav {\n    top: 0;\n    left: 0;\n    width: 100%;\n    background: #fff;\n    border: 1px solid rgba(0, 0, 0, .1);\n}\n\nnav ul {\n    list-style: none;\n    position: relative;\n    float: left;\n    display: inline-table;\n\n    -webkit-box-sizing: border-box;\n    -moz-box-sizing: border-box;\n    box-sizing: border-box;\n    padding: 0;\n    margin: 0;\n    font-family: arial, sans-serif;\n}\n\nnav ul li {\n    float: left;\n}\n\nnav ul li:hover {\n    background: #eee;\n}\n\nnav ul li:hover > ul {\n    display: block;\n}\n\n/* nav ul li:hover > ul:active {\n  display: none;\n} */\n\n\nnav ul li span {\n    display: block;\n    padding: 16px 16px;\n    color: #222;\n    font-size: .9em;\n    letter-spacing: 1px;\n    text-decoration: none;\n    cursor: default;\n}\n\nnav ul li span[data-bind]  {\n    cursor: pointer;\n}\n\nnav ul ul {\n    display: none;\n    background: #fff;\n    position: absolute;\n    top: 100%;\n    box-shadow: -3px 3px 10px -2px rgba(0, 0, 0, .1);\n    border: 1px solid rgba(0, 0, 0, .1);\n}\n\nnav ul ul li {\n    float: none;\n    position: relative;\n}\n\nnav ul ul ul {\n    position: absolute;\n    left: 100%;\n    top: 0;\n}\n\ndiv.separator {\n    margin: 4px 0px;\n    border-bottom: 1px solid rgba(0, 0, 0, .1);\n}\n\nli input[type='checkbox'] {\n    float: right;\n    margin-left: 8px;\n}\n\nspan.submenuSign {\n    color: #aaa;\n    float: right;\n    padding: 0;\n    margin-right: -12px;\n}", "", {"version":3,"sources":["/projects/block-diagram-builder/bdb-front/src/main/menu/menu.css"],"names":[],"mappings":"AAAA,kBAAkB;;AAElB;IACI,OAAO;IACP,QAAQ;IACR,YAAY;IACZ,iBAAiB;IACjB,oCAAoC;CACvC;;AAED;IACI,iBAAiB;IACjB,mBAAmB;IACnB,YAAY;IACZ,sBAAsB;;IAEtB,+BAA+B;IAC/B,4BAA4B;IAC5B,uBAAuB;IACvB,WAAW;IACX,UAAU;IACV,+BAA+B;CAClC;;AAED;IACI,YAAY;CACf;;AAED;IACI,iBAAiB;CACpB;;AAED;IACI,eAAe;CAClB;;AAED;;IAEI;;;AAGJ;IACI,eAAe;IACf,mBAAmB;IACnB,YAAY;IACZ,gBAAgB;IAChB,oBAAoB;IACpB,sBAAsB;IACtB,gBAAgB;CACnB;;AAED;IACI,gBAAgB;CACnB;;AAED;IACI,cAAc;IACd,iBAAiB;IACjB,mBAAmB;IACnB,UAAU;IACV,iDAAiD;IACjD,oCAAoC;CACvC;;AAED;IACI,YAAY;IACZ,mBAAmB;CACtB;;AAED;IACI,mBAAmB;IACnB,WAAW;IACX,OAAO;CACV;;AAED;IACI,gBAAgB;IAChB,2CAA2C;CAC9C;;AAED;IACI,aAAa;IACb,iBAAiB;CACpB;;AAED;IACI,YAAY;IACZ,aAAa;IACb,WAAW;IACX,oBAAoB;CACvB","file":"menu.css","sourcesContent":["/*| Navigation |*/\n\nnav {\n    top: 0;\n    left: 0;\n    width: 100%;\n    background: #fff;\n    border: 1px solid rgba(0, 0, 0, .1);\n}\n\nnav ul {\n    list-style: none;\n    position: relative;\n    float: left;\n    display: inline-table;\n\n    -webkit-box-sizing: border-box;\n    -moz-box-sizing: border-box;\n    box-sizing: border-box;\n    padding: 0;\n    margin: 0;\n    font-family: arial, sans-serif;\n}\n\nnav ul li {\n    float: left;\n}\n\nnav ul li:hover {\n    background: #eee;\n}\n\nnav ul li:hover > ul {\n    display: block;\n}\n\n/* nav ul li:hover > ul:active {\n  display: none;\n} */\n\n\nnav ul li span {\n    display: block;\n    padding: 16px 16px;\n    color: #222;\n    font-size: .9em;\n    letter-spacing: 1px;\n    text-decoration: none;\n    cursor: default;\n}\n\nnav ul li span[data-bind]  {\n    cursor: pointer;\n}\n\nnav ul ul {\n    display: none;\n    background: #fff;\n    position: absolute;\n    top: 100%;\n    box-shadow: -3px 3px 10px -2px rgba(0, 0, 0, .1);\n    border: 1px solid rgba(0, 0, 0, .1);\n}\n\nnav ul ul li {\n    float: none;\n    position: relative;\n}\n\nnav ul ul ul {\n    position: absolute;\n    left: 100%;\n    top: 0;\n}\n\ndiv.separator {\n    margin: 4px 0px;\n    border-bottom: 1px solid rgba(0, 0, 0, .1);\n}\n\nli input[type='checkbox'] {\n    float: right;\n    margin-left: 8px;\n}\n\nspan.submenuSign {\n    color: #aaa;\n    float: right;\n    padding: 0;\n    margin-right: -12px;\n}"],"sourceRoot":""}]);
+exports.push([module.i, "/*| Navigation |*/\n\nnav {\n    top: 0;\n    left: 0;\n    width: 100%;\n    background: #fff;\n    border: 1px solid rgba(0, 0, 0, .1);\n}\n\nnav ul {\n    list-style: none;\n    position: relative;\n    float: left;\n    display: inline-table;\n\n    -webkit-box-sizing: border-box;\n    -moz-box-sizing: border-box;\n    box-sizing: border-box;\n    padding: 0;\n    margin: 0;\n    font-family: arial, sans-serif;\n}\n\nnav ul li {\n    float: left;\n}\n\nnav ul li:hover {\n    background: #eee;\n}\n\nnav ul li:hover > ul {\n    display: block;\n}\n\n/* nav ul li:hover > ul:active {\n  display: none;\n} */\n\n\nnav ul li span {\n    display: block;\n    padding: 16px 16px;\n    color: #222;\n    font-size: .9em;\n    letter-spacing: 1px;\n    text-decoration: none;\n    cursor: default;\n}\n\nnav ul li span[data-bind]  {\n    cursor: pointer;\n}\n\nnav ul ul {\n    display: none;\n    background: #fff;\n    position: absolute;\n    top: 100%;\n    box-shadow: -3px 3px 10px -2px rgba(0, 0, 0, .1);\n    border: 1px solid rgba(0, 0, 0, .1);\n}\n\nnav ul ul li {\n    float: none;\n    position: relative;\n}\n\nnav ul ul ul {\n    position: absolute;\n    left: 100%;\n    top: 0;\n}\n\ndiv.separator {\n    margin: 4px 0px;\n    border-bottom: 1px solid rgba(0, 0, 0, .1);\n}\n\nli input[type='checkbox'] {\n    float: right;\n    margin-left: 8px;\n}\n\nspan.submenuSign {\n    color: #aaa;\n    float: right;\n    padding: 0;\n    margin-right: -12px;\n}\n\nli span label {\n    display: inline-block;\n    width: 100%;\n    height: 100%;\n    cursor: pointer;\n}", "", {"version":3,"sources":["/projects/block-diagram-builder/bdb-front/src/main/menu/menu.css"],"names":[],"mappings":"AAAA,kBAAkB;;AAElB;IACI,OAAO;IACP,QAAQ;IACR,YAAY;IACZ,iBAAiB;IACjB,oCAAoC;CACvC;;AAED;IACI,iBAAiB;IACjB,mBAAmB;IACnB,YAAY;IACZ,sBAAsB;;IAEtB,+BAA+B;IAC/B,4BAA4B;IAC5B,uBAAuB;IACvB,WAAW;IACX,UAAU;IACV,+BAA+B;CAClC;;AAED;IACI,YAAY;CACf;;AAED;IACI,iBAAiB;CACpB;;AAED;IACI,eAAe;CAClB;;AAED;;IAEI;;;AAGJ;IACI,eAAe;IACf,mBAAmB;IACnB,YAAY;IACZ,gBAAgB;IAChB,oBAAoB;IACpB,sBAAsB;IACtB,gBAAgB;CACnB;;AAED;IACI,gBAAgB;CACnB;;AAED;IACI,cAAc;IACd,iBAAiB;IACjB,mBAAmB;IACnB,UAAU;IACV,iDAAiD;IACjD,oCAAoC;CACvC;;AAED;IACI,YAAY;IACZ,mBAAmB;CACtB;;AAED;IACI,mBAAmB;IACnB,WAAW;IACX,OAAO;CACV;;AAED;IACI,gBAAgB;IAChB,2CAA2C;CAC9C;;AAED;IACI,aAAa;IACb,iBAAiB;CACpB;;AAED;IACI,YAAY;IACZ,aAAa;IACb,WAAW;IACX,oBAAoB;CACvB;;AAED;IACI,sBAAsB;IACtB,YAAY;IACZ,aAAa;IACb,gBAAgB;CACnB","file":"menu.css","sourcesContent":["/*| Navigation |*/\n\nnav {\n    top: 0;\n    left: 0;\n    width: 100%;\n    background: #fff;\n    border: 1px solid rgba(0, 0, 0, .1);\n}\n\nnav ul {\n    list-style: none;\n    position: relative;\n    float: left;\n    display: inline-table;\n\n    -webkit-box-sizing: border-box;\n    -moz-box-sizing: border-box;\n    box-sizing: border-box;\n    padding: 0;\n    margin: 0;\n    font-family: arial, sans-serif;\n}\n\nnav ul li {\n    float: left;\n}\n\nnav ul li:hover {\n    background: #eee;\n}\n\nnav ul li:hover > ul {\n    display: block;\n}\n\n/* nav ul li:hover > ul:active {\n  display: none;\n} */\n\n\nnav ul li span {\n    display: block;\n    padding: 16px 16px;\n    color: #222;\n    font-size: .9em;\n    letter-spacing: 1px;\n    text-decoration: none;\n    cursor: default;\n}\n\nnav ul li span[data-bind]  {\n    cursor: pointer;\n}\n\nnav ul ul {\n    display: none;\n    background: #fff;\n    position: absolute;\n    top: 100%;\n    box-shadow: -3px 3px 10px -2px rgba(0, 0, 0, .1);\n    border: 1px solid rgba(0, 0, 0, .1);\n}\n\nnav ul ul li {\n    float: none;\n    position: relative;\n}\n\nnav ul ul ul {\n    position: absolute;\n    left: 100%;\n    top: 0;\n}\n\ndiv.separator {\n    margin: 4px 0px;\n    border-bottom: 1px solid rgba(0, 0, 0, .1);\n}\n\nli input[type='checkbox'] {\n    float: right;\n    margin-left: 8px;\n}\n\nspan.submenuSign {\n    color: #aaa;\n    float: right;\n    padding: 0;\n    margin-right: -12px;\n}\n\nli span label {\n    display: inline-block;\n    width: 100%;\n    height: 100%;\n    cursor: pointer;\n}"],"sourceRoot":""}]);
 
 // exports
 
@@ -46119,39 +46144,39 @@ module.exports = function () {
 /* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
-/* WEBPACK VAR INJECTION */(function($) {var components = __webpack_require__(7);
-var ko = __webpack_require__(2);
-__webpack_require__(47);
+var components = __webpack_require__(7);
 
-components.register(
-    'diagram',
-    __webpack_require__(46),
-    __webpack_require__(45)
-);
+module.exports.init = function () {
+    components.register(
+        'diagram',
+        __webpack_require__(46),
+        __webpack_require__(45)
+    );
 
-components.register(
-    'simpleblock',
-    __webpack_require__(51),
-    __webpack_require__(50)
-);
+    components.register(
+        'simpleblock',
+        __webpack_require__(51),
+        __webpack_require__(50)
+    );
 
-components.register(
-    'textbox',
-    __webpack_require__(53),
-    __webpack_require__(52)
-);
+    components.register(
+        'textbox',
+        __webpack_require__(53),
+        __webpack_require__(52)
+    );
 
-components.register(
-    'block',
-    __webpack_require__(43),
-    __webpack_require__(42)
-);
+    components.register(
+        'block',
+        __webpack_require__(43),
+        __webpack_require__(42)
+    );
 
-components.register(
-    'link',
-    __webpack_require__(49),
-    __webpack_require__(48)
-);
+    components.register(
+        'link',
+        __webpack_require__(49),
+        __webpack_require__(48)
+    );
+}
 
 var data =
     {
@@ -46318,23 +46343,23 @@ var data =
     };
 
 module.exports.run = function (svgParentNode) {
-    //var diagramData = {component: 'diagram', id: 'diagram1'};
+
+    /*
+    var diagramData = {component: 'diagram', id: 'diagram1'};
+    var diagramViewModel = components.ViewModelFactory('diagram');
+    var diagramView = components.ViewFactory(diagramViewModel, svgParentNode);
+    diagramViewModel.load(diagramData);
+    */
 
     var diagramData = data;
-
     var diagramViewModel = components.ViewModelFactory('diagram');
     var diagramView = components.ViewFactory(diagramViewModel, svgParentNode);
     diagramViewModel.load(diagramData);
 
-    //debug initialize selection:
-    //diagramViewModel.elements()[0].commandSelect();
-
-    ko.applyBindings(diagramViewModel, $('#params')[0]); //! should be in another place ; consider: ko.applyBindings(diagramViewModel, paramsNode)
-    ko.applyBindings(diagramViewModel, $('nav')[0]);
+    return diagramViewModel;
 };
 
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ }),
 /* 45 */
@@ -46399,11 +46424,12 @@ module.exports = function(vm, parentNode) {
         }
         focusDiagram();
 
-        if (d3.event.altKey) {  //!! implement according to UI state
+        if (vm.pendingClickNewComponent()) { 
             var mouse = d3.mouse(svg.select('g').node());
             var x = mouse[0];
             var y = mouse[1];
-            vm.commandAdd(x, y, 'block');
+            vm.commandAdd(x, y, vm.pendingClickNewComponent());
+            vm.pendingClickNewComponent(null);
         }
     });
 
@@ -46505,12 +46531,16 @@ module.exports = function(vm, parentNode) {
     });
 
 
-
-    svg.call(d3.zoom()
+    var zoom = d3.zoom()
         .scaleExtent([0.3, 8])
         .on("zoom", function() {
             rootScalableGroup.attr("transform", d3.event.transform);
-        }));
+        });
+    svg.call(zoom);
+
+    vm.scale.subscribe(newValue => {
+        zoom.scaleTo(svg, newValue);
+    });
 
     function update(data, parentGroup) {
         var elements = parentGroup.selectAll(() => parentGroup.node().childNodes).data(data, function (d) {
@@ -46570,6 +46600,14 @@ module.exports = function(vm, parentNode) {
     vm.linking.subscribe(newValue => {
         elementsGroup.selectAll('.linkIn')
             .attr('visibility', newValue ? 'visible' : 'hidden');
+    });
+
+    vm.pendingClickNewComponent.subscribe(newValue => {
+        if (newValue) {
+            elementsGroup.style("cursor", "crosshair");
+        } else {
+            elementsGroup.style("cursor", "pointer");
+        }
     });
 
     vm.showCage.subscribe(newValue => {
@@ -46635,20 +46673,25 @@ module.exports = function (data) {
         self.id = ko.observable();
         self.component = ko.computed(() => 'diagram'); // readonly, const
         self.maxThreadCount = ko.observable(100).extend({dataType: "integer", range: {min: 1, max: 500}});
-        self.showCage = ko.observable(false).extend({dataType: "boolean"});
-        self.straightLinks = ko.observable(false).extend({dataType: "boolean"});
         self.loadingData = ko.observable(false).extend({dataType: "boolean"}); //! get rid of this
 
         self.elements = ko.observableArray([]);
         self.links = ko.observableArray([]);
 
         // not visible observables:
-        self.showParams = ko.observable(true);
         self.dragging = ko.observable(false);
         self.linking = ko.observable(null);
 
+        // view menu:
+        self.scale = ko.observable(1).extend({ notify: 'always' });
+        self.touchMode = ko.observable();
+        self.showCage = ko.observable(false).extend({dataType: "boolean"});
+        self.straightLinks = ko.observable(false).extend({dataType: "boolean"});
+        self.showParams = ko.observable(true);
+        self.showParamsPanel = ko.observable(true);
+
         self.undoRedo = ko.observable(false);
-        self.saving = ko.observable(false).extend({ notify: 'always' });;
+        self.saving = ko.observable(false).extend({ notify: 'always' });
         self.maxUndoCount = ko.observable(100);
         self.undoActions = ko.observableArray([]);
         self.redoActions = ko.observableArray([]);
@@ -46710,6 +46753,11 @@ module.exports = function (data) {
             self.commandDeselectAll();
             vm.commandSelect();
             self.elements.push(vm);
+        };
+
+        self.pendingClickNewComponent = ko.observable(null);
+        self.commandAddComponent = function(component) {
+            self.pendingClickNewComponent(component);
         };
 
         self.commandDeleteSelected = function() {
@@ -46968,6 +47016,10 @@ module.exports = function (data) {
                 self.loadingData(true);
                 self.json(jsonString);
             }
+        };
+
+        self.commandSetScale = function(value) {
+            self.scale(value);
         };
 
         // public functions:
@@ -47896,14 +47948,19 @@ __webpack_require__(8);
 
 /* WEBPACK VAR INJECTION */(function($) {// https://jsfiddle.net/tolexis/m50wvdgz/1/
 
-module.exports.init = function () {
+module.exports.isTouchDevice = function () {
+    return false;
+    return 'ontouchstart' in window        // works on most browsers
+        || navigator.maxTouchPoints;       // works on IE10/11 and Surface
+};
 
-    var isTouchDevice = function () {
-        return 'ontouchstart' in window        // works on most browsers
-            || navigator.maxTouchPoints;       // works on IE10/11 and Surface
+module.exports.initTouch = function (touch) {
+
+    var initTouchMode = function () {
+        $('nav li').unbind();
+        $('nav span:not(.uncloseMenu)').unbind();
+        $('nav ul').css('display', "");
     };
-
-    var touchMode = isTouchDevice();
 
     var initDesktopMode = function() {
         $('nav li').hover(
@@ -47915,19 +47972,23 @@ module.exports.init = function () {
         });
 
         $('nav span:not(.uncloseMenu)').click(function(event) {
-
             $('nav ul li > ul').hide();
+        });
+
+        $('nav li').on('touchstart', function(event) {
+            $('nav ul li > ul')
+                .not($(this).parents('ul'))
+                .hide();
+            $(this).find('ul').first().toggle();
         });
     };
 
-
-    if (touchMode) {
-        //initTouchMode();
+    if (touch) {
+        initTouchMode();
     } else {
         initDesktopMode();
     }
-
-}
+};
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ }),

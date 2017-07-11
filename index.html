@@ -20,57 +20,58 @@
 <body class="body">
     <div class="vbox">
         <div class="row header">
-            <nav role='navigation'>
-            <ul>
-                <li><span>File</span>
-                    <ul>
-                        <li><span>New</span></li>
-                        <li><span>Make a copy...</span></li>
-                    </ul>
-                </li>
-                <li><span>Edit</span>
-                    <ul>
-                        <li><span class='uncloseMenu' data-bind="click: commandUndo">Undo</span></li>
-                        <li><span class='uncloseMenu' data-bind="click: commandRedo">Redo</span></li>
-                        <div class="separator"></div>
-                        <li><span data-bind="click: commandCut">Cut</span></li>
-                        <li><span data-bind="click: commandCopySelectedToClipboard">Copy</span></li>
-                        <li><span data-bind="click: commandPasteFromClipboard">Paste</span></li>
-                        <li><span data-bind="click: commandDeleteSelected">Delete</span></li>
-                        <li><span data-bind="click: commandDuplicate">Duplicate</span></li>
-                        <div class="separator"></div>
-                        <li><span data-bind="click: commandSelectAll">Select all</span></li>
-                    </ul>
-                </li>
-                <li><span>View</span>
-                    <ul>
-                        <li><span class='uncloseMenu'>50%</span></li>
-                        <li><span class='uncloseMenu'>100%</span></li>
-                        <li><span class='uncloseMenu'>200%</span></li>
-                        <div class="separator"></div>
-                        <li><span class='uncloseMenu'>Touch mode <input type="checkbox"></span></li>
-                        <li><span class='uncloseMenu'>Cage <input type="checkbox"></span></li>
-                        <li><span class='uncloseMenu'>Straight links <input type="checkbox"></span></li>
-                        <li><span class='uncloseMenu'>Params <input type="checkbox"></span></li>
-                    </ul>
-                </li>
-                <li><span>Insert</span>
-                    <ul>
-                        <li><span>Block</span></li>
-                        <li><span>Text box</span></li>
-                        <div class="separator"></div>
-                        <li><span>Library...</span></li>
-                    </ul>
-                </li>
-                <li><span>Run</span>
-                    <ul>
-                        <li><span>Execute</span></li>
-                        <li><span>Debug</span></li>
-                        <li><span>Stop</span></li>
-                    </ul>
-                </li>
-            </ul>
-        </nav>
+            <nav role="navigation">
+                <ul>
+                    <li><span>File</span>
+                        <ul>
+                            <li><span>New</span></li>
+                            <li><span>Make a copy...</span></li>
+                        </ul>
+                    </li>
+                    <li><span>Edit</span>
+                        <ul>
+                            <li><span class="uncloseMenu" data-bind="click: commandUndo">Undo</span></li>
+                            <li><span class="uncloseMenu" data-bind="click: commandRedo">Redo</span></li>
+                            <div class="separator"></div>
+                            <li><span data-bind="click: commandCut">Cut</span></li>
+                            <li><span data-bind="click: commandCopySelectedToClipboard">Copy</span></li>
+                            <li><span data-bind="click: commandPasteFromClipboard">Paste</span></li>
+                            <li><span data-bind="click: commandDeleteSelected">Delete</span></li>
+                            <li><span data-bind="click: commandDuplicate">Duplicate</span></li>
+                            <div class="separator"></div>
+                            <li><span data-bind="click: commandSelectAll">Select all</span></li>
+                        </ul>
+                    </li>
+                    <li><span>View</span>
+                        <ul>
+                            <li><span class="uncloseMenu" data-bind="click: function(data, event) {commandSetScale(0.5)}">50%</span></li>
+                            <li><span class="uncloseMenu" data-bind="click: function() {commandSetScale(1)}">100%</span></li>
+                            <li><span class="uncloseMenu" data-bind="click: function() {commandSetScale(2)}">200%</span></li>
+                            <div class="separator"></div>
+                            <li><span class="uncloseMenu"><label>Touch mode <input type="checkbox" data-bind="checked: touchMode"></label></span></li>
+                            <li><span class="uncloseMenu"><label>Cage <input type="checkbox" data-bind="checked: showCage"></label></span></li>
+                            <li><span class="uncloseMenu"><label>Straight links <input type="checkbox" data-bind="checked: straightLinks"></label></span></li>
+                            <li><span class="uncloseMenu"><label>Element params <input type="checkbox" data-bind="checked: showParams"></label></span></li>
+                            <li><span class="uncloseMenu"><label>Params panel <input type="checkbox" data-bind="checked: showParamsPanel"></label></span></li>
+                        </ul>
+                    </li>
+                    <li><span>Insert</span>
+                        <ul>
+                            <li><span data-bind="click: function() {commandAddComponent('block')}">Block</span></li>
+                            <li><span data-bind="click: function() {commandAddComponent('textbox')}">Text box</span></li>
+                            <div class="separator"></div>
+                            <li><span>Library...</span></li>
+                        </ul>
+                    </li>
+                    <li><span>Run</span>
+                        <ul>
+                            <li><span>Execute</span></li>
+                            <li><span>Debug</span></li>
+                            <li><span>Stop</span></li>
+                        </ul>
+                    </li>
+                </ul>
+            </nav>
         </div>
 
         <div class="row content">
