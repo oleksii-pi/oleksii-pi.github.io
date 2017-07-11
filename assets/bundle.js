@@ -47949,7 +47949,6 @@ __webpack_require__(8);
 /* WEBPACK VAR INJECTION */(function($) {// https://jsfiddle.net/tolexis/m50wvdgz/1/
 
 module.exports.isTouchDevice = function () {
-    return false;
     return 'ontouchstart' in window        // works on most browsers
         || navigator.maxTouchPoints;       // works on IE10/11 and Surface
 };
