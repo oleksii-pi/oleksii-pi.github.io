@@ -44340,7 +44340,7 @@ exports = module.exports = __webpack_require__(1)(true);
 
 
 // module
-exports.push([module.i, "body.touch .link .line {\n    stroke-width: 7px!important;\n}", "", {"version":3,"sources":["/projects/block-diagram-builder/bdb-front/src/components/diagram/touch.css"],"names":[],"mappings":"AAAA;IACI,4BAA4B;CAC/B","file":"touch.css","sourcesContent":["body.touch .link .line {\n    stroke-width: 7px!important;\n}"],"sourceRoot":""}]);
+exports.push([module.i, "body.touch .link .line {\n    stroke-width: 7px!important;\n}\n\nbody.touch .link circle {\n    r: 10px!important;\n}", "", {"version":3,"sources":["/projects/block-diagram-builder/bdb-front/src/components/diagram/touch.css"],"names":[],"mappings":"AAAA;IACI,4BAA4B;CAC/B;;AAED;IACI,kBAAkB;CACrB","file":"touch.css","sourcesContent":["body.touch .link .line {\n    stroke-width: 7px!important;\n}\n\nbody.touch .link circle {\n    r: 10px!important;\n}"],"sourceRoot":""}]);
 
 // exports
 
@@ -45931,7 +45931,7 @@ __webpack_require__(33);
 var ko = __webpack_require__(2);
 
 const margin = 4;
-const resizeRectSize = 5;
+const resizeRectSize = 7;
 const linkRadius = 6;
 
 module.exports = function(vm, parentNode) {
@@ -46602,12 +46602,18 @@ module.exports = function(vm, parentNode) {
             })
             .on('mousedown', function(d) {
                 if (!vm.dragging()) {
-                    if (d3.event.shiftKey){
-                        d.commandSelect();
-                    } else {
+                    if (vm.touchMode()) {
                         if (!d.selected()) {
-                            vm.commandDeselectAll();
                             d.commandSelect();
+                        }
+                    } else {
+                        if (d3.event.shiftKey) {
+                            d.commandSelect();
+                        } else {
+                            if (!d.selected()) {
+                                vm.commandDeselectAll();
+                                d.commandSelect();
+                            }
                         }
                     }
                 };
