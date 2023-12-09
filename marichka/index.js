@@ -85,7 +85,7 @@ async function getOpenAiSecretKey() {
   let openaiSecretKey = localStorage.getItem("openaiSecretKey");
   if (!openaiSecretKey) {
     openaiSecretKey = prompt(
-      "Please enter your OpenAI secret key. Enable paid plan here https://platform.openai.com/account/billing/overview and generate secret key here https://platform.openai.com/account/api-keys"
+      "Please enter your OpenAI secret key. You can enable paid plan here https://platform.openai.com/account/billing/overview and generate secret key here https://platform.openai.com/account/api-keys"
     );
     localStorage.setItem("openaiSecretKey", openaiSecretKey);
   }
