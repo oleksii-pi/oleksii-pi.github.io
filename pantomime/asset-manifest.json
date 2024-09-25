@@ -1,13 +1,13 @@
 {
   "files": {
     "main.css": "/pantomime/static/css/main.d871d121.css",
-    "main.js": "/pantomime/static/js/main.f9338d79.js",
+    "main.js": "/pantomime/static/js/main.963d57ef.js",
     "index.html": "/pantomime/index.html",
     "main.d871d121.css.map": "/pantomime/static/css/main.d871d121.css.map",
-    "main.f9338d79.js.map": "/pantomime/static/js/main.f9338d79.js.map"
+    "main.963d57ef.js.map": "/pantomime/static/js/main.963d57ef.js.map"
   },
   "entrypoints": [
     "static/css/main.d871d121.css",
-    "static/js/main.f9338d79.js"
+    "static/js/main.963d57ef.js"
   ]
 }
