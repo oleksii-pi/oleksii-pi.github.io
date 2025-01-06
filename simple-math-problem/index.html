@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Math Problem Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        input {
+            font-size: 1.2em;
+            padding: 10px;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+            width: 80%;
+            margin-top: 20px;
+        }
+        input:focus {
+            outline: none;
+        }
+        .error {
+            border-color: red !important;
+        }
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 1em;
+            border: none;
+            background-color: #007bff;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #log {
+            display: none;
+            text-align: left;
+            max-height: 200px;
+            overflow-y: auto;
+            margin-top: 20px;
+            background-color: #e8e8e8;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Math Problem Generator</h1>
+        <div id="problem"></div>
+        <input type="text" id="answer" placeholder="Your answer" />
+        <button id="showLogs">Stats</button>
+        <div id="log"></div>
+    </div>
+
+    <script>
+        const problemElement = document.getElementById('problem');
+        const answerInput = document.getElementById('answer');
+        const logElement = document.getElementById('log');
+        const showLogsButton = document.getElementById('showLogs');
+
+        let currentProblem = {};
+        let sessionLog = [];
+        let startTime = null;
+
+        function generateProblem() {
+            const num1 = Math.floor(Math.random() * 15) + 1;
+            const num2 = Math.floor(Math.random() * 15) + 1;
+            const isAddition = Math.random() > 0.5;
+            
+            if (isAddition) {
+                currentProblem = {
+                    question: `${num1} + ${num2}`,
+                    answer: num1 + num2
+                };
+            } else {
+                const larger = Math.max(num1, num2);
+                const smaller = Math.min(num1, num2);
+                currentProblem = {
+                    question: `${larger} - ${smaller}`,
+                    answer: larger - smaller
+                };
+            }
+            problemElement.textContent = currentProblem.question;
+            startTime = new Date();
+        }
+
+        function logEntry(entry) {
+            sessionLog.push(entry);
+        }
+
+        function updateLog() {
+            logElement.innerHTML = sessionLog.join('<br>');
+        }
+
+        answerInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                const userAnswer = parseInt(answerInput.value, 10);
+                const timeTaken = Math.round((new Date() - startTime) / 1000);
+
+                if (userAnswer === currentProblem.answer) {
+                    logEntry(`${new Date().toLocaleTimeString()}: ${currentProblem.question} = ${userAnswer} (${timeTaken}s)`);
+                    answerInput.classList.remove('error');
+                    answerInput.value = '';
+                    generateProblem();
+                } else {
+                    logEntry(`${new Date().toLocaleTimeString()}: ${currentProblem.question} = ${userAnswer} Incorrect (${timeTaken}s)`);
+                    answerInput.classList.add('error');
+                }
+
+                updateLog();
+            }
+        });
+
+        showLogsButton.addEventListener('click', () => {
+            logElement.style.display = logElement.style.display === 'none' ? 'block' : 'none';
+        });
+
+        logEntry(`${new Date().toLocaleTimeString()}: New session (${new Date().toLocaleDateString()})`);
+        generateProblem();
+    </script>
+</body>
+</html>

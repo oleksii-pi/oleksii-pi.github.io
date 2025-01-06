@@ -1,0 +1,7 @@
+Create a single-page HTML application that generates random basic math problems, such as "8 + 4", "11 - 3", and "19 + 5", with the answers being positive and not exceeding 30. The user can input their answer and press enter in the input field. If the answer is correct, a new problem will be generated; if incorrect, the input field's border will turn red. Additionally, track session logs in the background with entries like:
+
+17:13: New session (06.01.2025)
+17:13: 2 + 2 = 4 (13s)
+17:14: 7 + 9 = 15 Incorrect (24s)
+
+Users can view the logs by clicking the "Stats" button.
