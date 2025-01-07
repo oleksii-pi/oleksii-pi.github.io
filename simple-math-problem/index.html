@@ -1,165 +1,253 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Math Problem Generator</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            height: 100vh;
-            background-color: #f0f0f0;
-        }
-        .container {
-            max-width: 600px;
-            margin: auto;
-            background: #fff;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        input {
-            font-size: 1.2em;
-            padding: 10px;
-            border: 2px solid #ccc;
-            border-radius: 5px;
-            width: 80%;
-            margin-top: 20px;
-        }
-        input:focus {
-            outline: none;
-        }
-        .error {
-            border-color: red !important;
-        }
-        button.gray {
-            margin-top: 200px;
-            padding: 10px 20px;
-            font-size: 1em;
-            border: none;
-            background-color: lightgray;
-            color: white;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        button.gray:hover {
-            background-color: gray;
-        }
-        button {
-            margin-top: 20px;
-            padding: 10px 20px;
-            font-size: 1em;
-            border: none;
-            background-color: #007bff;
-            color: white;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #0056b3;
-        }
-        #log {
-            display: none;
-            text-align: left;
-            max-height: 200px;
-            overflow-y: auto;
-            margin-top: 20px;
-            background-color: #e8e8e8;
-            padding: 10px;
-            border-radius: 5px;
-            box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1);
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Math Problem Generator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      height: 100vh;
+      background-color: #f0f0f0;
+    }
+    .container {
+      max-width: 600px;
+      margin: auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Removed the original input styling and replaced with a display box */
+    .answer-display {
+      font-size: 1.5em;
+      padding: 10px;
+      margin-top: 20px;
+      margin-bottom: 10px;
+      border: 2px solid #ccc;
+      border-radius: 5px;
+      width: 80%;
+      margin-left: auto;
+      margin-right: auto;
+      background-color: #fafafa;
+    }
+
+    /* Error highlight (if you wish to highlight the display box on error) */
+    .error-display {
+      border-color: red !important;
+    }
+
+    button.gray {
+      margin-top: 10px;
+      font-size: 1em;
+      border: none;
+      background-color: lightgray;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button.gray:hover {
+      background-color: gray;
+    }
+    button {
+      margin-top: 10px;
+      font-size: 1em;
+      border: none;
+      background-color: #007bff;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    /* Keypad styling */
+    .keypad {
+      display: inline-block;
+      margin-top: 20px;
+    }
+    .keypad .row {
+      display: flex;
+      justify-content: center;
+      margin: 5px 0;
+    }
+    .keypad button {
+      width: 60px;
+      height: 60px;
+      font-size: 0.8em;
+      margin: 0 5px;
+      border-radius: 8px;
+    }
+    .answer-display {
+        min-height: 1em;
+    }
+
+    #log {
+      display: none;
+      text-align: left;
+      max-height: 200px;
+      overflow-y: auto;
+      margin-top: 20px;
+      background-color: #e8e8e8;
+      padding: 10px;
+      border-radius: 5px;
+      box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1);
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Math Problem Generator</h1>
-        <div id="problem"></div>
-        <input type="text" id="answer" placeholder="Your answer" />
+  <div class="container">
+    <h1>Basic arithmetic</h1>
+    <div id="problem"></div>
+
+    <!-- Display for typed answer -->
+    <div id="answerDisplay" class="answer-display"></div>
+
+    <!-- Visual numeric keyboard -->
+    <div class="keypad">
+      <div class="row">
+        <button class="num" data-value="1">1</button>
+        <button class="num" data-value="2">2</button>
+        <button class="num" data-value="3">3</button>
+      </div>
+      <div class="row">
+        <button class="num" data-value="4">4</button>
+        <button class="num" data-value="5">5</button>
+        <button class="num" data-value="6">6</button>
+      </div>
+      <div class="row">
+        <button class="num" data-value="7">7</button>
+        <button class="num" data-value="8">8</button>
+        <button class="num" data-value="9">9</button>
+      </div>
+      <div class="row">
+        <button id="del">Delete</button>
+        <button class="num" data-value="0">0</button>
         <button id="enterAnswer">Enter</button>
-        <br>
-        <button id="showLogs" class="gray">Stats</button>
-        <div id="log"></div>
+      </div>
+      <button id="showLogs" class="gray">Stats</button>
     </div>
 
-    <script>
-        const problemElement = document.getElementById('problem');
-        const answerInput = document.getElementById('answer');
-        const logElement = document.getElementById('log');
-        const showLogsButton = document.getElementById('showLogs');
-        const enterAnswerButton = document.getElementById('enterAnswer');
+    <div id="log"></div>
+  </div>
 
-        let currentProblem = {};
-        let sessionLog = [];
-        let startTime = null;
+  <script>
+    const problemElement = document.getElementById('problem');
+    const logElement = document.getElementById('log');
+    const showLogsButton = document.getElementById('showLogs');
+    const enterAnswerButton = document.getElementById('enterAnswer');
+    const answerDisplay = document.getElementById('answerDisplay');
 
-        function generateProblem() {
-            const num1 = Math.floor(Math.random() * 15) + 1;
-            const num2 = Math.floor(Math.random() * 15) + 1;
-            const isAddition = Math.random() > 0.5;
-            
-            if (isAddition) {
-                currentProblem = {
-                    question: `${num1} + ${num2}`,
-                    answer: num1 + num2
-                };
-            } else {
-                const larger = Math.max(num1, num2);
-                const smaller = Math.min(num1, num2);
-                currentProblem = {
-                    question: `${larger} - ${smaller}`,
-                    answer: larger - smaller
-                };
-            }
-            problemElement.textContent = currentProblem.question;
-            startTime = new Date();
-        }
+    const deleteButton = document.getElementById('del');
+    deleteButton.addEventListener('click', () => {
+      typedAnswer = typedAnswer.slice(0, -1);
+      answerDisplay.classList.remove('error-display');
+      updateAnswerDisplay();
+    });
 
-        function logEntry(entry) {
-            sessionLog.push(entry);
-        }
+    let currentProblem = {};
+    let sessionLog = [];
+    let startTime = null;
+    let typedAnswer = ''; // user-typed answer via keypad
 
-        function updateLog() {
-            logElement.innerHTML = sessionLog.join('<br>');
-        }
+    function generateProblem() {
+      const num1 = Math.floor(Math.random() * 15) + 1;
+      const num2 = Math.floor(Math.random() * 15) + 1;
+      const isAddition = Math.random() > 0.5;
+      
+      if (isAddition) {
+        currentProblem = {
+          question: `${num1} + ${num2}`,
+          answer: num1 + num2
+        };
+      } else {
+        const larger = Math.max(num1, num2);
+        const smaller = Math.min(num1, num2);
+        currentProblem = {
+          question: `${larger} - ${smaller}`,
+          answer: larger - smaller
+        };
+      }
+      problemElement.textContent = currentProblem.question;
+      startTime = new Date();
+    }
 
-        function checkAnswer() {
-            const userAnswer = parseInt(answerInput.value, 10);
-            const timeTaken = Math.round((new Date() - startTime) / 1000);
+    function logEntry(entry) {
+      sessionLog.push(entry);
+    }
 
-            if (userAnswer === currentProblem.answer) {
-                logEntry(`${new Date().toLocaleTimeString()}: ${currentProblem.question} = ${userAnswer} (${timeTaken}s)`);
-                answerInput.classList.remove('error');
-                answerInput.value = '';
-                generateProblem();
-            } else {
-                logEntry(`${new Date().toLocaleTimeString()}: ${currentProblem.question} = ${userAnswer} Incorrect (${timeTaken}s)`);
-                answerInput.classList.add('error');
-            }
+    function updateLog() {
+      logElement.innerHTML = sessionLog.join('<br>');
+    }
 
-            updateLog();
-        }
+    function updateAnswerDisplay() {
+      answerDisplay.textContent = typedAnswer;
+    }
 
-        answerInput.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') {
-                checkAnswer();
-            }
-        });
+    function checkAnswer() {
+      // parse typed answer
+      const userAnswer = parseInt(typedAnswer, 10);
+      const timeTaken = Math.round((new Date() - startTime) / 1000);
 
-        enterAnswerButton.addEventListener('click', checkAnswer);
+      // if typedAnswer is not valid, do nothing
+      if (isNaN(userAnswer)) {
+        return;
+      }
 
-        showLogsButton.addEventListener('click', () => {
-            logElement.style.display = logElement.style.display === 'none' ? 'block' : 'none';
-        });
-
-        logEntry(`${new Date().toLocaleTimeString()}: New session (${new Date().toLocaleDateString()})`);
+      if (userAnswer === currentProblem.answer) {
+        logEntry(
+          `${new Date().toLocaleTimeString()}: ` +
+          `${currentProblem.question} = ${userAnswer} ` +
+          `(${timeTaken}s)`
+        );
+        answerDisplay.classList.remove('error-display');
+        typedAnswer = '';
+        updateAnswerDisplay();
         generateProblem();
-    </script>
+      } else {
+        logEntry(
+          `${new Date().toLocaleTimeString()}: ` +
+          `${currentProblem.question} = ${userAnswer} Incorrect ` +
+          `(${timeTaken}s)`
+        );
+        answerDisplay.classList.add('error-display');
+      }
+
+      updateLog();
+    }
+
+    // Handle numeric keypad clicks
+    document.querySelectorAll('.num').forEach(btn => {
+      btn.addEventListener('click', () => {
+        typedAnswer += btn.dataset.value;
+        answerDisplay.classList.remove('error-display');
+        updateAnswerDisplay();
+      });
+    });
+
+    enterAnswerButton.addEventListener('click', checkAnswer);
+
+    showLogsButton.addEventListener('click', () => {
+      logElement.style.display =
+        logElement.style.display === 'none' ? 'block' : 'none';
+    });
+
+    logEntry(`${new Date().toLocaleTimeString()}: New session (${new Date().toLocaleDateString()})`);
+    generateProblem();
+    updateAnswerDisplay();
+    
+    window.addEventListener('beforeunload', function (e) {
+        e.preventDefault();
+        e.returnValue = '';
+    });
+  </script>
 </body>
 </html>
