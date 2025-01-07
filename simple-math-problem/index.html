@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
   <title>Math Problem Generator</title>
   <style>
     body {
@@ -53,9 +53,6 @@
       border-radius: 5px;
       cursor: pointer;
     }
-    button.gray:hover {
-      background-color: gray;
-    }
     button {
       margin-top: 10px;
       font-size: 1em;
@@ -64,9 +61,6 @@
       color: white;
       border-radius: 5px;
       cursor: pointer;
-    }
-    button:hover {
-      background-color: #0056b3;
     }
 
     /* Keypad styling */
@@ -88,6 +82,12 @@
     }
     .answer-display {
         min-height: 1em;
+    }
+    .mainaction {
+      background-color: #28a745;
+    }
+    .dangerous {
+      background-color: #dc3545;
     }
 
     #log {
@@ -129,9 +129,9 @@
         <button class="num" data-value="9">9</button>
       </div>
       <div class="row">
-        <button id="del">Delete</button>
+        <button class="dangerous" id="del" >Delete</button>
         <button class="num" data-value="0">0</button>
-        <button id="enterAnswer">Enter</button>
+        <button class="mainaction" id="enterAnswer">Enter</button>
       </div>
       <button id="showLogs" class="gray">Stats</button>
     </div>
@@ -204,7 +204,6 @@
 
       if (userAnswer === currentProblem.answer) {
         logEntry(
-          `${new Date().toLocaleTimeString()}: ` +
           `${currentProblem.question} = ${userAnswer} ` +
           `(${timeTaken}s)`
         );
@@ -214,7 +213,6 @@
         generateProblem();
       } else {
         logEntry(
-          `${new Date().toLocaleTimeString()}: ` +
           `${currentProblem.question} = ${userAnswer} Incorrect ` +
           `(${timeTaken}s)`
         );
@@ -240,7 +238,7 @@
         logElement.style.display === 'none' ? 'block' : 'none';
     });
 
-    logEntry(`${new Date().toLocaleTimeString()}: New session (${new Date().toLocaleDateString()})`);
+    logEntry(`New session (${new Date().toLocaleString()})`);
     generateProblem();
     updateAnswerDisplay();
     
