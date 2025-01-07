@@ -38,6 +38,19 @@
         .error {
             border-color: red !important;
         }
+        button.gray {
+            margin-top: 200px;
+            padding: 10px 20px;
+            font-size: 1em;
+            border: none;
+            background-color: lightgray;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button.gray:hover {
+            background-color: gray;
+        }
         button {
             margin-top: 20px;
             padding: 10px 20px;
@@ -69,7 +82,9 @@
         <h1>Math Problem Generator</h1>
         <div id="problem"></div>
         <input type="text" id="answer" placeholder="Your answer" />
-        <button id="showLogs">Stats</button>
+        <button id="enterAnswer">Enter</button>
+        <br>
+        <button id="showLogs" class="gray">Stats</button>
         <div id="log"></div>
     </div>
 
@@ -78,6 +93,7 @@
         const answerInput = document.getElementById('answer');
         const logElement = document.getElementById('log');
         const showLogsButton = document.getElementById('showLogs');
+        const enterAnswerButton = document.getElementById('enterAnswer');
 
         let currentProblem = {};
         let sessionLog = [];
@@ -113,24 +129,30 @@
             logElement.innerHTML = sessionLog.join('<br>');
         }
 
+        function checkAnswer() {
+            const userAnswer = parseInt(answerInput.value, 10);
+            const timeTaken = Math.round((new Date() - startTime) / 1000);
+
+            if (userAnswer === currentProblem.answer) {
+                logEntry(`${new Date().toLocaleTimeString()}: ${currentProblem.question} = ${userAnswer} (${timeTaken}s)`);
+                answerInput.classList.remove('error');
+                answerInput.value = '';
+                generateProblem();
+            } else {
+                logEntry(`${new Date().toLocaleTimeString()}: ${currentProblem.question} = ${userAnswer} Incorrect (${timeTaken}s)`);
+                answerInput.classList.add('error');
+            }
+
+            updateLog();
+        }
+
         answerInput.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') {
-                const userAnswer = parseInt(answerInput.value, 10);
-                const timeTaken = Math.round((new Date() - startTime) / 1000);
-
-                if (userAnswer === currentProblem.answer) {
-                    logEntry(`${new Date().toLocaleTimeString()}: ${currentProblem.question} = ${userAnswer} (${timeTaken}s)`);
-                    answerInput.classList.remove('error');
-                    answerInput.value = '';
-                    generateProblem();
-                } else {
-                    logEntry(`${new Date().toLocaleTimeString()}: ${currentProblem.question} = ${userAnswer} Incorrect (${timeTaken}s)`);
-                    answerInput.classList.add('error');
-                }
-
-                updateLog();
+                checkAnswer();
             }
         });
+
+        enterAnswerButton.addEventListener('click', checkAnswer);
 
         showLogsButton.addEventListener('click', () => {
             logElement.style.display = logElement.style.display === 'none' ? 'block' : 'none';
