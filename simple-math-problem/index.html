@@ -1,258 +1,282 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Math Problem Generator</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      height: 100vh;
-      background-color: #f0f0f0;
-      touch-action: manipulation;
-      -webkit-user-select: none; /* Prevents accidental selection and zoom */
-    }
-    .container {
-      max-width: 600px;
-      margin: auto;
-      background: #fff;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    }
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Math Problem Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+            touch-action: manipulation;
+            -webkit-user-select: none; /* Prevents accidental selection and zoom */
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
 
-    #problem {
-      font-size: 2em;
-      margin-top: 20px;
-    }
+        #problem {
+            font-size: 2em;
+            margin-top: 20px;
+        }
 
-    /* Removed the original input styling and replaced with a display box */
-    .answer-display {
-      font-size: 1.5em;
-      padding: 10px;
-      margin-top: 20px;
-      margin-bottom: 10px;
-      border: 2px solid #ccc;
-      border-radius: 5px;
-      width: 80%;
-      margin-left: auto;
-      margin-right: auto;
-      background-color: #fafafa;
-    }
+        /* Removed the original input styling and replaced with a display box */
+        .answer-display {
+            font-size: 1.5em;
+            padding: 10px;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+            width: 80%;
+            margin-left: auto;
+            margin-right: auto;
+            background-color: #fafafa;
+        }
 
-    /* Error highlight (if you wish to highlight the display box on error) */
-    .error-display {
-      border-color: red !important;
-    }
+        /* Error highlight (if you wish to highlight the display box on error) */
+        .error-display {
+            border-color: red !important;
+        }
 
-    button.gray {
-      margin-top: 10px;
-      font-size: 1em;
-      border: none;
-      background-color: lightgray;
-      color: white;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-    button {
-      margin-top: 10px;
-      font-size: 1em;
-      border: none;
-      background-color: #007bff;
-      color: white;
-      border-radius: 5px;
-      cursor: pointer;
-    }
+        button.gray {
+            margin-top: 10px;
+            font-size: 1em;
+            border: none;
+            background-color: lightgray;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button {
+            margin-top: 10px;
+            font-size: 1em;
+            border: none;
+            background-color: #007bff;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+        }
 
-    /* Keypad styling */
-    .keypad {
-      display: inline-block;
-      margin-top: 20px;
-    }
-    .keypad .row {
-      display: flex;
-      justify-content: center;
-      margin: 5px 0;
-    }
-    .keypad button {
-      width: 60px;
-      height: 60px;
-      font-size: 0.8em;
-      margin: 0 5px;
-      border-radius: 8px;
-    }
-    .answer-display {
-        min-height: 1.2em;
-    }
-    .mainaction {
-      background-color: #28a745;
-    }
-    .dangerous {
-      background-color: #dc3545;
-    }
+        /* Keypad styling */
+        .keypad {
+            display: inline-block;
+            margin-top: 20px;
+        }
+        .keypad .row {
+            display: flex;
+            justify-content: center;
+            margin: 5px 0;
+        }
+        .keypad button {
+            width: 60px;
+            height: 60px;
+            font-size: 0.8em;
+            margin: 0 5px;
+            border-radius: 8px;
+        }
+        .answer-display {
+                min-height: 1.2em;
+        }
+        .mainaction {
+            background-color: #28a745;
+        }
+        .dangerous {
+            background-color: #dc3545;
+        }
 
-    #log {
-      display: none;
-      text-align: left;
-      max-height: 200px;
-      overflow-y: auto;
-      margin-top: 20px;
-      background-color: #e8e8e8;
-      padding: 10px;
-      border-radius: 5px;
-      box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1);
-    }
-  </style>
+        #log {
+            display: none;
+            text-align: left;
+            max-height: 200px;
+            overflow-y: auto;
+            margin-top: 20px;
+            background-color: #e8e8e8;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Success emoji styling */
+        #successEmoji {
+            font-size: 2em;
+            margin-bottom: 10px;
+            opacity: 0;
+        }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <h2 style="color: #bbb;">Basic arithmetic</h1>
-    <div id="problem"></div>
+    <div class="container">
+        <h2 style="color: #bbb;">Basic arithmetic</h1>
+        <div id="problem"></div>
 
-    <!-- Display for typed answer -->
-    <div id="answerDisplay" class="answer-display"></div>
+        <!-- Success emoji display -->
+        
 
-    <!-- Visual numeric keyboard -->
-    <div class="keypad">
-      <div class="row">
-        <button class="num" data-value="1">1</button>
-        <button class="num" data-value="2">2</button>
-        <button class="num" data-value="3">3</button>
-      </div>
-      <div class="row">
-        <button class="num" data-value="4">4</button>
-        <button class="num" data-value="5">5</button>
-        <button class="num" data-value="6">6</button>
-      </div>
-      <div class="row">
-        <button class="num" data-value="7">7</button>
-        <button class="num" data-value="8">8</button>
-        <button class="num" data-value="9">9</button>
-      </div>
-      <div class="row">
-        <button class="dangerous" id="del" >Delete</button>
-        <button class="num" data-value="0">0</button>
-        <button class="mainaction" id="enterAnswer">Enter</button>
-      </div>
-      <button id="showLogs" class="gray">Stats</button>
+        <!-- Display for typed answer -->
+        <!-- <div id="successEmoji">🎉</div> -->
+        <div id="answerDisplay" class="answer-display">
+        </div>
+
+        <!-- Visual numeric keyboard -->
+        <div class="keypad">
+            <div class="row">
+                <button class="num" data-value="1">1</button>
+                <button class="num" data-value="2">2</button>
+                <button class="num" data-value="3">3</button>
+            </div>
+            <div class="row">
+                <button class="num" data-value="4">4</button>
+                <button class="num" data-value="5">5</button>
+                <button class="num" data-value="6">6</button>
+            </div>
+            <div class="row">
+                <button class="num" data-value="7">7</button>
+                <button class="num" data-value="8">8</button>
+                <button class="num" data-value="9">9</button>
+            </div>
+            <div class="row">
+                <button class="dangerous" id="del" >Delete</button>
+                <button class="num" data-value="0">0</button>
+                <button class="mainaction" id="enterAnswer">Enter</button>
+            </div>
+            <button id="showLogs" class="gray">Stats</button>
+        </div>
+
+        <div id="log"></div>
     </div>
 
-    <div id="log"></div>
-  </div>
+    <script>
+        const problemElement = document.getElementById('problem');
+        const logElement = document.getElementById('log');
+        const showLogsButton = document.getElementById('showLogs');
+        const enterAnswerButton = document.getElementById('enterAnswer');
+        const answerDisplay = document.getElementById('answerDisplay');
+        const successEmoji = document.getElementById('successEmoji');
 
-  <script>
-    const problemElement = document.getElementById('problem');
-    const logElement = document.getElementById('log');
-    const showLogsButton = document.getElementById('showLogs');
-    const enterAnswerButton = document.getElementById('enterAnswer');
-    const answerDisplay = document.getElementById('answerDisplay');
+        const deleteButton = document.getElementById('del');
+        deleteButton.addEventListener('click', () => {
+            typedAnswer = typedAnswer.slice(0, -1);
+            answerDisplay.classList.remove('error-display');
+            updateAnswerDisplay();
+        });
 
-    const deleteButton = document.getElementById('del');
-    deleteButton.addEventListener('click', () => {
-      typedAnswer = typedAnswer.slice(0, -1);
-      answerDisplay.classList.remove('error-display');
-      updateAnswerDisplay();
-    });
+        let currentProblem = {};
+        let sessionLog = [];
+        let startTime = null;
+        let typedAnswer = ''; // user-typed answer via keypad
 
-    let currentProblem = {};
-    let sessionLog = [];
-    let startTime = null;
-    let typedAnswer = ''; // user-typed answer via keypad
+        function generateProblem() {
+            const num1 = Math.floor(Math.random() * 15) + 1;
+            const num2 = Math.floor(Math.random() * 15) + 1;
+            const isAddition = Math.random() > 0.5;
+            
+            if (isAddition) {
+                currentProblem = {
+                    question: `${num1} + ${num2}`,
+                    answer: num1 + num2
+                };
+            } else {
+                const larger = Math.max(num1, num2);
+                const smaller = Math.min(num1, num2);
+                currentProblem = {
+                    question: `${larger} - ${smaller}`,
+                    answer: larger - smaller
+                };
+            }
+            problemElement.textContent = currentProblem.question;
+            startTime = new Date();
+        }
 
-    function generateProblem() {
-      const num1 = Math.floor(Math.random() * 15) + 1;
-      const num2 = Math.floor(Math.random() * 15) + 1;
-      const isAddition = Math.random() > 0.5;
-      
-      if (isAddition) {
-        currentProblem = {
-          question: `${num1} + ${num2}`,
-          answer: num1 + num2
-        };
-      } else {
-        const larger = Math.max(num1, num2);
-        const smaller = Math.min(num1, num2);
-        currentProblem = {
-          question: `${larger} - ${smaller}`,
-          answer: larger - smaller
-        };
-      }
-      problemElement.textContent = currentProblem.question;
-      startTime = new Date();
-    }
+        function logEntry(entry) {
+            sessionLog.push(entry);
+        }
 
-    function logEntry(entry) {
-      sessionLog.push(entry);
-    }
+        function updateLog() {
+            logElement.innerHTML = sessionLog.join('<br>');
+        }
 
-    function updateLog() {
-      logElement.innerHTML = sessionLog.join('<br>');
-    }
+        function updateAnswerDisplay() {
+            answerDisplay.textContent = typedAnswer;
+        }
 
-    function updateAnswerDisplay() {
-      answerDisplay.textContent = typedAnswer;
-    }
+        function showSuccessEmoji() {
+            const emojis = ['🎉', '👏', '👍', '😊', '🥳'];
+            const randomEmoji = emojis[Math.floor(Math.random() * emojis.length)];
+            successEmoji.textContent = randomEmoji;
+            successEmoji.style.opacity = 1;
+            setTimeout(() => {
+                successEmoji.style.opacity = 0;
+            }, 3000);
+        }
 
-    function checkAnswer() {
-      // parse typed answer
-      const userAnswer = parseInt(typedAnswer, 10);
-      const timeTaken = Math.round((new Date() - startTime) / 1000);
+        function checkAnswer() {
+            // parse typed answer
+            const userAnswer = parseInt(typedAnswer, 10);
+            const timeTaken = Math.round((new Date() - startTime) / 1000);
 
-      // if typedAnswer is not valid, do nothing
-      if (isNaN(userAnswer)) {
-        return;
-      }
+            // if typedAnswer is not valid, do nothing
+            if (isNaN(userAnswer)) {
+                return;
+            }
 
-      if (userAnswer === currentProblem.answer) {
-        logEntry(
-          `${currentProblem.question} = ${userAnswer} ` +
-          `(${timeTaken}s)`
-        );
-        answerDisplay.classList.remove('error-display');
-        typedAnswer = '';
-        updateAnswerDisplay();
+            if (userAnswer === currentProblem.answer) {
+                logEntry(
+                    `${currentProblem.question} = ${userAnswer} ` +
+                    `(${timeTaken}s)`
+                );
+                answerDisplay.classList.remove('error-display');
+                typedAnswer = '';
+                updateAnswerDisplay();
+                //showSuccessEmoji();
+                generateProblem();
+            } else {
+                logEntry(
+                    `${currentProblem.question} = ${userAnswer} Incorrect ` +
+                    `(${timeTaken}s)`
+                );
+                answerDisplay.classList.add('error-display');
+            }
+
+            updateLog();
+        }
+
+        // Handle numeric keypad clicks
+        document.querySelectorAll('.num').forEach(btn => {
+            btn.addEventListener('click', () => {
+                typedAnswer += btn.dataset.value;
+                answerDisplay.classList.remove('error-display');
+                updateAnswerDisplay();
+            });
+        });
+
+        enterAnswerButton.addEventListener('click', checkAnswer);
+
+        showLogsButton.addEventListener('click', () => {
+            logElement.style.display =
+                logElement.style.display === 'none' ? 'block' : 'none';
+        });
+
+        logEntry(`New session (${new Date().toLocaleString()})`);
         generateProblem();
-      } else {
-        logEntry(
-          `${currentProblem.question} = ${userAnswer} Incorrect ` +
-          `(${timeTaken}s)`
-        );
-        answerDisplay.classList.add('error-display');
-      }
-
-      updateLog();
-    }
-
-    // Handle numeric keypad clicks
-    document.querySelectorAll('.num').forEach(btn => {
-      btn.addEventListener('click', () => {
-        typedAnswer += btn.dataset.value;
-        answerDisplay.classList.remove('error-display');
         updateAnswerDisplay();
-      });
-    });
-
-    enterAnswerButton.addEventListener('click', checkAnswer);
-
-    showLogsButton.addEventListener('click', () => {
-      logElement.style.display =
-        logElement.style.display === 'none' ? 'block' : 'none';
-    });
-
-    logEntry(`New session (${new Date().toLocaleString()})`);
-    generateProblem();
-    updateAnswerDisplay();
-    
-    window.addEventListener('beforeunload', function (e) {
-        e.preventDefault();
-        e.returnValue = '';
-    });
-  </script>
+        
+        window.addEventListener('beforeunload', function (e) {
+                e.preventDefault();
+                e.returnValue = '';
+        });
+    </script>
 </body>
 </html>
