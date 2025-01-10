@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <!-- Prevent zoom (double tap) and adapt for mobile -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+  <title>Навчання Українських Літер</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      -webkit-user-select: none;  /* Prevent selection on iOS Safari */
+      -webkit-touch-callout: none; /* Prevent context menu on iOS Safari */
+      touch-action: manipulation;   /* Helps reduce double-tap issues on mobile */
+    }
+
+    #app {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 20px;
+    }
+
+    h1 {
+      font-size: 10rem;
+      margin: 40px 0;
+      user-select: none;
+    }
+
+    .button-row {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    button {
+      font-size: 1.2rem;
+      padding: 15px 20px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .mistake {
+      background-color: #f44336;
+      color: white;
+    }
+
+    .correct {
+      background-color: #4caf50;
+      color: white;
+    }
+
+    #logArea {
+      width: 90%;
+      max-width: 600px;
+      margin-top: 20px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      padding: 10px;
+      white-space: pre-line; /* Keep line breaks */
+      font-size: 1rem;
+      line-height: 1.4;
+    }
+  </style>
+</head>
+<body>
+<div id="app">
+  <h1 id="letter">?</h1>
+  <div class="button-row">
+    <button id="mistakeBtn" class="mistake">
+      <span>&#10060;</span>
+      <span>Помилка</span>
+    </button>
+    <button id="correctBtn" class="correct">
+      <span>&#10004;</span>
+      <span>Вірно</span>
+    </button>
+  </div>
+  <div id="logArea"></div>
+</div>
+
+<script>
+  // Повний список великих літер українського алфавіту (варіант)
+  // За потреби можна скоротити чи змінити
+  const letters = [
+    "А","Б","В","Г","Ґ","Д","Е","Є","Ж","З","И",
+    "І","Ї","Й","К","Л","М","Н","О","П","Р","С",
+    "Т","У","Ф","Х","Ц","Ч","Ш","Щ","Ь","Ю","Я"
+  ];
+
+  // HTML elements
+  const letterEl = document.getElementById('letter');
+  const mistakeBtn = document.getElementById('mistakeBtn');
+  const correctBtn = document.getElementById('correctBtn');
+  const logArea = document.getElementById('logArea');
+
+  let lastEventTime = null; // For measuring time between events
+  let logLines = [];
+
+  // Helper to pad minutes/seconds with zero if needed
+  function pad(num) {
+    return num < 10 ? '0' + num : num;
+  }
+
+  // Format current time as HH:MM
+  function getTimeString(date) {
+    return pad(date.getHours()) + ':' + pad(date.getMinutes());
+  }
+
+  // Format current date as DD.MM.YYYY
+  function getDateString(date) {
+    return pad(date.getDate()) + '.' + pad(date.getMonth() + 1) + '.' + date.getFullYear();
+  }
+
+  // Pick a random letter
+  function pickRandomLetter() {
+    const idx = Math.floor(Math.random() * letters.length);
+    return letters[idx];
+  }
+
+  // Display a new random letter
+  function displayNewLetter() {
+    letterEl.textContent = pickRandomLetter();
+  }
+
+  // Log a new session start
+  function startNewSession() {
+    const now = new Date();
+    lastEventTime = now;
+    const sessionString = `${getTimeString(now)}: Нова сесія (${getDateString(now)})`;
+    logLines.push(sessionString);
+    updateLogArea();
+  }
+
+  // Add log entry for answer
+  function logAnswer(isCorrect) {
+    const now = new Date();
+    const currentTimeStr = getTimeString(now);
+
+    // Compute time difference in seconds
+    const diffSec = Math.round((now - lastEventTime) / 1000);
+    lastEventTime = now;
+
+    // Build message
+    const letter = letterEl.textContent;
+    let logMessage = '';
+    if (isCorrect) {
+      logMessage = `${currentTimeStr}: ${letter} = вірно / OK (${diffSec}s)`;
+    } else {
+      logMessage = `${currentTimeStr}: ${letter} = не вірно / MISTAKE (${diffSec}s)`;
+    }
+
+    logLines.push(logMessage);
+    updateLogArea();
+  }
+
+  // Update the visible log
+  function updateLogArea() {
+    logArea.textContent = logLines.join('\n');
+  }
+
+  // Button click handlers
+  mistakeBtn.addEventListener('click', function() {
+    logAnswer(false);
+    displayNewLetter();
+  });
+
+  correctBtn.addEventListener('click', function() {
+    logAnswer(true);
+    displayNewLetter();
+  });
+
+  // Start
+  window.addEventListener('load', () => {
+    startNewSession();
+    displayNewLetter();
+  });
+</script>
+</body>
+</html>

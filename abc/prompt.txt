@@ -1,0 +1,15 @@
+Act as senior software engineer.
+Create a single-page HTML application 
+for learning 5 years old kid Ukrainian letters 
+that
+1. Adopt for mobile Chrome browser (prevent double tap)
+2. Display random big letter 
+3. Display buttons: Mistake (icon red error) and Right (icon green check)
+4. When entering one of buttons log stored and new button displayed
+5. Log should be in format:
+
+19:13: Нова сесія (10.01.2025)
+19:13: А = вірно / OK (13s)
+19:14: З = не вірно / MISTAKE (24s)
+
+Українська абетка: А а, Б б, В в, Г г, Ґ ґ, Д д, Е е, Є є, Ж ж, З з, И и, І і, Ї ї, Й й, К к, Л л, М м, Н н, О о, П п, Р р, С с, Т т, У у, Ф ф, Х х, Ц ц, Ч ч, Ш ш, Щ щ, ь, Ю ю, Я я.
