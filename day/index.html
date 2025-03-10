@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Amelie or Viktor</title>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      font-family: Arial, sans-serif;
+      font-size: 3rem;
+      text-align: center;
+    }
+  </style>
+  <script>
+    function whoIsToday() {
+      const reference = new Date(2019, 3, 27);
+      const today = new Date();
+      const diffDays = Math.floor((today - reference) / 86400000);
+      document.getElementById("name").textContent = (diffDays % 2 === 0) ? "Amelie" : "Viktor";
+    }
+    window.onload = whoIsToday;
+    setInterval(whoIsToday, 1000 * 60);
+  </script>
+</head>
+<body>
+  <div id="name"></div>
+</body>
+</html>
