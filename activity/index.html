@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Activity</title>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      font-family: Arial, sans-serif;
+      font-size: 5rem;
+      text-align: center;
+      background-color: black;
+      color: white;
+    }
+  </style>
+  <script>
+    const allActivities = 
+`
+Паперові літачки. Різні способи.
+Орігамі. Гадалка.
+Малювання
+Пластилін
+Лего
+Настільні ігри
+Книжечки
+Розвʼязувати завдання з книжечок
+Подзвонити бабусі
+Кімната лоскоту
+Роздрукувати розмальовку
+Загадки
+Пантоміма / крокодил
+Послухати аудіоказку
+Морський бій
+Чарівний мішок
+Шибениця
+Ігри на спритність: влучити м’ячиком, що скочується з гірки, у віддалену ціль; надворі — метати каштани в урну на влучність
+Зробити свою книжку з малюнками
+Аплікація
+`;
+
+    function getHourlyRandom(N) {
+      const hoursSinceEpoch = Math.floor(Date.now() / (1000 * 60 * 60));
+      let hash = hoursSinceEpoch ^ (hoursSinceEpoch << 13);
+      hash = (hash * 0x5bd1e995) & 0xffffffff;
+      return Math.abs(hash) % N;
+    }
+    function randomActivity() {
+      const activities = allActivities.split('\n').map(x => x.trim()).filter(x => x !== '');
+      const index = getHourlyRandom(activities.length);
+      document.getElementById("text").textContent = activities[index];
+    }
+    window.onload = randomActivity;
+    setInterval(randomActivity, 1000 * 60);
+  </script>
+</head>
+<body>
+  <div id="text"></div>
+</body>
+</html>
