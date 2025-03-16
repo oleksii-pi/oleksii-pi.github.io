@@ -43,19 +43,20 @@
 Аплікація
 `;
 
-    function getHourlyRandom(N) {
-      const hoursSinceEpoch = Math.floor(Date.now() / (1000 * 60 * 60));
-      let hash = hoursSinceEpoch ^ (hoursSinceEpoch << 13);
+    function getRandom(N) {
+      const intervalMinutes = 30;
+      const intervalsSinceEpoch = Math.floor(Date.now() / (1000 * 60 * intervalMinutes));
+      let hash = intervalsSinceEpoch ^ (intervalsSinceEpoch << 13);
       hash = (hash * 0x5bd1e995) & 0xffffffff;
       return Math.abs(hash) % N;
     }
-    function randomActivity() {
+    function updateRandomActivity() {
       const activities = allActivities.split('\n').map(x => x.trim()).filter(x => x !== '');
-      const index = getHourlyRandom(activities.length);
+      const index = getRandom(activities.length);
       document.getElementById("text").textContent = activities[index];
     }
-    window.onload = randomActivity;
-    setInterval(randomActivity, 1000 * 60);
+    window.onload = updateRandomActivity;
+    setInterval(updateRandomActivity, 1000 * 60);
   </script>
 </head>
 <body>
