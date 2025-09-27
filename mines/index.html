@@ -33,13 +33,11 @@
       padding:10px 14px; border-radius:8px; cursor:pointer; box-shadow:none; font-size:15px
     }
 
-    .boards{display:grid; grid-template-columns:repeat(2, 1fr); gap:18px; align-items:start}
-    .panel{border:2px solid #000; border-radius:12px; padding:12px}
+    .boards{display:grid; grid-template-columns:repeat(2, 1fr); gap:18px; align-items:start; position:relative}
     .panel h2{margin:0 0 8px 0; font-size:16px}
 
     .board{
       display:grid; grid-template-columns:repeat(10, 1fr); grid-auto-rows:1fr; aspect-ratio:1/1;
-      border:2px solid var(--grid-strong); border-radius:8px; overflow:hidden; background:#fff;
     }
     .cell{
       display:flex; align-items:center; justify-content:center; user-select:none;
@@ -84,11 +82,9 @@
 
     <div class="boards">
       <section class="panel">
-        <h2>Board A — Generated</h2>
         <div id="boardA" class="board" aria-label="Generated Minesweeper board" role="grid"></div>
       </section>
       <section class="panel">
-        <h2>Board B — Blank (for second player)</h2>
         <div id="boardB" class="board" aria-label="Blank board" role="grid"></div>
       </section>
     </div>
