@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Minesweeper 9×9 Generator — Print Friendly</title>
+  <style>
+    /* ---- Print-friendly, white background ---- */
+    :root{
+      --bg:#ffffff;
+      --ink:#111111;
+      --muted:#444444;
+      --grid:#cfd6dd;
+      --grid-strong:#000000;
+      --mine:#c91c1c;
+      --accent:#0b57d0; /* button color (screen only) */
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; font-family:system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, Apple Color Emoji, Segoe UI Emoji;
+      background:var(--bg); color:var(--ink);
+      display:flex; justify-content:center; align-items:flex-start; padding:16px;
+    }
+    .wrap{width:min(1100px, 98vw)}
+
+    header{display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:12px}
+    h1{font-size:clamp(18px, 2.4vw, 26px); margin:0; letter-spacing:.2px}
+    p.sub{margin:4px 0 0; color:var(--muted); font-size:13px}
+
+    button#generate{
+      appearance:none; border:1px solid #c9d2df; background:var(--accent); color:#fff; font-weight:700;
+      padding:10px 14px; border-radius:8px; cursor:pointer; box-shadow:none; font-size:15px
+    }
+
+    .boards{display:grid; grid-template-columns:repeat(2, 1fr); gap:18px; align-items:start}
+    .panel{border:2px solid #000; border-radius:12px; padding:12px}
+    .panel h2{margin:0 0 8px 0; font-size:16px}
+
+    .board{
+      display:grid; grid-template-columns:repeat(10, 1fr); grid-auto-rows:1fr; aspect-ratio:1/1;
+      border:2px solid var(--grid-strong); border-radius:8px; overflow:hidden; background:#fff;
+    }
+    .cell{
+      display:flex; align-items:center; justify-content:center; user-select:none;
+      border:1px solid var(--grid); font-weight:700; font-variant-numeric:tabular-nums;
+      font-size:clamp(12px, 2vw, 22px); color:var(--ink);
+    }
+    .cell.header{background:#f3f6fa}
+    .cell.header--corner{background:#eef2f7}
+
+    .cell.mine{color:var(--mine)}
+    .n1{color:#0b57d0}
+    .n2{color:#18794e}
+    .n3{color:#b3261e}
+    .n4{color:#5b2a86}
+    .n5{color:#9a4a00}
+    .n6{color:#006a6a}
+    .n7{color:#333}
+    .n8{color:#666}
+    .n0{color:#8a8f98}
+
+    .notes{margin-top:8px; color:var(--muted); font-size:12px}
+
+    @media print{
+      header, .notes{display:none}
+      body{padding:0}
+      .wrap{width:100%}
+      .boards{gap:10mm; grid-template-columns:1fr 1fr; padding:10mm}
+      .panel{border:1px solid #000; border-radius:0; padding:5mm}
+      .board{border:1px solid #000}
+      .cell{border:1px solid #bbb}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div>
+        <h1>Minesweeper 9×9 (10 mines)</h1>
+      </div>
+      <button id="generate" type="button">Generate</button>
+    </header>
+
+    <div class="boards">
+      <section class="panel">
+        <h2>Board A — Generated</h2>
+        <div id="boardA" class="board" aria-label="Generated Minesweeper board" role="grid"></div>
+      </section>
+      <section class="panel">
+        <h2>Board B — Blank (for second player)</h2>
+        <div id="boardB" class="board" aria-label="Blank board" role="grid"></div>
+      </section>
+    </div>
+  </div>
+
+  <script>
+    // ---- Strong RNG helpers (Web Crypto) ----
+    function randUint32(){ const a = new Uint32Array(1); crypto.getRandomValues(a); return a[0]; }
+    function randomInt(maxExclusive){
+      if (maxExclusive <= 0) throw new Error('maxExclusive must be > 0');
+      const max = 0xFFFFFFFF + 1; // 2^32
+      const bound = Math.floor(max / maxExclusive) * maxExclusive;
+      let r; do { r = randUint32(); } while (r >= bound);
+      return r % maxExclusive;
+    }
+    function shuffleInPlace(arr){
+      for (let i = arr.length - 1; i > 0; i--){
+        const j = randomInt(i + 1);
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    // ---- Board generation ----
+    const ROWS = 9, COLS = 9, MINES = 10;
+
+    function generateMinefield(rows = ROWS, cols = COLS, mines = MINES){
+      if (mines >= rows * cols) throw new Error('Too many mines');
+      const indices = Array.from({length: rows*cols}, (_, i) => i);
+      shuffleInPlace(indices);
+      const mineSet = new Set(indices.slice(0, mines));
+
+      const grid = Array.from({length: rows}, () => Array(cols).fill(0));
+      mineSet.forEach(idx => { const r = Math.floor(idx/cols), c = idx % cols; grid[r][c] = '*'; });
+
+      const dirs = [-1,0,1];
+      for (let r=0; r<rows; r++){
+        for (let c=0; c<cols; c++){
+          if (grid[r][c] === '*') continue;
+          let count = 0;
+          for (let dr of dirs) for (let dc of dirs){
+            if (dr===0 && dc===0) continue;
+            const nr=r+dr, nc=c+dc;
+            if (nr>=0 && nr<rows && nc>=0 && nc<cols && grid[nr][nc]==='*') count++;
+          }
+          grid[r][c] = count;
+        }
+      }
+      return grid;
+    }
+
+    function renderBoard(container, grid){
+      container.innerHTML = '';
+      container.style.setProperty('grid-template-columns', `repeat(${COLS+1}, 1fr)`);
+      const top = [''].concat([...Array(COLS).keys()].map(i => String(i+1)));
+      const left = [''].concat([...Array(ROWS).keys()].map(i => String.fromCharCode('A'.charCodeAt(0)+i)));
+
+      // Row 0 headers
+      for (let j=0; j<=COLS; j++){
+        const cell = document.createElement('div');
+        cell.className = 'cell header' + (j===0 ? ' header--corner' : '');
+        cell.textContent = top[j]; cell.setAttribute('role','columnheader');
+        container.appendChild(cell);
+      }
+      // Rows 1..ROWS
+      for (let i=0; i<ROWS; i++){
+        const h = document.createElement('div'); h.className = 'cell header'; h.textContent = left[i+1]; h.setAttribute('role','rowheader'); container.appendChild(h);
+        for (let j=0; j<COLS; j++){
+          const v = grid[i][j];
+          const cell = document.createElement('div'); cell.className = 'cell';
+          if (v === '*'){ cell.classList.add('mine'); cell.textContent='*'; }
+          else { cell.classList.add('n'+v); cell.textContent=String(v); }
+          container.appendChild(cell);
+        }
+      }
+    }
+
+    function renderBlank(container){
+      container.innerHTML = '';
+      container.style.setProperty('grid-template-columns', `repeat(${COLS+1}, 1fr)`);
+      const top = [''].concat([...Array(COLS).keys()].map(i => String(i+1)));
+      const left = [''].concat([...Array(ROWS).keys()].map(i => String.fromCharCode('A'.charCodeAt(0)+i)));
+
+      for (let j=0; j<=COLS; j++){
+        const cell = document.createElement('div');
+        cell.className = 'cell header' + (j===0 ? ' header--corner' : '');
+        cell.textContent = top[j]; container.appendChild(cell);
+      }
+      for (let i=0; i<ROWS; i++){
+        const h = document.createElement('div'); h.className = 'cell header'; h.textContent = left[i+1]; container.appendChild(h);
+        for (let j=0; j<COLS; j++){
+          const cell = document.createElement('div'); cell.className = 'cell'; cell.textContent=''; container.appendChild(cell);
+        }
+      }
+    }
+
+    const boardA = document.getElementById('boardA');
+    const boardB = document.getElementById('boardB');
+    const btn = document.getElementById('generate');
+
+    function regenerate(){
+      const grid = generateMinefield();
+      renderBoard(boardA, grid);
+      renderBlank(boardB);
+    }
+
+    btn.addEventListener('click', regenerate);
+    // initial render
+    regenerate();
+  </script>
+</body>
+</html>
