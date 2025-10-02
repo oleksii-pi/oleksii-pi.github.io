@@ -32,13 +32,13 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 20px;
+            gap: 10px;
             margin-top: 50px;
         }
 
         .level-selector label {
             font-size: 1.2em;
-            margin-right: 10px;
+            margin: 0;
         }
 
         .level-selector input {
@@ -47,11 +47,14 @@
             width: 60px;
             text-align: center;
             border: 2px solid #eee;
+            margin: 0;
         }
 
         .level-selector .gray {
             font-size: 1.2em;
-            
+            margin: 0;
+            padding: 5px 10px;
+            height: auto;
         }
 
         #problem {
@@ -86,6 +89,10 @@
             color: white;
             border-radius: 5px;
             cursor: pointer;
+        }
+        
+        #showLogs {
+            background-color: #007bff !important;
         }
         button {
             margin-top: 10px;
@@ -184,7 +191,9 @@
 
         <div class="level-selector">
             <label for="levelInput">Level:</label>
+            <button id="decreaseLevel" class="gray">-</button>
             <input type="number" id="levelInput" min="1" max="4" value="1">
+            <button id="increaseLevel" class="gray">+</button>
             <button id="showLogs" class="gray">Stats</button>
         </div>
         
@@ -381,6 +390,23 @@
                 }).catch(err => {
                     console.error('Failed to copy stats to clipboard:', err);
                 });
+            }
+        });
+
+        // Level increase/decrease buttons
+        document.getElementById('increaseLevel').addEventListener('click', () => {
+            const currentLevel = parseInt(levelInput.value, 10);
+            if (currentLevel < 4) {
+                levelInput.value = currentLevel + 1;
+                generateProblem();
+            }
+        });
+
+        document.getElementById('decreaseLevel').addEventListener('click', () => {
+            const currentLevel = parseInt(levelInput.value, 10);
+            if (currentLevel > 1) {
+                levelInput.value = currentLevel - 1;
+                generateProblem();
             }
         });
 
