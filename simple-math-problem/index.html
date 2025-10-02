@@ -215,13 +215,22 @@
         });
 
         let currentProblem = {};
+        let previousProblem = null;
         let sessionLog = [];
         let startTime = null;
         let typedAnswer = ''; // user-typed answer via keypad
 
         function generateNewProblem() {
             const level = parseInt(levelInput.value, 10);
-            currentProblem = generateProblem(level);
+            let newProblem;
+            
+            // Generate a new problem, ensuring it's different from the previous one
+            do {
+                newProblem = generateProblem(level);
+            } while (previousProblem && newProblem.question === previousProblem.question);
+            
+            previousProblem = currentProblem;
+            currentProblem = newProblem;
             problemElement.textContent = currentProblem.question;
             startTime = new Date();
         }
