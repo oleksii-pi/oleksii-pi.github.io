@@ -187,8 +187,9 @@
             <input type="number" id="levelInput" min="1" max="4" value="1">
             <button id="showLogs" class="gray">Stats</button>
         </div>
-
+        
         <div id="log"></div>
+        <label id="clipboardLabel" style="display: none; color: #666; font-size: 0.9em; margin-top: 10px;">Results have been copied to the clipboard</label>
     </div>
 
     <script>
@@ -208,7 +209,7 @@
         });
 
         let currentProblem = {};
-        let sessionLog = ['(Stats copied to clipboard)'];
+        let sessionLog = [];
         let startTime = null;
         let typedAnswer = ''; // user-typed answer via keypad
 
@@ -366,17 +367,21 @@
         enterAnswerButton.addEventListener('click', checkAnswer);
 
         showLogsButton.addEventListener('click', () => {
+            const clipboardLabel = document.getElementById('clipboardLabel');
             // Check if log is currently visible (handles both 'none' and '' cases)
             const isVisible = window.getComputedStyle(logElement).display !== 'none';
             logElement.style.display = isVisible ? 'none' : 'block';
+            clipboardLabel.style.display = isVisible ? 'none' : 'block';
             
-            // Copy stats to clipboard
-            const statsText = sessionLog.join('\n');
-            navigator.clipboard.writeText(statsText).then(() => {
-                console.log('Stats copied to clipboard');
-            }).catch(err => {
-                console.error('Failed to copy stats to clipboard:', err);
-            });
+            // Copy stats to clipboard when showing logs
+            if (!isVisible) {
+                const statsText = sessionLog.join('\n');
+                navigator.clipboard.writeText(statsText).then(() => {
+                    console.log('Stats copied to clipboard');
+                }).catch(err => {
+                    console.error('Failed to copy stats to clipboard:', err);
+                });
+            }
         });
 
         logEntry(`Session started (${new Date().toLocaleString()})`);
