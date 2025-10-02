@@ -141,7 +141,7 @@
         
         <div class="level-selector">
             <label for="levelInput">Level:</label>
-            <input type="number" id="levelInput" min="1" max="2" value="1">
+            <input type="number" id="levelInput" min="1" max="4" value="1">
         </div>
         
         <div id="problem"></div>
@@ -226,9 +226,9 @@
                     };
                 }
             } else if (level === 2) {
-                // Level 2: Multiplication and division (1-5)
-                const num1 = Math.floor(Math.random() * 5) + 1;
-                const num2 = Math.floor(Math.random() * 5) + 1;
+                // Level 2: Multiplication and division (2-5)
+                const num1 = Math.floor(Math.random() * 4) + 2;
+                const num2 = Math.floor(Math.random() * 4) + 2;
                 const isMultiplication = Math.random() > 0.5;
                 
                 if (isMultiplication) {
@@ -237,9 +237,49 @@
                         answer: num1 * num2
                     };
                 } else {
-                    // For division, ensure result is a whole number between 1-5
-                    const result = Math.floor(Math.random() * 5) + 1;
-                    const divisor = Math.floor(Math.random() * 5) + 1;
+                    // For division, ensure result is a whole number between 2-5
+                    const result = Math.floor(Math.random() * 4) + 2;
+                    const divisor = Math.floor(Math.random() * 4) + 2;
+                    const dividend = result * divisor;
+                    currentProblem = {
+                        question: `${dividend} : ${divisor}`,
+                        answer: result
+                    };
+                }
+            } else if (level === 3) {
+                // Level 3: Addition and subtraction with two-digit numbers (10-99)
+                const num1 = Math.floor(Math.random() * 90) + 10;
+                const num2 = Math.floor(Math.random() * 90) + 10;
+                const isAddition = Math.random() > 0.5;
+                
+                if (isAddition) {
+                    currentProblem = {
+                        question: `${num1} + ${num2}`,
+                        answer: num1 + num2
+                    };
+                } else {
+                    const larger = Math.max(num1, num2);
+                    const smaller = Math.min(num1, num2);
+                    currentProblem = {
+                        question: `${larger} - ${smaller}`,
+                        answer: larger - smaller
+                    };
+                }
+            } else if (level === 4) {
+                // Level 4: Multiplication and division (2-9)
+                const num1 = Math.floor(Math.random() * 8) + 2;
+                const num2 = Math.floor(Math.random() * 8) + 2;
+                const isMultiplication = Math.random() > 0.5;
+                
+                if (isMultiplication) {
+                    currentProblem = {
+                        question: `${num1} × ${num2}`,
+                        answer: num1 * num2
+                    };
+                } else {
+                    // For division, ensure result is a whole number between 2-9
+                    const result = Math.floor(Math.random() * 8) + 2;
+                    const divisor = Math.floor(Math.random() * 8) + 2;
                     const dividend = result * divisor;
                     currentProblem = {
                         question: `${dividend} : ${divisor}`,
@@ -321,7 +361,7 @@
                 logElement.style.display === 'none' ? 'block' : 'none';
         });
 
-        logEntry(`New session (${new Date().toLocaleString()})`);
+        logEntry(`Session started (${new Date().toLocaleString()})`);
         generateProblem();
         updateAnswerDisplay();
         
