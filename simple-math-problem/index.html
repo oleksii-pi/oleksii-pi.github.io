@@ -208,7 +208,7 @@
         });
 
         let currentProblem = {};
-        let sessionLog = [];
+        let sessionLog = ['(Stats copied to clipboard)'];
         let startTime = null;
         let typedAnswer = ''; // user-typed answer via keypad
 
@@ -366,8 +366,17 @@
         enterAnswerButton.addEventListener('click', checkAnswer);
 
         showLogsButton.addEventListener('click', () => {
-            logElement.style.display =
-                logElement.style.display === 'none' ? 'block' : 'none';
+            // Check if log is currently visible (handles both 'none' and '' cases)
+            const isVisible = window.getComputedStyle(logElement).display !== 'none';
+            logElement.style.display = isVisible ? 'none' : 'block';
+            
+            // Copy stats to clipboard
+            const statsText = sessionLog.join('\n');
+            navigator.clipboard.writeText(statsText).then(() => {
+                console.log('Stats copied to clipboard');
+            }).catch(err => {
+                console.error('Failed to copy stats to clipboard:', err);
+            });
         });
 
         logEntry(`Session started (${new Date().toLocaleString()})`);
