@@ -29,6 +29,11 @@
 
         .level-selector {
             margin-bottom: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            margin-top: 50px;
         }
 
         .level-selector label {
@@ -42,6 +47,11 @@
             width: 60px;
             text-align: center;
             border: 2px solid #eee;
+        }
+
+        .level-selector .gray {
+            font-size: 1.2em;
+            
         }
 
         #problem {
@@ -138,11 +148,6 @@
     <div class="container">
         <h2 style="color: #bbb;">Basic arithmetic</h2>
         
-        <div class="level-selector">
-            <label for="levelInput">Level:</label>
-            <input type="number" id="levelInput" min="1" max="4" value="1">
-        </div>
-        
         <div id="problem"></div>
 
         <!-- Success emoji display -->
@@ -175,6 +180,11 @@
                 <button class="num" data-value="0">0</button>
                 <button class="mainaction" id="enterAnswer">Enter</button>
             </div>
+        </div>
+
+        <div class="level-selector">
+            <label for="levelInput">Level:</label>
+            <input type="number" id="levelInput" min="1" max="4" value="1">
             <button id="showLogs" class="gray">Stats</button>
         </div>
 
