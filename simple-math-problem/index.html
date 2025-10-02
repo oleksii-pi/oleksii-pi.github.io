@@ -192,7 +192,7 @@
         <div class="level-selector">
             <label for="levelInput">Level:</label>
             <button id="decreaseLevel" class="gray">-</button>
-            <input type="number" id="levelInput" min="0" max="5" value="0">
+            <input type="number" id="levelInput" min="1" max="6" value="1">
             <button id="increaseLevel" class="gray">+</button>
             <button id="showLogs" class="gray">Stats</button>
         </div>
@@ -225,8 +225,8 @@
         function generateProblem() {
             const level = parseInt(levelInput.value, 10);
             
-            if (level === 0) {
-                // Level 0: Simple addition (1-3) and subtraction with results 1-3
+            if (level === 1) {
+                // Level 1: Simple addition (1-3) and subtraction with results 1-3
                 const isAddition = Math.random() > 0.5;
                 
                 if (isAddition) {
@@ -246,8 +246,8 @@
                         answer: result
                     };
                 }
-            } else if (level === 1) {
-                // Level 1: Addition and subtraction (1-15)
+            } else if (level === 2) {
+                // Level 2: Addition and subtraction (1-15)
                 const num1 = Math.floor(Math.random() * 15) + 1;
                 const num2 = Math.floor(Math.random() * 15) + 1;
                 const isAddition = Math.random() > 0.5;
@@ -265,22 +265,13 @@
                         answer: larger - smaller
                     };
                 }
-            } else if (level === 2) {
-                // Level 2: Multiplication only (2-5)
+            } else if (level === 3) {
+                // Level 3: Multiplication only (2-5)
                 const num1 = Math.floor(Math.random() * 4) + 2;
                 const num2 = Math.floor(Math.random() * 4) + 2;
                 currentProblem = {
                     question: `${num1} × ${num2}`,
                     answer: num1 * num2
-                };
-            } else if (level === 3) {
-                // Level 3: Division only (2-5)
-                const result = Math.floor(Math.random() * 4) + 2;
-                const divisor = Math.floor(Math.random() * 4) + 2;
-                const dividend = result * divisor;
-                currentProblem = {
-                    question: `${dividend} : ${divisor}`,
-                    answer: result
                 };
             } else if (level === 4) {
                 // Level 4: Addition and subtraction with two-digit numbers (10-99)
@@ -413,7 +404,7 @@
         // Level increase/decrease buttons
         document.getElementById('increaseLevel').addEventListener('click', () => {
             const currentLevel = parseInt(levelInput.value, 10);
-            if (currentLevel < 5) {
+            if (currentLevel < 6) {
                 levelInput.value = currentLevel + 1;
                 generateProblem();
             }
@@ -421,7 +412,7 @@
 
         document.getElementById('decreaseLevel').addEventListener('click', () => {
             const currentLevel = parseInt(levelInput.value, 10);
-            if (currentLevel > 0) {
+            if (currentLevel > 1) {
                 levelInput.value = currentLevel - 1;
                 generateProblem();
             }
