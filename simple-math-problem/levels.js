@@ -15,8 +15,8 @@ function generateProblem(level) {
   if (level === 1) {
     // Level 1: Addition with result < 10
     // Examples: 1+2, 2+3, 4+1, 5+2 (avoid sums of 10)
-    const a = randInt(1, 8);
-    const b = randInt(1, 9 - a); // ensures a + b <= 9
+    const a = randInt(1, 5); // ensures a <= 5
+    const b = randInt(1, Math.min(5, 9 - a)); // ensures both a <= 5, b <= 5, and a + b <= 9
     currentProblem = { question: `${a} + ${b}`, answer: a + b };
   } else if (level === 2) {
     // Level 2: Subtraction, first number <= 5 (positive result)
