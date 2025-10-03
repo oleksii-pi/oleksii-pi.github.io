@@ -6,15 +6,15 @@ function randInt(min, max) {
 
 const levelGenerators = [
   // Addition with result < 10
-  // Examples: 1+2, 2+3, 4+1, 5+2 (avoid sums of 10)
+  // Examples: 1+2, 2+3, 4+1, 5+2
   function () {
     const a = randInt(1, 5); // ensures a <= 5
-    const b = randInt(1, Math.min(5, 9 - a)); // ensures both a <= 5, b <= 5, and a + b <= 9
+    const b = randInt(1, Math.min(5, 10 - a)); // ensures both a <= 5, b <= 5, and a + b <= 10
     return { question: `${a} + ${b}`, answer: a + b };
   },
 
   // Subtraction, first number <= 5 (positive result or 0)
-  // Examples: 4-1, 4-2, 3-2, 2-1, 5-4
+  // Examples: 4-1, 4-2, 3-3, 2-1, 5-4
   function () {
     const minuend = randInt(2, 5);
     const subtrahend = randInt(1, minuend);
@@ -33,7 +33,7 @@ const levelGenerators = [
   },
 
   // Subtraction with numbers <= 10 (positive result or 0)
-  // Examples: 10-3, 8-5, 9-2, 7-6, 10-1
+  // Examples: 10-3, 8-8, 9-2, 7-6, 10-1
   function () {
     const minuend = randInt(6, 10);
     const subtrahend = randInt(1, minuend);
@@ -43,9 +43,8 @@ const levelGenerators = [
     };
   },
 
-  // Addition where sum > 10
+  // Addition where result > 10
   // Examples: 9+1, 9+9, 7+5
-  // Use single digits 1..9 with sum >= 11
   function () {
     let a = randInt(1, 9);
     let b = randInt(Math.max(1, 11 - a), 9);
@@ -71,7 +70,7 @@ const levelGenerators = [
     return { question: `${a} × ${b}`, answer: a * b };
   },
 
-  // Two-digit + two-digit, result < 100
+  // Addition, two-digit + two-digit, result < 100
   // Examples: 12+32, 78+12, 89+5 (89+5 uses one-digit in example; we keep both two-digit per rule)
   function () {
     const left = randInt(10, 89); // ensures room for right >=10 and sum < 100
@@ -79,11 +78,11 @@ const levelGenerators = [
     return { question: `${left} + ${right}`, answer: left + right };
   },
 
-  // Two-digit − two-digit, result > 0
-  // Examples: 32-13, 89-46
+  // Subtraction, two-digit − two-digit, result >= 0
+  // Examples: 32-13, 89-46, 50-50
   function () {
     const a = randInt(10, 99);
-    const b = randInt(10, a - 1); // ensure positive result
+    const b = randInt(10, a); // ensure result >= 0
     return { question: `${a} - ${b}`, answer: a - b };
   },
 
@@ -130,7 +129,6 @@ function getLevelCount() {
 }
 
 function generateProblem(level) {
-  // Convert 1-based level to 0-based array index
   const levelIndex = level - 1;
 
   if (levelIndex >= 0 && levelIndex < levelGenerators.length) {
