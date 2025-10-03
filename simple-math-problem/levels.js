@@ -13,11 +13,30 @@ const levelGenerators = [
     return { question: `${a} + ${b}`, answer: a + b };
   },
 
-  // Subtraction, first number <= 5 (positive result)
+  // Subtraction, first number <= 5 (positive result or 0)
   // Examples: 4-1, 4-2, 3-2, 2-1, 5-4
   function () {
     const minuend = randInt(2, 5);
-    const subtrahend = randInt(1, minuend - 1);
+    const subtrahend = randInt(1, minuend);
+    return {
+      question: `${minuend} - ${subtrahend}`,
+      answer: minuend - subtrahend,
+    };
+  },
+
+  // Addition with numbers <= 9 and result <= 10
+  // Examples: 1+9, 2+8, 3+7, 4+6, 5+5, 6+4, 7+3, 8+2, 9+1
+  function () {
+    const a = randInt(1, 9);
+    const b = randInt(1, Math.min(9, 10 - a)); // ensures both a <= 9, b <= 9, and a + b <= 10
+    return { question: `${a} + ${b}`, answer: a + b };
+  },
+
+  // Subtraction with numbers <= 10 (positive result or 0)
+  // Examples: 10-3, 8-5, 9-2, 7-6, 10-1
+  function () {
+    const minuend = randInt(6, 10);
+    const subtrahend = randInt(1, minuend);
     return {
       question: `${minuend} - ${subtrahend}`,
       answer: minuend - subtrahend,
