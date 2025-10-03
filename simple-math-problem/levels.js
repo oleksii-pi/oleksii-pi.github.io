@@ -87,11 +87,11 @@ const levelGenerators = [
     return { question: `${a} - ${b}`, answer: a - b };
   },
 
-  // Division, first number < 30, second is single digit (2..9), integer result
+  // Division, first number < 30, second is single digit (2..9), integer result < 10
   // Examples: 6:3, 8:4, 20:5, 25:5, 14:2
   function () {
     const divisor = randInt(2, 9);
-    const maxQuot = Math.floor(29 / divisor);
+    const maxQuot = Math.min(9, Math.floor(29 / divisor)); // ensure quotient < 10
     const quotient = randInt(1, Math.max(1, maxQuot));
     const dividend = divisor * quotient; // guaranteed < 30
     return { question: `${dividend} : ${divisor}`, answer: quotient };
