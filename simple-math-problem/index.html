@@ -354,14 +354,18 @@
         });
 
         // Additional prevention for mobile Safari pull-to-refresh
+        let startY = null;
+
         document.addEventListener('touchstart', function(e) {
-            if (e.touches.length === 1 && window.scrollY === 0) {
-                e.preventDefault();
-            }
-        }, { passive: false });
+            startY = e.touches[0].clientY;
+        }, { passive: true });
 
         document.addEventListener('touchmove', function(e) {
-            if (e.touches.length === 1 && window.scrollY === 0) {
+            const currentY = e.touches[0].clientY;
+            const deltaY = currentY - startY;
+            
+            // Only prevent if at top of page and pulling down
+            if (window.scrollY === 0 && deltaY > 0) {
                 e.preventDefault();
             }
         }, { passive: false });
