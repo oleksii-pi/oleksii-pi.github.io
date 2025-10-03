@@ -45,7 +45,7 @@
         .level-selector input {
             font-size: 1em;
             padding: 5px;
-            width: 60px;
+            width: 30px;
             text-align: center;
             border: 2px solid #eee;
             margin: 0;
@@ -114,9 +114,13 @@
         .keypad button {
             width: 60px;
             height: 60px;
-            font-size: 1em;
+            font-size: 2em;
             margin: 0 5px;
             border-radius: 8px;
+        }
+        .keypad button.mainaction,
+        .keypad button.dangerous {
+            font-size: 1em;
         }
         .answer-display {
                 min-height: 1.2em;
@@ -215,7 +219,6 @@
         });
 
         let currentProblem = {};
-        let previousProblem = null;
         let sessionLog = [];
         let startTime = null;
         let typedAnswer = ''; // user-typed answer via keypad
@@ -224,12 +227,11 @@
             const level = parseInt(levelInput.value, 10);
             let newProblem;
             
-            // Generate a new problem, ensuring it's different from the previous one
+            // Generate a new problem, ensuring it's different from the current one
             do {
                 newProblem = generateProblem(level);
-            } while (previousProblem && newProblem.question === previousProblem.question);
+            } while (currentProblem && newProblem.question === currentProblem.question);
             
-            previousProblem = currentProblem;
             currentProblem = newProblem;
             problemElement.textContent = currentProblem.question;
             startTime = new Date();
