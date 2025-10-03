@@ -105,17 +105,17 @@ const levelGenerators = [
     return { question: `${a} × ${b}`, answer: a * b };
   },
 
-  // Any multiplication or division for numbers 1..9
+  // Any multiplication or division for numbers 2..9
   // For division, ensure integer result.
   function () {
     const isMultiplication = Math.random() < 0.5;
     if (isMultiplication) {
-      const a = randInt(1, 9);
-      const b = randInt(1, 9);
+      const a = randInt(2, 9); // avoid multiplying by 1
+      const b = randInt(2, 9); // avoid multiplying by 1
       return { question: `${a} × ${b}`, answer: a * b };
     } else {
-      const divisor = randInt(1, 9);
-      const quotient = randInt(1, 9);
+      const divisor = randInt(2, 9); // avoid division by 1
+      const quotient = randInt(2, 9); // avoid quotient of 1
       const dividend = divisor * quotient;
       return {
         question: `${dividend} : ${divisor}`,
@@ -136,9 +136,6 @@ function generateProblem(level) {
   if (levelIndex >= 0 && levelIndex < levelGenerators.length) {
     return levelGenerators[levelIndex]();
   } else {
-    // Fallback for invalid level
-    const a = randInt(1, 9);
-    const b = randInt(1, 9);
-    return { question: `${a} + ${b}`, answer: a + b };
+    return { question: `No level found ${levelIndex}`, answer: 0 };
   }
 }
