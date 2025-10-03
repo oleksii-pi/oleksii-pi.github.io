@@ -18,6 +18,8 @@
             background-color: #f0f0f0;
             touch-action: manipulation;
             -webkit-user-select: none; /* Prevents accidental selection and zoom */
+            overscroll-behavior: none; /* Prevents pull-to-refresh */
+            -webkit-overscroll-behavior: none; /* Safari specific */
         }
         .container {
             max-width: 600px;
@@ -343,10 +345,26 @@
         generateNewProblem();
         updateAnswerDisplay();
         
+        // Prevent pull-to-refresh and show confirmation before leaving
         window.addEventListener('beforeunload', function (e) {
-                e.preventDefault();
-                e.returnValue = '';
+            const confirmationMessage = 'Are you sure you want to leave? Your progress will be lost.';
+            e.preventDefault();
+            e.returnValue = confirmationMessage;
+            return confirmationMessage;
         });
+
+        // Additional prevention for mobile Safari pull-to-refresh
+        document.addEventListener('touchstart', function(e) {
+            if (e.touches.length === 1 && window.scrollY === 0) {
+                e.preventDefault();
+            }
+        }, { passive: false });
+
+        document.addEventListener('touchmove', function(e) {
+            if (e.touches.length === 1 && window.scrollY === 0) {
+                e.preventDefault();
+            }
+        }, { passive: false });
     </script>
 </body>
 </html>
