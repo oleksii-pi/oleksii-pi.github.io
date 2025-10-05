@@ -52,10 +52,10 @@ const levelGenerators = [
   },
 
   // Subtraction, first number > 10 (positive result)
-  // Examples: 12-3, 14-5, 13-8, 18-9, 19-9, 16-3
+  // Examples: 12-3, 14-5, 13-8, 18-9, 19-9,
   function () {
-    const minuend = randInt(11, 30);
-    const subtrahend = randInt(1, minuend - 1);
+    const minuend = randInt(11, 40);
+    const subtrahend = randInt(1, Math.min(10, minuend - 1));
     return {
       question: `${minuend} - ${subtrahend}`,
       answer: minuend - subtrahend,
