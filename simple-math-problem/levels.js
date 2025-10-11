@@ -125,6 +125,16 @@ const levelGenerators = [
   },
 
   // Age 9
+  // Division, divisor 5..9, quotient 3..9
+  // Examples: 6:3, 8:4, 20:5, 25:5, 14:7
+  function () {
+    const divisor = randInt(5, 9);
+    const quotient = randInt(3, 9);
+    const dividend = divisor * quotient;
+    return { question: `${dividend} : ${divisor}`, answer: quotient };
+  },
+
+  // Age 9
   // Any multiplication or division for numbers 2..9
   // For division, ensure integer result.
   function () {
