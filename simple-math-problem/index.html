@@ -395,6 +395,14 @@
                 e.preventDefault();
             }
         }, { passive: false });
+
+        // Handle keyboard events
+        document.addEventListener('keydown', function(e) {
+            if (e.code === 'Space') {
+                e.preventDefault();
+                generateNewProblem();
+            }
+        });
     </script>
 </body>
 </html>
