@@ -96,6 +96,15 @@ const levelGenerators = [
   },
 
   // Age 8
+  // Multiplication, first number <= 5, second number 6..9
+  // Examples: 2*6, 3*9, 5*7
+  function () {
+    const a = randInt(2, 5);
+    const b = randInt(6, 9);
+    return { question: `${a} × ${b}`, answer: a * b };
+  },
+
+  // Age 8
   // Division, first number < 30, second is single digit (2..9), integer result < 10
   // Examples: 6:3, 8:4, 20:5, 25:5, 14:2
   function () {
