@@ -191,8 +191,16 @@
         for (let j=0; j<COLS; j++){
           const v = grid[i][j];
           const cell = document.createElement('div'); cell.className = 'cell';
-          if (v === '*'){ cell.classList.add('mine'); cell.textContent='*'; }
-          else { cell.classList.add('n'+v); cell.textContent=String(v); }
+          cell.style.position = 'relative';
+          
+          if (v === '*'){ 
+            cell.classList.add('mine'); 
+            cell.innerHTML = '*<span style="position:absolute; top:2px; left:2px; font-size:8px; color:#ddd;">' + left[i+1] + (j+1) + '</span>';
+          }
+          else { 
+            cell.classList.add('n'+v); 
+            cell.innerHTML = String(v) + '<span style="position:absolute; top:2px; left:2px; font-size:8px; color:#ddd;">' + left[i+1] + (j+1) + '</span>';
+          }
           container.appendChild(cell);
         }
       }
