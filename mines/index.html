@@ -28,9 +28,13 @@
     h1{font-size:clamp(18px, 2.4vw, 26px); margin:0; letter-spacing:.2px}
     p.sub{margin:4px 0 0; color:var(--muted); font-size:13px}
 
-    button#generate{
+    button#generate, button#print{
       appearance:none; border:1px solid #c9d2df; background:var(--accent); color:#fff; font-weight:700;
       padding:10px 14px; border-radius:8px; cursor:pointer; box-shadow:none; font-size:15px
+    }
+
+    button#print{
+      background:#666; margin-left:8px;
     }
 
     .boards{display:grid; grid-template-columns:repeat(2, 1fr); gap:18px; align-items:start; position:relative}
@@ -77,7 +81,10 @@
       <div>
         <h1>Minesweeper 9×9 (10 mines)</h1>
       </div>
-      <button id="generate" type="button">Generate</button>
+      <div>
+        <button id="generate" type="button">Generate</button>
+        <button id="print" type="button">Print</button>
+      </div>
     </header>
 
     <div class="boards">
@@ -199,6 +206,7 @@
     }
 
     btn.addEventListener('click', regenerate);
+    document.getElementById('print').addEventListener('click', () => window.print());
     // initial render
     regenerate();
   </script>
