@@ -285,6 +285,7 @@
       currentGrid = grid;
       renderBoard(boardA, grid);
       renderBlank(boardB);
+      showStart(); // Automatically show a start point
     }
 
     btn.addEventListener('click', regenerate);
