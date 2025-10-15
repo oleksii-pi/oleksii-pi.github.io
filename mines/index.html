@@ -176,7 +176,14 @@
       for (let i=0; i<ROWS; i++){
         const h = document.createElement('div'); h.className = 'cell header'; h.textContent = left[i+1]; container.appendChild(h);
         for (let j=0; j<COLS; j++){
-          const cell = document.createElement('div'); cell.className = 'cell'; cell.textContent=''; container.appendChild(cell);
+          const cell = document.createElement('div'); cell.className = 'cell'; 
+          cell.textContent = left[i+1] + (j+1);
+          cell.style.color = '#ddd';
+          cell.style.fontSize = '10px';
+          cell.style.alignItems = 'flex-start';
+          cell.style.justifyContent = 'flex-start';
+          cell.style.padding = '2px';
+          container.appendChild(cell);
         }
       }
     }
