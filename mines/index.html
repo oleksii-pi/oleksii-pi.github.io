@@ -37,6 +37,18 @@
       background:#666; margin-left:8px;
     }
 
+    .size-links{
+      display:flex; gap:8px; align-items:center;
+    }
+    .size-links a{
+      color:var(--accent); text-decoration:none; font-size:13px; font-weight:500;
+      padding:4px 8px; border-radius:4px; border:1px solid #e0e0e0;
+      background:#f8f9fa;
+    }
+    .size-links a:hover{
+      background:#e8f0fe; border-color:var(--accent);
+    }
+
     .boards{display:grid; grid-template-columns:repeat(2, 1fr); gap:18px; align-items:start; position:relative}
     .panel h2{margin:0 0 8px 0; font-size:16px}
 
@@ -65,7 +77,7 @@
     .notes{margin-top:8px; color:var(--muted); font-size:12px}
 
     @media print{
-      header, .notes{display:none}
+      header, .notes, .size-links{display:none}
       body{padding:0}
       .wrap{width:100%}
       .boards{gap:10mm; grid-template-columns:1fr 1fr; padding:10mm}
@@ -81,9 +93,16 @@
       <div>
         <h1 id="title">Minesweeper 9×9 (10 mines)</h1>
       </div>
-      <div>
-        <button id="generate" type="button">Generate</button>
-        <button id="print" type="button">Print</button>
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <div class="size-links">
+          <a href="?size=5&mines=6">5×5×6</a>
+          <a href="?size=9&mines=10">9×9×10</a>
+          <a href="?size=16&mines=40">16×16×40</a>
+        </div>
+        <div>
+          <button id="generate" type="button">Generate</button>
+          <button id="print" type="button">Print</button>
+        </div>
       </div>
     </header>
 
