@@ -28,13 +28,17 @@
     h1{font-size:clamp(18px, 2.4vw, 26px); margin:0; letter-spacing:.2px}
     p.sub{margin:4px 0 0; color:var(--muted); font-size:13px}
 
-    button#generate, button#print{
+    button#generate, button#showStart, button#print{
       appearance:none; border:1px solid #c9d2df; background:var(--accent); color:#fff; font-weight:700;
       padding:10px 14px; border-radius:8px; cursor:pointer; box-shadow:none; font-size:15px
     }
 
     button#print{
       background:#666; margin-left:8px;
+    }
+
+    button#showStart{
+      background:#75278c; 
     }
 
     .size-links{
@@ -95,12 +99,13 @@
       </div>
       <div style="display: flex; align-items: center; gap: 12px;">
         <div class="size-links">
-          <a href="?size=5&mines=6">5×5×6</a>
+          <a href="?size=5&mines=4">5×5×4</a>
           <a href="?size=9&mines=10">9×9×10</a>
           <a href="?size=16&mines=40">16×16×40</a>
         </div>
         <div>
           <button id="generate" type="button">Generate</button>
+          <button id="showStart" type="button">Show Start</button>
           <button id="print" type="button">Print</button>
         </div>
       </div>
@@ -222,17 +227,59 @@
     const boardB = document.getElementById('boardB');
     const btn = document.getElementById('generate');
 
-    function regenerate(){
-      const grid = generateMinefield();
-      renderBoard(boardA, grid);
-      renderBlank(boardB);
-    }
-
     function updateTitle(){
       document.getElementById('title').textContent = `Minesweeper ${SIZE}×${SIZE} (${MINES} mines)`;
     }
 
+    let currentGrid = null;
+
+    function showStart() {
+      if (!currentGrid) return;
+      
+      // Find all cells with 0 mines
+      const zeroCells = [];
+      for (let i = 0; i < ROWS; i++) {
+        for (let j = 0; j < COLS; j++) {
+          if (currentGrid[i][j] === 0) {
+            zeroCells.push({row: i, col: j});
+          }
+        }
+      }
+      
+      if (zeroCells.length === 0) return;
+      
+      // Select a random cell with 0 mines
+      const randomIndex = randomInt(zeroCells.length);
+      const {row: i, col: j} = zeroCells[randomIndex];
+      
+      // Clear the blank board and show only this cell
+      renderBlank(boardB);
+      
+      // Find the specific cell in the blank board and reveal it
+      const cellIndex = (i + 1) * (COLS + 1) + (j + 1); // +1 for headers
+      const cells = boardB.children;
+      const targetCell = cells[cellIndex];
+      
+      if (targetCell) {
+        targetCell.textContent = '0';
+        targetCell.style.color = '#8a8f98';
+        targetCell.style.fontSize = '';
+        targetCell.style.alignItems = 'center';
+        targetCell.style.justifyContent = 'center';
+        targetCell.style.padding = '';
+        targetCell.classList.add('n0');
+      }
+    }
+
+    function regenerate(){
+      const grid = generateMinefield();
+      currentGrid = grid;
+      renderBoard(boardA, grid);
+      renderBlank(boardB);
+    }
+
     btn.addEventListener('click', regenerate);
+    document.getElementById('showStart').addEventListener('click', showStart);
     document.getElementById('print').addEventListener('click', () => window.print());
     // initial render
     updateTitle();
