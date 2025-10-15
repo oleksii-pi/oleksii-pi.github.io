@@ -28,7 +28,7 @@
     h1{font-size:clamp(18px, 2.4vw, 26px); margin:0; letter-spacing:.2px}
     p.sub{margin:4px 0 0; color:var(--muted); font-size:13px}
 
-    button#generate, button#showStart, button#print{
+    button#generate, button#print{
       appearance:none; border:1px solid #c9d2df; background:var(--accent); color:#fff; font-weight:700;
       padding:10px 14px; border-radius:8px; cursor:pointer; box-shadow:none; font-size:15px
     }
@@ -37,8 +37,17 @@
       background:#666; margin-left:8px;
     }
 
-    button#showStart{
-      background:#75278c; 
+    .start-checkbox {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 14px;
+      margin-right: 12px;
+    }
+
+    .start-checkbox input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
     }
 
     .size-links{
@@ -95,7 +104,7 @@
   <div class="wrap">
     <header>
       <div>
-        <h1 id="title">Minesweeper 9×9 (10 mines)</h1>
+        <h1 id="title">page title placeholder</h1>
       </div>
       <div style="display: flex; align-items: center; gap: 12px;">
         <div class="size-links">
@@ -104,9 +113,16 @@
           <a href="?size=9&mines=10">9×9×10</a>
           <a href="?size=16&mines=40">16×16×40</a>
         </div>
-        <div>
+        <div style="display: flex; align-items: center;">
+          <div class="start-checkbox">
+            <input type="checkbox" id="startCheckbox" checked>
+            <label for="startCheckbox">start</label>
+          </div>
+          <div class="start-checkbox">
+            <input type="checkbox" id="hintsCheckbox" checked>
+            <label for="hintsCheckbox">hints</label>
+          </div>
           <button id="generate" type="button">Generate</button>
-          <button id="showStart" type="button">Show Start</button>
           <button id="print" type="button">Print</button>
         </div>
       </div>
@@ -145,7 +161,25 @@
     const urlParams = new URLSearchParams(window.location.search);
     const SIZE = parseInt(urlParams.get('size')) || 9;
     const MINES = parseInt(urlParams.get('mines')) || 10;
+    const SHOW_START = urlParams.get('start') !== 'false';
+    const SHOW_HINTS = urlParams.get('hints') !== 'false';
     const ROWS = SIZE, COLS = SIZE;
+
+    // Function to update URL parameters
+    function updateUrlParams() {
+      const params = new URLSearchParams();
+      if (SIZE !== 9) params.set('size', SIZE);
+      if (MINES !== 10) params.set('mines', MINES);
+      
+      const startCheckbox = document.getElementById('startCheckbox');
+      const hintsCheckbox = document.getElementById('hintsCheckbox');
+      
+      if (!startCheckbox.checked) params.set('start', 'false');
+      if (!hintsCheckbox.checked) params.set('hints', 'false');
+      
+      const newUrl = window.location.pathname + (params.toString() ? '?' + params.toString() : '');
+      window.history.replaceState({}, '', newUrl);
+    }
 
     function generateMinefield(rows = ROWS, cols = COLS, mines = MINES){
       if (mines >= rows * cols) throw new Error('Too many mines');
@@ -193,13 +227,16 @@
           const cell = document.createElement('div'); cell.className = 'cell';
           cell.style.position = 'relative';
           
+          const hintsCheckbox = document.getElementById('hintsCheckbox');
+          const showHints = hintsCheckbox ? hintsCheckbox.checked : true;
+          
           if (v === '*'){ 
             cell.classList.add('mine'); 
-            cell.innerHTML = '*<span style="position:absolute; top:2px; left:2px; font-size:8px; color:#ddd;">' + left[i+1] + (j+1) + '</span>';
+            cell.innerHTML = '*' + (showHints ? '<span style="position:absolute; top:2px; left:2px; font-size:8px; color:#ddd;">' + left[i+1] + (j+1) + '</span>' : '');
           }
           else { 
             cell.classList.add('n'+v); 
-            cell.innerHTML = String(v) + '<span style="position:absolute; top:2px; left:2px; font-size:8px; color:#ddd;">' + left[i+1] + (j+1) + '</span>';
+            cell.innerHTML = String(v) + (showHints ? '<span style="position:absolute; top:2px; left:2px; font-size:8px; color:#ddd;">' + left[i+1] + (j+1) + '</span>' : '');
           }
           container.appendChild(cell);
         }
@@ -212,6 +249,9 @@
       const top = [''].concat([...Array(COLS).keys()].map(i => String(i+1)));
       const left = [''].concat([...Array(ROWS).keys()].map(i => String.fromCharCode('A'.charCodeAt(0)+i)));
 
+      const hintsCheckbox = document.getElementById('hintsCheckbox');
+      const showHints = hintsCheckbox ? hintsCheckbox.checked : true;
+
       for (let j=0; j<=COLS; j++){
         const cell = document.createElement('div');
         cell.className = 'cell header' + (j===0 ? ' header--corner' : '');
@@ -221,12 +261,21 @@
         const h = document.createElement('div'); h.className = 'cell header'; h.textContent = left[i+1]; container.appendChild(h);
         for (let j=0; j<COLS; j++){
           const cell = document.createElement('div'); cell.className = 'cell'; 
-          cell.textContent = left[i+1] + (j+1);
-          cell.style.color = '#ddd';
-          cell.style.fontSize = '8px';
-          cell.style.alignItems = 'flex-start';
-          cell.style.justifyContent = 'flex-start';
-          cell.style.padding = '2px';
+          if (showHints) {
+            cell.textContent = left[i+1] + (j+1);
+            cell.style.color = '#ddd';
+            cell.style.fontSize = '8px';
+            cell.style.alignItems = 'flex-start';
+            cell.style.justifyContent = 'flex-start';
+            cell.style.padding = '2px';
+          } else {
+            cell.textContent = '';
+            cell.style.color = '';
+            cell.style.fontSize = '';
+            cell.style.alignItems = 'center';
+            cell.style.justifyContent = 'center';
+            cell.style.padding = '';
+          }
           container.appendChild(cell);
         }
       }
@@ -285,12 +334,47 @@
       currentGrid = grid;
       renderBoard(boardA, grid);
       renderBlank(boardB);
-      showStart(); // Automatically show a start point
+      
+      // Show start only if checkbox is checked
+      const startCheckbox = document.getElementById('startCheckbox');
+      if (startCheckbox.checked) {
+        showStart();
+      }
     }
 
     btn.addEventListener('click', regenerate);
-    document.getElementById('showStart').addEventListener('click', showStart);
     document.getElementById('print').addEventListener('click', () => window.print());
+    
+    // Add event listener for start checkbox
+    document.getElementById('startCheckbox').addEventListener('change', function() {
+      if (currentGrid) {
+        renderBlank(boardB);
+        if (this.checked) {
+          showStart();
+        }
+      }
+      updateUrlParams();
+    });
+    
+    // Add event listener for hints checkbox
+    document.getElementById('hintsCheckbox').addEventListener('change', function() {
+      if (currentGrid) {
+        renderBoard(boardA, currentGrid);
+        renderBlank(boardB);
+        
+        // Show start only if start checkbox is checked
+        const startCheckbox = document.getElementById('startCheckbox');
+        if (startCheckbox.checked) {
+          showStart();
+        }
+      }
+      updateUrlParams();
+    });
+    
+    // Set initial checkbox states from URL parameters
+    document.getElementById('startCheckbox').checked = SHOW_START;
+    document.getElementById('hintsCheckbox').checked = SHOW_HINTS;
+    
     // initial render
     updateTitle();
     regenerate();
