@@ -41,7 +41,7 @@
     .panel h2{margin:0 0 8px 0; font-size:16px}
 
     .board{
-      display:grid; grid-template-columns:repeat(10, 1fr); grid-auto-rows:1fr; aspect-ratio:1/1;
+      display:grid; grid-auto-rows:1fr; aspect-ratio:1/1;
     }
     .cell{
       display:flex; align-items:center; justify-content:center; user-select:none;
@@ -79,7 +79,7 @@
   <div class="wrap">
     <header>
       <div>
-        <h1>Minesweeper 9×9 (10 mines)</h1>
+        <h1 id="title">Minesweeper 9×9 (10 mines)</h1>
       </div>
       <div>
         <button id="generate" type="button">Generate</button>
@@ -116,7 +116,11 @@
     }
 
     // ---- Board generation ----
-    const ROWS = 9, COLS = 9, MINES = 10;
+    // Parse URL parameters for board size and mine count
+    const urlParams = new URLSearchParams(window.location.search);
+    const SIZE = parseInt(urlParams.get('size')) || 9;
+    const MINES = parseInt(urlParams.get('mines')) || 10;
+    const ROWS = SIZE, COLS = SIZE;
 
     function generateMinefield(rows = ROWS, cols = COLS, mines = MINES){
       if (mines >= rows * cols) throw new Error('Too many mines');
@@ -205,9 +209,14 @@
       renderBlank(boardB);
     }
 
+    function updateTitle(){
+      document.getElementById('title').textContent = `Minesweeper ${SIZE}×${SIZE} (${MINES} mines)`;
+    }
+
     btn.addEventListener('click', regenerate);
     document.getElementById('print').addEventListener('click', () => window.print());
     // initial render
+    updateTitle();
     regenerate();
   </script>
 </body>
