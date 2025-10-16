@@ -187,10 +187,9 @@
         <div id="problem"></div>
 
         <!-- Success emoji display -->
-        
+        <div id="successEmoji">🎉</div>
 
         <!-- Display for typed answer -->
-        <!-- <div id="successEmoji">🎉</div> -->
         <div class="answer-container">
             <div id="answerDisplay" class="answer-display">
             </div>
@@ -307,7 +306,7 @@
             successEmoji.style.opacity = 1;
             setTimeout(() => {
                 successEmoji.style.opacity = 0;
-            }, 3000);
+            }, 2000);
         }
 
         function checkAnswer() {
@@ -330,7 +329,7 @@
                 problemElement.textContent = currentProblem.question; // Reset title
                 typedAnswer = '';
                 updateAnswerDisplay();
-                //showSuccessEmoji();
+                showSuccessEmoji();
                 generateNewProblem();
             } else {
                 incorrectAttempts++;
