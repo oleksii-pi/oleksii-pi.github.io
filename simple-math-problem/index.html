@@ -321,7 +321,7 @@
 
             if (userAnswer === currentProblem.answer) {
                 logEntry(
-                    `${currentProblem.question} = ${userAnswer} ` +
+                    `✅ ${currentProblem.question} = ${userAnswer} ` +
                     `(${timeTaken}s)`
                 );
                 answerDisplay.classList.remove('error-display');
@@ -334,7 +334,7 @@
             } else {
                 incorrectAttempts++;
                 logEntry(
-                    `${currentProblem.question} = ${userAnswer} Incorrect ` +
+                    `❌ ${currentProblem.question} = ${userAnswer} Incorrect ` +
                     `(${timeTaken}s)`
                 );
                 answerDisplay.classList.add('error-display');
@@ -359,7 +359,7 @@
         // Help button click handler
         helpButton.addEventListener('click', () => {
             const timeTaken = Math.round((new Date() - startTime) / 1000);
-            logEntry(`${currentProblem.question} = ? Help requested (${timeTaken}s)`);
+            logEntry(`💡 ${currentProblem.question} = ? Help requested (${timeTaken}s)`);
             updateLog();
             problemElement.textContent = `${currentProblem.question} = ${currentProblem.answer}`;
         });
@@ -412,7 +412,7 @@
             levelInput.value = savedLevel;
         }
         
-        logEntry(`Session started (${new Date().toLocaleString()})`);
+        logEntry(`📚 Session started (${new Date().toLocaleString()})`);
         generateNewProblem();
         updateAnswerDisplay();
         
