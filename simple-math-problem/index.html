@@ -84,6 +84,31 @@
             border-color: red !important;
         }
 
+        /* Help button styling */
+        .help-button {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-size: 1em;
+            margin-left: 10px;
+            cursor: pointer;
+            display: none;
+        }
+
+        .help-button:hover {
+            background-color: #218838;
+        }
+
+        .answer-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+
         button.gray {
             margin-top: 10px;
             font-size: 1em;
@@ -166,7 +191,10 @@
 
         <!-- Display for typed answer -->
         <!-- <div id="successEmoji">🎉</div> -->
-        <div id="answerDisplay" class="answer-display">
+        <div class="answer-container">
+            <div id="answerDisplay" class="answer-display">
+            </div>
+            <button id="helpButton" class="help-button">💡</button>
         </div>
 
         <!-- Visual numeric keyboard -->
@@ -212,6 +240,7 @@
         const answerDisplay = document.getElementById('answerDisplay');
         const successEmoji = document.getElementById('successEmoji');
         const levelInput = document.getElementById('levelInput');
+        const helpButton = document.getElementById('helpButton');
 
         const deleteButton = document.getElementById('del');
         deleteButton.addEventListener('click', () => {
@@ -224,6 +253,7 @@
         let sessionLog = [];
         let startTime = null;
         let typedAnswer = ''; // user-typed answer via keypad
+        let incorrectAttempts = 0; // track incorrect attempts for current problem
 
         // Cookie functions for level persistence
         function setCookie(name, value, days = 365) {
@@ -255,6 +285,7 @@
             currentProblem = newProblem;
             problemElement.textContent = currentProblem.question;
             startTime = new Date();
+            incorrectAttempts = 0; // Reset incorrect attempts for new problem
         }
 
         function logEntry(entry) {
@@ -295,16 +326,23 @@
                     `(${timeTaken}s)`
                 );
                 answerDisplay.classList.remove('error-display');
+                helpButton.style.display = 'none';
+                problemElement.textContent = currentProblem.question; // Reset title
                 typedAnswer = '';
                 updateAnswerDisplay();
                 //showSuccessEmoji();
                 generateNewProblem();
             } else {
+                incorrectAttempts++;
                 logEntry(
                     `${currentProblem.question} = ${userAnswer} Incorrect ` +
                     `(${timeTaken}s)`
                 );
                 answerDisplay.classList.add('error-display');
+                // Show help button only after second incorrect attempt
+                if (incorrectAttempts >= 2) {
+                    helpButton.style.display = 'inline-block';
+                }
             }
 
             updateLog();
@@ -317,6 +355,14 @@
                 answerDisplay.classList.remove('error-display');
                 updateAnswerDisplay();
             });
+        });
+
+        // Help button click handler
+        helpButton.addEventListener('click', () => {
+            const timeTaken = Math.round((new Date() - startTime) / 1000);
+            logEntry(`${currentProblem.question} = ? Help requested (${timeTaken}s)`);
+            updateLog();
+            problemElement.textContent = `${currentProblem.question} = ${currentProblem.answer}`;
         });
 
         enterAnswerButton.addEventListener('click', checkAnswer);
