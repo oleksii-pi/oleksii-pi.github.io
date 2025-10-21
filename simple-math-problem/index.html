@@ -251,6 +251,9 @@
         let startTime = null;
         let typedAnswer = ''; // user-typed answer via keypad
         let incorrectAttempts = 0; // track incorrect attempts for current problem
+        let sessionStartTime = new Date(); // track session start time
+        let totalProblems = 0; // count total problems attempted
+        let successfulProblems = 0; // count successful problems
 
         // Cookie functions for level persistence
         function setCookie(name, value, days = 365) {
@@ -290,7 +293,16 @@
         }
 
         function updateLog() {
-            logElement.innerHTML = sessionLog.join('<br>');
+            const sessionDuration = Math.round((new Date() - sessionStartTime) / 1000);
+            const minutes = Math.floor(sessionDuration / 60);
+            const seconds = sessionDuration % 60;
+            const successRate = totalProblems > 0 ? Math.round((successfulProblems / totalProblems) * 100) : 0;
+            
+            const statsEntry = `📊 Duration: ${minutes}m ${seconds}s | Exercises: ${totalProblems} | Success: ${successRate}% (${successfulProblems}/${totalProblems})`;
+            
+            // Insert stats as second entry (after session started)
+            const logWithStats = [sessionLog[0], statsEntry, ...sessionLog.slice(1)];
+            logElement.innerHTML = logWithStats.join('<br>');
         }
 
         function updateAnswerDisplay() {
@@ -338,6 +350,8 @@
             }
 
             if (userAnswer === currentProblem.answer) {
+                totalProblems++;
+                successfulProblems++;
                 logEntry(
                     `✅ ${currentProblem.question} = ${userAnswer} ` +
                     `(${timeTaken}s)`
@@ -351,6 +365,7 @@
                 generateNewProblem();
             } else {
                 incorrectAttempts++;
+                totalProblems++;
                 logEntry(
                     `❌ ${currentProblem.question} = ${userAnswer} Incorrect ` +
                     `(${timeTaken}s)`
@@ -393,7 +408,19 @@
             
             // Copy stats to clipboard when showing logs
             if (!isVisible) {
-                const statsText = sessionLog.join('\n');
+                const sessionDuration = Math.round((new Date() - sessionStartTime) / 1000);
+                const minutes = Math.floor(sessionDuration / 60);
+                const seconds = sessionDuration % 60;
+                const successRate = totalProblems > 0 ? Math.round((successfulProblems / totalProblems) * 100) : 0;
+                
+                const statsHeader = [
+                    `📊 Session Statistics:`,
+                    `⏱️ Duration: ${minutes}m ${seconds}s`,
+                    `📝 Total exercises: ${totalProblems}`,
+                    `✅ Success rate: ${successRate}% (${successfulProblems}/${totalProblems})`,
+                    `---`
+                ];
+                const statsText = statsHeader.join('\n') + '\n' + sessionLog.join('\n');
                 navigator.clipboard.writeText(statsText).then(() => {
                     console.log('Stats copied to clipboard');
                 }).catch(err => {
