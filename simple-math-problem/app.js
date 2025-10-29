@@ -18,6 +18,7 @@ let incorrectAttempts = 0;
 let sessionStartTime = new Date();
 let totalProblems = 0;
 let successfulProblems = 0;
+let currentSessionIndex = -1; // -1 means current session, 0+ means historical sessions
 
 // Cookie functions for level persistence
 function setCookie(name, value, days = 365) {
@@ -35,6 +36,128 @@ function getCookie(name) {
     if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
   }
   return null;
+}
+
+// Local storage functions for session history
+function saveSessionToHistory() {
+  if (sessionLog.length <= 1 || totalProblems === 0) {
+    return; // Don't save empty sessions
+  }
+
+  const sessions = getSessionHistory();
+  const sessionData = {
+    startTime: sessionStartTime.toISOString(),
+    endTime: new Date().toISOString(),
+    log: sessionLog,
+    totalProblems: totalProblems,
+    successfulProblems: successfulProblems,
+  };
+
+  sessions.unshift(sessionData); // Add to beginning
+
+  // Keep only last 50 sessions
+  if (sessions.length > 50) {
+    sessions.length = 50;
+  }
+
+  localStorage.setItem("mathProblemSessions", JSON.stringify(sessions));
+}
+
+function getSessionHistory() {
+  const stored = localStorage.getItem("mathProblemSessions");
+  return stored ? JSON.parse(stored) : [];
+}
+
+function displaySession(index) {
+  const sessions = getSessionHistory();
+  const navigationButtons = document.getElementById("navigationButtons");
+  const prevButton = document.getElementById("prevSession");
+  const nextButton = document.getElementById("nextSession");
+
+  let logContent, statsForClipboard;
+
+  if (index === -1) {
+    // Current session
+    const sessionDuration = Math.round((new Date() - sessionStartTime) / 1000);
+    const minutes = Math.floor(sessionDuration / 60);
+    const seconds = sessionDuration % 60;
+    const successRate =
+      totalProblems > 0
+        ? Math.round((successfulProblems / totalProblems) * 100)
+        : 0;
+
+    const statsEntry = `📊 Duration: ${minutes}m ${seconds}s | Exercises: ${totalProblems} | Success: ${successRate}% (${successfulProblems}/${totalProblems})`;
+    const logWithStats = [sessionLog[0], statsEntry, ...sessionLog.slice(1)];
+    logContent = logWithStats.join("<br>");
+
+    const statsHeader = [
+      `📊 Session Statistics:`,
+      `⏱️ Duration: ${minutes}m ${seconds}s`,
+      `📝 Total exercises: ${totalProblems}`,
+      `✅ Success rate: ${successRate}% (${successfulProblems}/${totalProblems})`,
+      `---`,
+    ];
+    statsForClipboard = statsHeader.join("\n") + "\n" + sessionLog.join("\n");
+
+    // Enable/disable buttons
+    prevButton.disabled = sessions.length === 0;
+    nextButton.disabled = true;
+    navigationButtons.style.display = "flex";
+  } else {
+    // Historical session
+    const session = sessions[index];
+    const start = new Date(session.startTime);
+    const end = new Date(session.endTime);
+    const sessionDuration = Math.round((end - start) / 1000);
+    const minutes = Math.floor(sessionDuration / 60);
+    const seconds = sessionDuration % 60;
+    const successRate =
+      session.totalProblems > 0
+        ? Math.round((session.successfulProblems / session.totalProblems) * 100)
+        : 0;
+
+    const statsEntry = `📊 Duration: ${minutes}m ${seconds}s | Exercises: ${session.totalProblems} | Success: ${successRate}% (${session.successfulProblems}/${session.totalProblems})`;
+    const logWithStats = [session.log[0], statsEntry, ...session.log.slice(1)];
+    logContent = logWithStats.join("<br>");
+
+    const statsHeader = [
+      `📊 Session Statistics (${start.toLocaleString()}):`,
+      `⏱️ Duration: ${minutes}m ${seconds}s`,
+      `📝 Total exercises: ${session.totalProblems}`,
+      `✅ Success rate: ${successRate}% (${session.successfulProblems}/${session.totalProblems})`,
+      `---`,
+    ];
+    statsForClipboard = statsHeader.join("\n") + "\n" + session.log.join("\n");
+
+    // Enable/disable buttons
+    prevButton.disabled = index >= sessions.length - 1;
+    nextButton.disabled = false; // Can always go back towards current session
+    navigationButtons.style.display = "flex";
+  }
+
+  logElement.innerHTML = logContent;
+
+  // Store for clipboard copy
+  logElement.dataset.clipboardText = statsForClipboard;
+}
+
+function navigateToPreviousSession() {
+  const sessions = getSessionHistory();
+  if (currentSessionIndex === -1 && sessions.length > 0) {
+    currentSessionIndex = 0;
+  } else if (currentSessionIndex < sessions.length - 1) {
+    currentSessionIndex++;
+  }
+  displaySession(currentSessionIndex);
+}
+
+function navigateToNextSession() {
+  if (currentSessionIndex === 0) {
+    currentSessionIndex = -1;
+  } else if (currentSessionIndex > 0) {
+    currentSessionIndex--;
+  }
+  displaySession(currentSessionIndex);
 }
 
 // Problem generation
@@ -70,6 +193,9 @@ function updateLog() {
 
   const logWithStats = [sessionLog[0], statsEntry, ...sessionLog.slice(1)];
   logElement.innerHTML = logWithStats.join("<br>");
+
+  // Reset to current session when updating
+  currentSessionIndex = -1;
 }
 
 function updateAnswerDisplay() {
@@ -167,27 +293,18 @@ enterAnswerButton.addEventListener("click", checkAnswer);
 
 showLogsButton.addEventListener("click", () => {
   const clipboardLabel = document.getElementById("clipboardLabel");
+  const navigationButtons = document.getElementById("navigationButtons");
   const isVisible = window.getComputedStyle(logElement).display !== "none";
   logElement.style.display = isVisible ? "none" : "block";
   clipboardLabel.style.display = isVisible ? "none" : "block";
+  navigationButtons.style.display = isVisible ? "none" : "flex";
 
   if (!isVisible) {
-    const sessionDuration = Math.round((new Date() - sessionStartTime) / 1000);
-    const minutes = Math.floor(sessionDuration / 60);
-    const seconds = sessionDuration % 60;
-    const successRate =
-      totalProblems > 0
-        ? Math.round((successfulProblems / totalProblems) * 100)
-        : 0;
+    currentSessionIndex = -1; // Reset to current session
+    displaySession(currentSessionIndex);
 
-    const statsHeader = [
-      `📊 Session Statistics:`,
-      `⏱️ Duration: ${minutes}m ${seconds}s`,
-      `📝 Total exercises: ${totalProblems}`,
-      `✅ Success rate: ${successRate}% (${successfulProblems}/${totalProblems})`,
-      `---`,
-    ];
-    const statsText = statsHeader.join("\n") + "\n" + sessionLog.join("\n");
+    // Copy to clipboard
+    const statsText = logElement.dataset.clipboardText || "";
     navigator.clipboard
       .writeText(statsText)
       .then(() => {
@@ -218,6 +335,7 @@ document.getElementById("decreaseLevel").addEventListener("click", () => {
 });
 
 window.addEventListener("beforeunload", function (e) {
+  saveSessionToHistory();
   const confirmationMessage =
     "Are you sure you want to leave? Your progress will be lost.";
   e.preventDefault();
@@ -262,6 +380,14 @@ const savedLevel = getCookie("mathProblemLevel");
 if (savedLevel && savedLevel >= 1 && savedLevel <= getLevelCount()) {
   levelInput.value = savedLevel;
 }
+
+// Set up navigation buttons
+document
+  .getElementById("prevSession")
+  .addEventListener("click", navigateToPreviousSession);
+document
+  .getElementById("nextSession")
+  .addEventListener("click", navigateToNextSession);
 
 logEntry(`📚 Session started (${new Date().toLocaleString()})`);
 generateNewProblem();

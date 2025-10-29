@@ -119,6 +119,11 @@ button {
   cursor: pointer;
 }
 
+button:disabled {
+  background-color: lightgray;
+  cursor: not-allowed;
+}
+
 .keypad {
   display: inline-block;
   margin-top: 20px;
