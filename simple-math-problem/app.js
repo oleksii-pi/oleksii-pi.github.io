@@ -63,11 +63,18 @@ function saveSessionToHistory() {
   const minutes = Math.floor(sessionDuration / 60);
   const seconds = sessionDuration % 60;
   const durationFormatted = `${minutes}:${String(seconds).padStart(2, "0")}`;
+  const successRatePercent =
+    totalProblems > 0
+      ? Math.round((successfulProblems / totalProblems) * 100)
+      : 0;
+  const successRateFormatted = `${successRatePercent}% (${successfulProblems}/${totalProblems})`;
 
   const sessionData = {
     startTime: formatDateTime(sessionStartTime),
     endTime: formatDateTime(sessionEndTime),
     duration: durationFormatted,
+    exercises: totalProblems,
+    successRate: successRateFormatted,
     log: sessionLog,
     totalProblems: totalProblems,
     successfulProblems: successfulProblems,
