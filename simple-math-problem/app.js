@@ -19,7 +19,7 @@ let sessionStartTime = new Date();
 let sessionEndTime = new Date();
 let totalProblems = 0;
 let successfulProblems = 0;
-let currentSessionIndex = -1; // -1 means current session, 0+ means historical sessions
+let currentSessionIndex = 0;
 
 // Cookie functions for level persistence
 function setCookie(name, value, days = 365) {
@@ -93,7 +93,7 @@ function displaySession(index) {
 
   let logContent, statsForClipboard;
 
-  if (index === -1) {
+  if (index === 0) {
     // Current session
     const sessionDuration = Math.round(
       (sessionEndTime - sessionStartTime) / 1000
@@ -162,24 +162,17 @@ function displaySession(index) {
 
 function navigateToPreviousSession() {
   const sessions = getSessionHistory();
-  if (currentSessionIndex === -1) {
-    if (sessions.length > 0) {
-      currentSessionIndex = 0;
-      displaySession(currentSessionIndex);
-    }
-  } else if (currentSessionIndex < sessions.length - 1) {
+  if (currentSessionIndex < sessions.length) {
     currentSessionIndex++;
     displaySession(currentSessionIndex);
   }
 }
 
 function navigateToNextSession() {
-  if (currentSessionIndex === 0) {
-    currentSessionIndex = -1;
-  } else if (currentSessionIndex > 0) {
+  if (currentSessionIndex > 0) {
     currentSessionIndex--;
+    displaySession(currentSessionIndex);
   }
-  displaySession(currentSessionIndex);
 }
 
 // Problem generation
@@ -219,7 +212,7 @@ function updateLog() {
   logElement.innerHTML = logWithStats.join("<br>");
 
   // Reset to current session when updating
-  currentSessionIndex = -1;
+  currentSessionIndex = 0;
 }
 
 function updateAnswerDisplay() {
@@ -327,7 +320,7 @@ showLogsButton.addEventListener("click", () => {
   navigationButtons.style.display = isVisible ? "none" : "flex";
 
   if (!isVisible) {
-    currentSessionIndex = -1; // Reset to current session
+    currentSessionIndex = 0; // Reset to current session
     displaySession(currentSessionIndex);
 
     // Copy to clipboard
