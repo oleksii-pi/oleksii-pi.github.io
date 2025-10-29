@@ -162,12 +162,15 @@ function displaySession(index) {
 
 function navigateToPreviousSession() {
   const sessions = getSessionHistory();
-  if (currentSessionIndex === -1 && sessions.length > 0) {
-    currentSessionIndex = 0;
+  if (currentSessionIndex === -1) {
+    if (sessions.length > 0) {
+      currentSessionIndex = 0;
+      displaySession(currentSessionIndex);
+    }
   } else if (currentSessionIndex < sessions.length - 1) {
     currentSessionIndex++;
+    displaySession(currentSessionIndex);
   }
-  displaySession(currentSessionIndex);
 }
 
 function navigateToNextSession() {
