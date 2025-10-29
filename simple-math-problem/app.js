@@ -16,6 +16,7 @@ let startTime = null;
 let typedAnswer = "";
 let incorrectAttempts = 0;
 let sessionStartTime = new Date();
+let sessionEndTime = new Date();
 let totalProblems = 0;
 let successfulProblems = 0;
 let currentSessionIndex = -1; // -1 means current session, 0+ means historical sessions
@@ -38,6 +39,17 @@ function getCookie(name) {
   return null;
 }
 
+// Helper function to format date as YYYY-MM-DD HH:MM:SS
+function formatDateTime(date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  const hours = String(date.getHours()).padStart(2, "0");
+  const minutes = String(date.getMinutes()).padStart(2, "0");
+  const seconds = String(date.getSeconds()).padStart(2, "0");
+  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+}
+
 // Local storage functions for session history
 function saveSessionToHistory() {
   if (sessionLog.length <= 1 || totalProblems === 0) {
@@ -46,14 +58,19 @@ function saveSessionToHistory() {
 
   const sessions = getSessionHistory();
   const sessionData = {
-    startTime: sessionStartTime.toISOString(),
-    endTime: new Date().toISOString(),
+    startTime: formatDateTime(sessionStartTime),
+    endTime: formatDateTime(sessionEndTime),
     log: sessionLog,
     totalProblems: totalProblems,
     successfulProblems: successfulProblems,
   };
 
-  sessions.unshift(sessionData); // Add to beginning
+  // Replace or add current session at the beginning
+  if (sessions.length > 0 && sessions[0].startTime === sessionData.startTime) {
+    sessions[0] = sessionData; // Update existing session
+  } else {
+    sessions.unshift(sessionData); // Add new session
+  }
 
   // Keep only last 50 sessions
   if (sessions.length > 50) {
@@ -78,7 +95,9 @@ function displaySession(index) {
 
   if (index === -1) {
     // Current session
-    const sessionDuration = Math.round((new Date() - sessionStartTime) / 1000);
+    const sessionDuration = Math.round(
+      (sessionEndTime - sessionStartTime) / 1000
+    );
     const minutes = Math.floor(sessionDuration / 60);
     const seconds = sessionDuration % 60;
     const successRate =
@@ -121,7 +140,7 @@ function displaySession(index) {
     logContent = logWithStats.join("<br>");
 
     const statsHeader = [
-      `📊 Session Statistics (${start.toLocaleString()}):`,
+      `📊 Session Statistics (${session.startTime}):`,
       `⏱️ Duration: ${minutes}m ${seconds}s`,
       `📝 Total exercises: ${session.totalProblems}`,
       `✅ Success rate: ${successRate}% (${session.successfulProblems}/${session.totalProblems})`,
@@ -181,7 +200,9 @@ function logEntry(entry) {
 }
 
 function updateLog() {
-  const sessionDuration = Math.round((new Date() - sessionStartTime) / 1000);
+  const sessionDuration = Math.round(
+    (sessionEndTime - sessionStartTime) / 1000
+  );
   const minutes = Math.floor(sessionDuration / 60);
   const seconds = sessionDuration % 60;
   const successRate =
@@ -240,6 +261,8 @@ function checkAnswer() {
     return;
   }
 
+  sessionEndTime = new Date(); // Update session end time on every answer
+
   if (userAnswer === currentProblem.answer) {
     totalProblems++;
     successfulProblems++;
@@ -265,6 +288,7 @@ function checkAnswer() {
   }
 
   updateLog();
+  saveSessionToHistory(); // Save session after each answer
 }
 
 // Event Listeners
@@ -305,14 +329,9 @@ showLogsButton.addEventListener("click", () => {
 
     // Copy to clipboard
     const statsText = logElement.dataset.clipboardText || "";
-    navigator.clipboard
-      .writeText(statsText)
-      .then(() => {
-        console.log("Stats copied to clipboard");
-      })
-      .catch((err) => {
-        console.error("Failed to copy stats to clipboard:", err);
-      });
+    navigator.clipboard.writeText(statsText).catch((err) => {
+      console.error("Failed to copy stats to clipboard:", err);
+    });
   }
 });
 
@@ -332,15 +351,6 @@ document.getElementById("decreaseLevel").addEventListener("click", () => {
     setCookie("mathProblemLevel", levelInput.value);
     generateNewProblem();
   }
-});
-
-window.addEventListener("beforeunload", function (e) {
-  saveSessionToHistory();
-  const confirmationMessage =
-    "Are you sure you want to leave? Your progress will be lost.";
-  e.preventDefault();
-  e.returnValue = confirmationMessage;
-  return confirmationMessage;
 });
 
 let startY = null;
@@ -388,7 +398,19 @@ document
 document
   .getElementById("nextSession")
   .addEventListener("click", navigateToNextSession);
+document.getElementById("copyAllSessions").addEventListener("click", () => {
+  const sessions = getSessionHistory();
 
-logEntry(`📚 Session started (${new Date().toLocaleString()})`);
+  navigator.clipboard
+    .writeText(JSON.stringify(sessions, null, 2))
+    .then(() => {
+      alert("All sessions copied to clipboard!");
+    })
+    .catch((err) => {
+      alert("Failed to copy to clipboard");
+    });
+});
+
+logEntry(`📚 Session started (${formatDateTime(new Date())})`);
 generateNewProblem();
 updateAnswerDisplay();
