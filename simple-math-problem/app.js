@@ -57,9 +57,17 @@ function saveSessionToHistory() {
   }
 
   const sessions = getSessionHistory();
+  const sessionDuration = Math.round(
+    (sessionEndTime - sessionStartTime) / 1000
+  );
+  const minutes = Math.floor(sessionDuration / 60);
+  const seconds = sessionDuration % 60;
+  const durationFormatted = `${minutes}:${String(seconds).padStart(2, "0")}`;
+
   const sessionData = {
     startTime: formatDateTime(sessionStartTime),
     endTime: formatDateTime(sessionEndTime),
+    duration: durationFormatted,
     log: sessionLog,
     totalProblems: totalProblems,
     successfulProblems: successfulProblems,
