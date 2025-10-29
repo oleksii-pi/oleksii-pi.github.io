@@ -161,6 +161,7 @@ button:disabled {
   display: none;
   text-align: left;
   max-height: 200px;
+  height: 300px;
   overflow-y: auto;
   margin-top: 20px;
   background-color: #e8e8e8;

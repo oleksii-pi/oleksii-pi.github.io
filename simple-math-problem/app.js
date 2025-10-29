@@ -93,66 +93,34 @@ function displaySession(index) {
 
   let logContent, statsForClipboard;
 
-  if (index === 0) {
-    // Current session
-    const sessionDuration = Math.round(
-      (sessionEndTime - sessionStartTime) / 1000
-    );
-    const minutes = Math.floor(sessionDuration / 60);
-    const seconds = sessionDuration % 60;
-    const successRate =
-      totalProblems > 0
-        ? Math.round((successfulProblems / totalProblems) * 100)
-        : 0;
+  const session = sessions[index];
+  const start = new Date(session.startTime);
+  const end = new Date(session.endTime);
+  const sessionDuration = Math.round((end - start) / 1000);
+  const minutes = Math.floor(sessionDuration / 60);
+  const seconds = sessionDuration % 60;
+  const successRate =
+    session.totalProblems > 0
+      ? Math.round((session.successfulProblems / session.totalProblems) * 100)
+      : 0;
 
-    const statsEntry = `📊 Duration: ${minutes}m ${seconds}s | Exercises: ${totalProblems} | Success: ${successRate}% (${successfulProblems}/${totalProblems})`;
-    const logWithStats = [sessionLog[0], statsEntry, ...sessionLog.slice(1)];
-    logContent = logWithStats.join("<br>");
+  const statsEntry = `📊 Duration: ${minutes}m ${seconds}s | Exercises: ${session.totalProblems} | Success: ${successRate}% (${session.successfulProblems}/${session.totalProblems})`;
+  const logWithStats = [session.log[0], statsEntry, ...session.log.slice(1)];
+  logContent = logWithStats.join("<br>");
 
-    const statsHeader = [
-      `📊 Session Statistics:`,
-      `⏱️ Duration: ${minutes}m ${seconds}s`,
-      `📝 Total exercises: ${totalProblems}`,
-      `✅ Success rate: ${successRate}% (${successfulProblems}/${totalProblems})`,
-      `---`,
-    ];
-    statsForClipboard = statsHeader.join("\n") + "\n" + sessionLog.join("\n");
+  const statsHeader = [
+    `📊 Session Statistics (${session.startTime}):`,
+    `⏱️ Duration: ${minutes}m ${seconds}s`,
+    `📝 Total exercises: ${session.totalProblems}`,
+    `✅ Success rate: ${successRate}% (${session.successfulProblems}/${session.totalProblems})`,
+    `---`,
+  ];
+  statsForClipboard = statsHeader.join("\n") + "\n" + session.log.join("\n");
 
-    // Enable/disable buttons
-    prevButton.disabled = sessions.length === 0;
-    nextButton.disabled = true;
-    navigationButtons.style.display = "flex";
-  } else {
-    // Historical session
-    const session = sessions[index];
-    const start = new Date(session.startTime);
-    const end = new Date(session.endTime);
-    const sessionDuration = Math.round((end - start) / 1000);
-    const minutes = Math.floor(sessionDuration / 60);
-    const seconds = sessionDuration % 60;
-    const successRate =
-      session.totalProblems > 0
-        ? Math.round((session.successfulProblems / session.totalProblems) * 100)
-        : 0;
-
-    const statsEntry = `📊 Duration: ${minutes}m ${seconds}s | Exercises: ${session.totalProblems} | Success: ${successRate}% (${session.successfulProblems}/${session.totalProblems})`;
-    const logWithStats = [session.log[0], statsEntry, ...session.log.slice(1)];
-    logContent = logWithStats.join("<br>");
-
-    const statsHeader = [
-      `📊 Session Statistics (${session.startTime}):`,
-      `⏱️ Duration: ${minutes}m ${seconds}s`,
-      `📝 Total exercises: ${session.totalProblems}`,
-      `✅ Success rate: ${successRate}% (${session.successfulProblems}/${session.totalProblems})`,
-      `---`,
-    ];
-    statsForClipboard = statsHeader.join("\n") + "\n" + session.log.join("\n");
-
-    // Enable/disable buttons
-    prevButton.disabled = index >= sessions.length - 1;
-    nextButton.disabled = false; // Can always go back towards current session
-    navigationButtons.style.display = "flex";
-  }
+  // Enable/disable buttons
+  prevButton.disabled = index >= sessions.length - 1;
+  nextButton.disabled = index == 0;
+  navigationButtons.style.display = "flex";
 
   logElement.innerHTML = logContent;
 
