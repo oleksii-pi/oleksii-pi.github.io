@@ -121,6 +121,7 @@ function displaySession(index) {
   const navigationButtons = document.getElementById("navigationButtons");
   const prevButton = document.getElementById("prevSession");
   const nextButton = document.getElementById("nextSession");
+  const deleteButton = document.getElementById("deleteSession");
 
   let logContent, statsForClipboard;
 
@@ -152,6 +153,7 @@ function displaySession(index) {
   prevButton.disabled = index >= sessions.length - 1;
   nextButton.disabled = index == 0;
   navigationButtons.style.display = "flex";
+  deleteButton.style.display = "block";
 
   logElement.innerHTML = logContent;
 
@@ -323,10 +325,12 @@ enterAnswerButton.addEventListener("click", checkAnswer);
 showLogsButton.addEventListener("click", () => {
   const clipboardLabel = document.getElementById("clipboardLabel");
   const navigationButtons = document.getElementById("navigationButtons");
+  const deleteButton = document.getElementById("deleteSession");
   const isVisible = window.getComputedStyle(logElement).display !== "none";
   logElement.style.display = isVisible ? "none" : "block";
   clipboardLabel.style.display = isVisible ? "none" : "block";
   navigationButtons.style.display = isVisible ? "none" : "flex";
+  deleteButton.style.display = isVisible ? "none" : "block";
 
   if (!isVisible) {
     currentSessionIndex = 0; // Reset to current session
@@ -413,6 +417,35 @@ document.getElementById("copyAllSessions").addEventListener("click", () => {
     .catch((err) => {
       alert("Failed to copy to clipboard");
     });
+});
+
+document.getElementById("deleteSession").addEventListener("click", () => {
+  const sessions = getSessionHistory();
+  const session = sessions[currentSessionIndex];
+  
+  if (confirm(`Are you sure you want to delete this session?\n\nSession: ${session.startTime}\nExercises: ${session.totalProblems}\nSuccess rate: ${session.successRate}`)) {
+    // Remove the session from the array
+    sessions.splice(currentSessionIndex, 1);
+    
+    // Save updated sessions
+    localStorage.setItem("mathProblemSessions", JSON.stringify(sessions));
+    
+    // Adjust current index if needed
+    if (currentSessionIndex >= sessions.length && sessions.length > 0) {
+      currentSessionIndex = sessions.length - 1;
+    }
+    
+    // Refresh display or hide if no sessions left
+    if (sessions.length > 0) {
+      displaySession(currentSessionIndex);
+    } else {
+      logElement.style.display = "none";
+      document.getElementById("clipboardLabel").style.display = "none";
+      document.getElementById("navigationButtons").style.display = "none";
+      document.getElementById("deleteSession").style.display = "none";
+      alert("All sessions have been deleted.");
+    }
+  }
 });
 
 // Mistakes practice functionality
