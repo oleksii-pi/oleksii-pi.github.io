@@ -422,19 +422,23 @@ document.getElementById("copyAllSessions").addEventListener("click", () => {
 document.getElementById("deleteSession").addEventListener("click", () => {
   const sessions = getSessionHistory();
   const session = sessions[currentSessionIndex];
-  
-  if (confirm(`Are you sure you want to delete this session?\n\nSession: ${session.startTime}\nExercises: ${session.totalProblems}\nSuccess rate: ${session.successRate}`)) {
+
+  const userInput = prompt(
+    `Are you sure you want to delete this session?\n\nSession: ${session.startTime}\nExercises: ${session.totalProblems}\nSuccess rate: ${session.successRate}\n\nType "delete" to confirm:`
+  );
+
+  if (userInput === "delete") {
     // Remove the session from the array
     sessions.splice(currentSessionIndex, 1);
-    
+
     // Save updated sessions
     localStorage.setItem("mathProblemSessions", JSON.stringify(sessions));
-    
+
     // Adjust current index if needed
     if (currentSessionIndex >= sessions.length && sessions.length > 0) {
       currentSessionIndex = sessions.length - 1;
     }
-    
+
     // Refresh display or hide if no sessions left
     if (sessions.length > 0) {
       displaySession(currentSessionIndex);
