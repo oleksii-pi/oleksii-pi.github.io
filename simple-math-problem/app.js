@@ -122,6 +122,7 @@ function displaySession(index) {
   const prevButton = document.getElementById("prevSession");
   const nextButton = document.getElementById("nextSession");
   const deleteButton = document.getElementById("deleteSession");
+  const copyAllButton = document.getElementById("copyAllSessions");
 
   let logContent, statsForClipboard;
 
@@ -154,6 +155,9 @@ function displaySession(index) {
   nextButton.disabled = index == 0;
   navigationButtons.style.display = "flex";
   deleteButton.style.display = "block";
+
+  // Update "Copy all" button text with session count
+  copyAllButton.textContent = `Copy all (${sessions.length})`;
 
   logElement.innerHTML = logContent;
 
@@ -422,6 +426,18 @@ document
 document
   .getElementById("nextSession")
   .addEventListener("click", navigateToNextSession);
+document.getElementById("copySession").addEventListener("click", () => {
+  const statsText = logElement.dataset.clipboardText || "";
+  navigator.clipboard
+    .writeText(statsText)
+    .then(() => {
+      alert("Current session copied to clipboard!");
+    })
+    .catch((err) => {
+      alert("Failed to copy to clipboard");
+      console.error(err);
+    });
+});
 document.getElementById("copyAllSessions").addEventListener("click", () => {
   const sessions = getSessionHistory();
 
