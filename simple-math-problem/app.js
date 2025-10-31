@@ -35,7 +35,7 @@ let currentSessionIndex = 0;
 let isPracticingMistakes = false;
 let practiceTasks = [];
 let currentPracticeIndex = 0;
-let pastSessionCount = 5;
+let pastSessionCount = 1;
 
 // Cookie functions for level persistence
 function setCookie(name, value, days = 365) {
