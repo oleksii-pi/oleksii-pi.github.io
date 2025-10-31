@@ -562,6 +562,7 @@ showMistakesButton.addEventListener("click", () => {
     logElement.style.display = "none";
     document.getElementById("clipboardLabel").style.display = "none";
     document.getElementById("navigationButtons").style.display = "none";
+    document.getElementById("deleteSession").style.display = "none";
   }
 });
 
