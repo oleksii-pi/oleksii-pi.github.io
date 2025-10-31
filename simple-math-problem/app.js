@@ -180,8 +180,21 @@ function navigateToNextSession() {
 function generateNewProblem() {
   if (isPracticingMistakes && practiceTasks.length > 0) {
     // Practice mode: pick a random task from the practice list
-    const randomIndex = Math.floor(Math.random() * practiceTasks.length);
-    currentProblem = practiceTasks[randomIndex];
+    let randomIndex;
+    let selectedProblem;
+    
+    // If there's more than 1 task, ensure we don't pick the same one as before
+    if (practiceTasks.length > 1) {
+      do {
+        randomIndex = Math.floor(Math.random() * practiceTasks.length);
+        selectedProblem = practiceTasks[randomIndex];
+      } while (currentProblem && selectedProblem.question === currentProblem.question);
+    } else {
+      randomIndex = 0;
+      selectedProblem = practiceTasks[randomIndex];
+    }
+    
+    currentProblem = selectedProblem;
     problemElement.textContent = currentProblem.question;
     startTime = new Date();
     incorrectAttempts = 0;
