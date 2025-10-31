@@ -8,6 +8,18 @@ const successEmoji = document.getElementById("successEmoji");
 const levelInput = document.getElementById("levelInput");
 const helpButton = document.getElementById("helpButton");
 const deleteButton = document.getElementById("del");
+const showMistakesButton = document.getElementById("showMistakes");
+const mistakesModal = document.getElementById("mistakesModal");
+const pastSessionCountLabel = document.getElementById("pastSessionCount");
+const practiceTasksTextArea = document.getElementById("practiceTasksTextArea");
+const applyMistakesButton = document.getElementById("applyMistakes");
+const cancelMistakesButton = document.getElementById("cancelMistakes");
+const increasePastSessionsButton = document.getElementById(
+  "increasePastSessions"
+);
+const decreasePastSessionsButton = document.getElementById(
+  "decreasePastSessions"
+);
 
 // State variables
 let currentProblem = {};
@@ -20,6 +32,10 @@ let sessionEndTime = new Date();
 let totalProblems = 0;
 let successfulProblems = 0;
 let currentSessionIndex = 0;
+let isPracticingMistakes = false;
+let practiceTasks = [];
+let currentPracticeIndex = 0;
+let pastSessionCount = 5;
 
 // Cookie functions for level persistence
 function setCookie(name, value, days = 365) {
@@ -160,6 +176,16 @@ function navigateToNextSession() {
 
 // Problem generation
 function generateNewProblem() {
+  if (isPracticingMistakes && practiceTasks.length > 0) {
+    // Practice mode: pick a random task from the practice list
+    const randomIndex = Math.floor(Math.random() * practiceTasks.length);
+    currentProblem = practiceTasks[randomIndex];
+    problemElement.textContent = currentProblem.question;
+    startTime = new Date();
+    incorrectAttempts = 0;
+    return;
+  }
+
   const level = parseInt(levelInput.value, 10);
   let newProblem;
 
@@ -357,7 +383,6 @@ document.addEventListener(
 
 document.addEventListener("keydown", function (e) {
   if (e.code === "Space") {
-    e.preventDefault();
     generateNewProblem();
   }
 });
@@ -388,6 +413,183 @@ document.getElementById("copyAllSessions").addEventListener("click", () => {
     .catch((err) => {
       alert("Failed to copy to clipboard");
     });
+});
+
+// Mistakes practice functionality
+function extractMistakesFromSessions(numSessions) {
+  const sessions = getSessionHistory();
+  const mistakes = [];
+
+  for (let i = 0; i < Math.min(numSessions, sessions.length); i++) {
+    const session = sessions[i];
+    session.log.forEach((entry) => {
+      if (entry.startsWith("❌")) {
+        // Extract the problem from the log entry
+        // Format: ❌ 2x2 = 5 Incorrect (3s)
+        const match = entry.match(/❌\s+(.+?)\s+=\s+\d+\s+Incorrect/);
+        if (match) {
+          const question = match[1].trim();
+          mistakes.push(question);
+        }
+      }
+    });
+  }
+
+  return [...new Set(mistakes)]; // Remove duplicates
+}
+
+function parsePracticeTasks(tasksText) {
+  const tasks = [];
+  const entries = tasksText
+    .split(",")
+    .map((e) => e.trim())
+    .filter((e) => e);
+
+  entries.forEach((entry) => {
+    // Parse format: 2x2=4, 3 × 7=21, 56:7=8, 4 + 4=8
+    const match = entry.match(/^(.+?)\s*=\s*(\d+)$/);
+    if (match) {
+      let question = match[1].trim();
+      const answer = parseInt(match[2], 10);
+
+      // Normalize the question format by replacing × with x for consistency
+      question = question.replace(/×/g, "x");
+
+      tasks.push({ question, answer });
+    }
+  });
+
+  return tasks;
+}
+
+function formatPracticeTasksForTextarea(mistakes) {
+  return mistakes
+    .map((q) => {
+      // Parse the question to get the answer
+      try {
+        // Replace operators for eval: x or × -> *, : -> /
+        const evalExpression = q.replace(/x|×/g, "*").replace(/:/g, "/");
+        const answer = eval(evalExpression);
+        return `${q}=${answer}`;
+      } catch (e) {
+        return q;
+      }
+    })
+    .join(", ");
+}
+
+showMistakesButton.addEventListener("click", () => {
+  const isVisible = mistakesModal.style.display === "block";
+
+  if (isVisible) {
+    mistakesModal.style.display = "none";
+  } else {
+    // Load mistakes from past sessions
+    const mistakes = extractMistakesFromSessions(pastSessionCount);
+    practiceTasksTextArea.value = formatPracticeTasksForTextarea(mistakes);
+    mistakesModal.style.display = "block";
+    logElement.style.display = "none";
+    document.getElementById("clipboardLabel").style.display = "none";
+    document.getElementById("navigationButtons").style.display = "none";
+  }
+});
+
+cancelMistakesButton.addEventListener("click", () => {
+  mistakesModal.style.display = "none";
+});
+
+increasePastSessionsButton.addEventListener("click", () => {
+  const sessions = getSessionHistory();
+  if (pastSessionCount < sessions.length) {
+    pastSessionCount++;
+    pastSessionCountLabel.textContent = pastSessionCount;
+    // Reload mistakes with new count
+    const mistakes = extractMistakesFromSessions(pastSessionCount);
+    practiceTasksTextArea.value = formatPracticeTasksForTextarea(mistakes);
+  }
+});
+
+decreasePastSessionsButton.addEventListener("click", () => {
+  if (pastSessionCount > 1) {
+    pastSessionCount--;
+    pastSessionCountLabel.textContent = pastSessionCount;
+    // Reload mistakes with new count
+    const mistakes = extractMistakesFromSessions(pastSessionCount);
+    practiceTasksTextArea.value = formatPracticeTasksForTextarea(mistakes);
+  }
+});
+
+applyMistakesButton.addEventListener("click", () => {
+  const tasksText = practiceTasksTextArea.value.trim();
+
+  if (!tasksText) {
+    alert("Please add some practice tasks!");
+    return;
+  }
+
+  practiceTasks = parsePracticeTasks(tasksText);
+
+  if (practiceTasks.length === 0) {
+    alert("No valid tasks found. Please use format: 2x2=4, 3x3=9, 56:7=8");
+    return;
+  }
+
+  // Enter practice mode
+  isPracticingMistakes = true;
+  mistakesModal.style.display = "none";
+  showMistakesButton.style.backgroundColor = "#28a745";
+  showMistakesButton.style.color = "white";
+
+  // Disable level selection
+  document.getElementById("decreaseLevel").disabled = true;
+  document.getElementById("increaseLevel").disabled = true;
+  levelInput.disabled = true;
+
+  // Reset session for practice
+  sessionLog = [];
+  sessionStartTime = new Date();
+  totalProblems = 0;
+  successfulProblems = 0;
+
+  logEntry(
+    `📚 Practicing mistakes from the last ${pastSessionCount} sessions (${formatDateTime(
+      new Date()
+    )})`
+  );
+  updateLog();
+
+  generateNewProblem();
+});
+
+// Add click handler to exit practice mode when clicking Mistakes button again while in practice mode
+const originalShowMistakesHandler = showMistakesButton.onclick;
+showMistakesButton.addEventListener("click", () => {
+  if (isPracticingMistakes) {
+    // Exit practice mode
+    isPracticingMistakes = false;
+    practiceTasks = [];
+    showMistakesButton.style.backgroundColor = "";
+    showMistakesButton.style.color = "";
+
+    // Re-enable level selection
+    document.getElementById("decreaseLevel").disabled = false;
+    document.getElementById("increaseLevel").disabled = false;
+    levelInput.disabled = false;
+
+    // Save current practice session
+    saveSessionToHistory();
+
+    // Reset session
+    sessionLog = [];
+    sessionStartTime = new Date();
+    totalProblems = 0;
+    successfulProblems = 0;
+
+    logEntry(`📚 Session started (${formatDateTime(new Date())})`);
+    updateLog();
+
+    generateNewProblem();
+  }
 });
 
 logEntry(`📚 Session started (${formatDateTime(new Date())})`);
