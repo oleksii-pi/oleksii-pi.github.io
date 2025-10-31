@@ -428,7 +428,9 @@ function extractMistakesFromSessions(numSessions) {
         // Format: ❌ 2x2 = 5 Incorrect (3s)
         const match = entry.match(/❌\s+(.+?)\s+=\s+\d+\s+Incorrect/);
         if (match) {
-          const question = match[1].trim();
+          let question = match[1].trim();
+          // Normalize the question format by replacing × with x for consistency
+          question = question.replace(/×/g, "x");
           mistakes.push(question);
         }
       }
