@@ -525,6 +525,11 @@ function parsePracticeTasks(tasksText) {
 
       // Normalize the question format by replacing × with x for consistency
       question = question.replace(/×/g, "x");
+      
+      // Add spaces around operators for consistency with generated problems
+      question = question.replace(/([+\-x:])/g, " $1 ");
+      // Clean up any double spaces
+      question = question.replace(/\s+/g, " ").trim();
 
       tasks.push({ question, answer });
     }
@@ -541,7 +546,8 @@ function formatPracticeTasksForTextarea(mistakes) {
         // Replace operators for eval: x or × -> *, : -> /
         const evalExpression = q.replace(/x|×/g, "*").replace(/:/g, "/");
         const answer = eval(evalExpression);
-        return `${q}=${answer}`;
+        // Remove spaces from the format
+        return `${q.replace(/\s/g, '')}=${answer}`;
       } catch (e) {
         return q;
       }
