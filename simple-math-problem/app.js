@@ -20,6 +20,7 @@ const increasePastSessionsButton = document.getElementById(
 const decreasePastSessionsButton = document.getElementById(
   "decreasePastSessions"
 );
+const allPastSessionsButton = document.getElementById("allPastSessions");
 
 // State variables
 let currentProblem = {};
@@ -525,7 +526,7 @@ function parsePracticeTasks(tasksText) {
 
       // Normalize the question format by replacing × with x for consistency
       question = question.replace(/×/g, "x");
-      
+
       // Add spaces around operators for consistency with generated problems
       question = question.replace(/([+\-x:])/g, " $1 ");
       // Clean up any double spaces
@@ -547,7 +548,7 @@ function formatPracticeTasksForTextarea(mistakes) {
         const evalExpression = q.replace(/x|×/g, "*").replace(/:/g, "/");
         const answer = eval(evalExpression);
         // Remove spaces from the format
-        return `${q.replace(/\s/g, '')}=${answer}`;
+        return `${q.replace(/\s/g, "")}=${answer}`;
       } catch (e) {
         return q;
       }
@@ -590,6 +591,17 @@ increasePastSessionsButton.addEventListener("click", () => {
 decreasePastSessionsButton.addEventListener("click", () => {
   if (pastSessionCount > 1) {
     pastSessionCount--;
+    pastSessionCountLabel.textContent = pastSessionCount;
+    // Reload mistakes with new count
+    const mistakes = extractMistakesFromSessions(pastSessionCount);
+    practiceTasksTextArea.value = formatPracticeTasksForTextarea(mistakes);
+  }
+});
+
+allPastSessionsButton.addEventListener("click", () => {
+  const sessions = getSessionHistory();
+  if (sessions.length > 0) {
+    pastSessionCount = sessions.length;
     pastSessionCountLabel.textContent = pastSessionCount;
     // Reload mistakes with new count
     const mistakes = extractMistakesFromSessions(pastSessionCount);
