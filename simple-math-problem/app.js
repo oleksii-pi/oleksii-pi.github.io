@@ -623,9 +623,7 @@ applyMistakesButton.addEventListener("click", () => {
   totalProblems = 0;
   successfulProblems = 0;
 
-  logEntry(
-    `📚 Practicing mistakes from the last ${pastSessionCount} sessions)`
-  );
+  logEntry(`📚 Practicing mistakes from the last ${pastSessionCount} sessions`);
   updateLog();
 
   generateNewProblem();
