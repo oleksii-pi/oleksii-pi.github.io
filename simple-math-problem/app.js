@@ -624,7 +624,7 @@ applyMistakesButton.addEventListener("click", () => {
   successfulProblems = 0;
 
   logEntry(
-    `📚 Practicing mistakes from the last ${pastSessionCount} sessions})`
+    `📚 Practicing mistakes from the last ${pastSessionCount} sessions)`
   );
   updateLog();
 
@@ -645,9 +645,6 @@ showMistakesButton.addEventListener("click", () => {
     document.getElementById("decreaseLevel").disabled = false;
     document.getElementById("increaseLevel").disabled = false;
     levelInput.disabled = false;
-
-    // Save current practice session
-    saveSessionToHistory();
 
     // Reset session
     sessionLog = [];
