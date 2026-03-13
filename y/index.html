@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>YouTube Fullscreen Player</title>
+    <title>Video Fullscreen Player</title>
     <style>
       html,
       body {
@@ -109,7 +109,7 @@
 
       if (!videoId) {
         app.innerHTML =
-          '<div class="message">Missing or invalid YouTube URL/video id.</div>';
+          '<div class="message">Missing or invalid URL/video id.</div>';
       } else {
         const iframe = document.createElement("iframe");
         iframe.src =
