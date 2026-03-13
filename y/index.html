@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>YouTube Fullscreen Player</title>
+    <style>
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        background: #000;
+        overflow: hidden;
+      }
+
+      #app {
+        width: 100%;
+        height: 100%;
+      }
+
+      iframe {
+        width: 100%;
+        height: 100%;
+        border: 0;
+        display: block;
+      }
+
+      .message {
+        color: #fff;
+        font-family: sans-serif;
+        display: grid;
+        place-items: center;
+        width: 100%;
+        height: 100%;
+        padding: 24px;
+        box-sizing: border-box;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <main id="app"></main>
+    <script>
+      function extractVideoId(input) {
+        if (!input) return null;
+
+        const trimmed = input.trim();
+        const idPattern = /^[A-Za-z0-9_-]{11}$/;
+
+        if (idPattern.test(trimmed)) {
+          return trimmed;
+        }
+
+        try {
+          const url = new URL(trimmed);
+
+          if (url.hostname === "youtu.be") {
+            const shortId = url.pathname.replace(/^\/+/, "").split("/")[0];
+            return idPattern.test(shortId) ? shortId : null;
+          }
+
+          if (
+            url.hostname === "www.youtube.com" ||
+            url.hostname === "youtube.com" ||
+            url.hostname === "m.youtube.com"
+          ) {
+            const v = url.searchParams.get("v");
+            if (idPattern.test(v || "")) return v;
+
+            const parts = url.pathname.split("/").filter(Boolean);
+            if (parts[0] === "embed" || parts[0] === "shorts") {
+              return idPattern.test(parts[1] || "") ? parts[1] : null;
+            }
+          }
+        } catch (_) {
+          return null;
+        }
+
+        return null;
+      }
+
+      function getInputFromQuery() {
+        const raw = window.location.search.replace(/^\?/, "");
+        if (/^https?:\/\//i.test(raw)) {
+          return decodeURIComponent(raw);
+        }
+
+        const params = new URLSearchParams(window.location.search);
+        const direct = params.get("v");
+        if (direct) return direct;
+
+        const firstEntry = params.entries().next().value;
+        if (firstEntry) {
+          const key = firstEntry[0];
+          const value = firstEntry[1];
+          if (/^https?:\/\//i.test(key) && value) {
+            return decodeURIComponent(key + "=" + value);
+          }
+          return decodeURIComponent(key);
+        }
+
+        return null;
+      }
+
+      const app = document.getElementById("app");
+      const input = getInputFromQuery();
+      const videoId = extractVideoId(input);
+
+      if (!videoId) {
+        app.innerHTML =
+          '<div class="message">Missing or invalid YouTube URL/video id.</div>';
+      } else {
+        const iframe = document.createElement("iframe");
+        iframe.src =
+          "https://www.youtube.com/embed/" +
+          encodeURIComponent(videoId) +
+          "?autoplay=1&rel=0";
+        iframe.allow =
+          "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
+        iframe.allowFullscreen = true;
+        iframe.referrerPolicy = "strict-origin-when-cross-origin";
+        app.appendChild(iframe);
+      }
+    </script>
+  </body>
+</html>
