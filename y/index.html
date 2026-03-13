@@ -111,16 +111,26 @@
         app.innerHTML =
           '<div class="message">Missing or invalid URL/video id.</div>';
       } else {
-        const iframe = document.createElement("iframe");
-        iframe.src =
-          "https://www.youtube-nocookie.com/embed/" +
-          encodeURIComponent(videoId) +
-          "?autoplay=1&rel=0";
-        iframe.allow =
-          "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
-        iframe.allowFullscreen = true;
-        iframe.referrerPolicy = "strict-origin-when-cross-origin";
-        app.appendChild(iframe);
+        const canonicalParams = new URLSearchParams();
+        canonicalParams.set("v", videoId);
+        const canonicalSearch = "?" + canonicalParams.toString();
+
+        if (window.location.search !== canonicalSearch) {
+          window.location.replace(
+            window.location.pathname + canonicalSearch + window.location.hash,
+          );
+        } else {
+          const iframe = document.createElement("iframe");
+          iframe.src =
+            "https://www.youtube-nocookie.com/embed/" +
+            encodeURIComponent(videoId) +
+            "?autoplay=1&rel=0";
+          iframe.allow =
+            "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
+          iframe.allowFullscreen = true;
+          iframe.referrerPolicy = "strict-origin-when-cross-origin";
+          app.appendChild(iframe);
+        }
       }
     </script>
   </body>
