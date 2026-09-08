@@ -1,0 +1,502 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="data:,">
+  <title>LDR BLE Monitor</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #eef2f4;
+      --panel: #fbfcfd;
+      --line: #cfd9df;
+      --text: #17212b;
+      --muted: #62717d;
+      --blue: #1769aa;
+      --green: #198754;
+      --red: #b42318;
+      --grid: rgba(36, 54, 66, 0.13);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      min-height: 100%;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    body {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+    }
+
+    button {
+      min-height: 38px;
+      border: 1px solid var(--blue);
+      border-radius: 8px;
+      background: var(--blue);
+      color: #fff;
+      padding: 0 16px;
+      font: inherit;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    button:disabled {
+      border-color: var(--line);
+      background: #dde5ea;
+      color: var(--muted);
+      cursor: default;
+    }
+
+    .app {
+      width: min(980px, 100%);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      box-shadow: 0 18px 42px rgba(23, 31, 38, 0.12);
+      padding: 22px;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      margin-bottom: 18px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 24px;
+      line-height: 1.2;
+      letter-spacing: 0;
+    }
+
+    .controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 32px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 0 11px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--red);
+    }
+
+    .connected .dot {
+      background: var(--green);
+    }
+
+    .readout {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .metric {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 14px;
+      min-width: 0;
+    }
+
+    .label {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0;
+      margin-bottom: 7px;
+    }
+
+    .value {
+      min-height: 34px;
+      font-size: 30px;
+      line-height: 1.1;
+      font-weight: 850;
+      font-variant-numeric: tabular-nums;
+      overflow-wrap: anywhere;
+    }
+
+    .filter {
+      display: grid;
+      grid-template-columns: auto minmax(180px, 1fr) 44px;
+      align-items: center;
+      gap: 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 12px 14px;
+      margin-bottom: 16px;
+    }
+
+    .filter label {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--blue);
+    }
+
+    .filter-value {
+      font-size: 20px;
+      font-weight: 850;
+      font-variant-numeric: tabular-nums;
+      text-align: right;
+    }
+
+    .chart-wrap {
+      position: relative;
+      height: min(58vh, 520px);
+      min-height: 320px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      overflow: hidden;
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    .empty {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      color: var(--muted);
+      font-weight: 800;
+      pointer-events: none;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    @media (max-width: 720px) {
+      body {
+        padding: 12px;
+      }
+
+      .app {
+        padding: 14px;
+      }
+
+      .topbar {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .controls {
+        justify-content: flex-start;
+      }
+
+      .readout {
+        grid-template-columns: 1fr;
+      }
+
+      .filter {
+        grid-template-columns: 1fr;
+      }
+
+      .filter-value {
+        text-align: left;
+      }
+
+      .chart-wrap {
+        height: 56vh;
+        min-height: 300px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <div class="topbar">
+      <h1>LDR BLE Monitor</h1>
+      <div class="controls">
+        <span id="status" class="status"><span class="dot"></span><span>Disconnected</span></span>
+        <button id="connect" type="button">Connect</button>
+      </div>
+    </div>
+
+    <section class="readout" aria-label="Light sensor readings">
+      <div class="metric">
+        <div class="label">Current</div>
+        <div id="currentValue" class="value">-</div>
+      </div>
+      <div class="metric">
+        <div class="label">Minimum</div>
+        <div id="minValue" class="value">-</div>
+      </div>
+      <div class="metric">
+        <div class="label">Maximum</div>
+        <div id="maxValue" class="value">-</div>
+      </div>
+    </section>
+
+    <section class="filter" aria-label="Low-pass filter">
+      <label for="filterStrength">LP filter</label>
+      <input id="filterStrength" type="range" min="0" max="31" value="0">
+      <div id="filterValue" class="filter-value">0</div>
+    </section>
+
+    <section class="chart-wrap" aria-label="Last minute light sensor chart">
+      <canvas id="chart"></canvas>
+      <div id="empty" class="empty">No samples</div>
+    </section>
+  </main>
+
+  <script>
+    const SERVICE_UUID = "19b10000-e8f2-537e-4f6c-d104768a1214";
+    const VALUE_UUID = "19b10001-e8f2-537e-4f6c-d104768a1214";
+    const WINDOW_MS = 60 * 1000;
+    const ADC_MAX = 1023;
+
+    const connectButton = document.getElementById("connect");
+    const statusEl = document.getElementById("status");
+    const statusText = statusEl.querySelector("span:last-child");
+    const currentValueEl = document.getElementById("currentValue");
+    const minValueEl = document.getElementById("minValue");
+    const maxValueEl = document.getElementById("maxValue");
+    const filterStrengthEl = document.getElementById("filterStrength");
+    const filterValueEl = document.getElementById("filterValue");
+    const emptyEl = document.getElementById("empty");
+    const canvas = document.getElementById("chart");
+    const ctx = canvas.getContext("2d");
+
+    let device = null;
+    let characteristic = null;
+    let samples = [];
+    let filteredValue = null;
+
+    function setStatus(text, connected) {
+      statusText.textContent = text;
+      statusEl.classList.toggle("connected", connected);
+      connectButton.textContent = connected ? "Disconnect" : "Connect";
+    }
+
+    function trimSamples(now) {
+      const cutoff = now - WINDOW_MS;
+      while (samples.length && samples[0].time < cutoff) {
+        samples.shift();
+      }
+    }
+
+    function updateReadout() {
+      if (!samples.length) {
+        currentValueEl.textContent = "-";
+        minValueEl.textContent = "-";
+        maxValueEl.textContent = "-";
+        emptyEl.classList.remove("hidden");
+        return;
+      }
+
+      const values = samples.map((sample) => sample.value);
+      currentValueEl.textContent = values[values.length - 1];
+      minValueEl.textContent = Math.min(...values);
+      maxValueEl.textContent = Math.max(...values);
+      emptyEl.classList.add("hidden");
+    }
+
+    function resizeCanvas() {
+      const rect = canvas.getBoundingClientRect();
+      const scale = window.devicePixelRatio || 1;
+      canvas.width = Math.max(1, Math.floor(rect.width * scale));
+      canvas.height = Math.max(1, Math.floor(rect.height * scale));
+      ctx.setTransform(scale, 0, 0, scale, 0, 0);
+      drawChart();
+    }
+
+    function drawChart() {
+      const rect = canvas.getBoundingClientRect();
+      const width = rect.width;
+      const height = rect.height;
+      const pad = { left: 48, right: 18, top: 18, bottom: 34 };
+      const plotWidth = Math.max(1, width - pad.left - pad.right);
+      const plotHeight = Math.max(1, height - pad.top - pad.bottom);
+      const now = Date.now();
+
+      trimSamples(now);
+      updateReadout();
+
+      ctx.clearRect(0, 0, width, height);
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(0, 0, width, height);
+
+      ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue("--grid");
+      ctx.lineWidth = 1;
+      ctx.fillStyle = "#62717d";
+      ctx.font = "12px system-ui, sans-serif";
+      ctx.textBaseline = "middle";
+
+      for (let i = 0; i <= 4; i += 1) {
+        const y = pad.top + (plotHeight * i) / 4;
+        const value = Math.round(ADC_MAX - (ADC_MAX * i) / 4);
+        ctx.beginPath();
+        ctx.moveTo(pad.left, y);
+        ctx.lineTo(width - pad.right, y);
+        ctx.stroke();
+        ctx.fillText(String(value), 10, y);
+      }
+
+      ctx.textBaseline = "top";
+      ctx.textAlign = "center";
+      for (let i = 0; i <= 4; i += 1) {
+        const x = pad.left + (plotWidth * i) / 4;
+        const secondsAgo = 60 - i * 15;
+        ctx.beginPath();
+        ctx.moveTo(x, pad.top);
+        ctx.lineTo(x, height - pad.bottom);
+        ctx.stroke();
+        ctx.fillText(secondsAgo === 0 ? "now" : `-${secondsAgo}s`, x, height - 24);
+      }
+      ctx.textAlign = "start";
+
+      if (samples.length < 2) {
+        return;
+      }
+
+      ctx.strokeStyle = "#1769aa";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      for (let i = 0; i < samples.length; i += 1) {
+        const sample = samples[i];
+        const x = pad.left + ((sample.time - (now - WINDOW_MS)) / WINDOW_MS) * plotWidth;
+        const y = pad.top + (1 - sample.value / ADC_MAX) * plotHeight;
+        if (i === 0) {
+          ctx.moveTo(x, y);
+        } else {
+          ctx.lineTo(x, y);
+        }
+      }
+      ctx.stroke();
+    }
+
+    function onDisconnected() {
+      characteristic = null;
+      device = null;
+      setStatus("Disconnected", false);
+    }
+
+    function onValueChanged(event) {
+      const decoder = new TextDecoder();
+      const text = decoder.decode(event.target.value).trim();
+      const rawValue = Number.parseInt(text, 10);
+
+      if (!Number.isFinite(rawValue)) {
+        return;
+      }
+
+      const clampedValue = Math.max(0, Math.min(ADC_MAX, rawValue));
+      const filterStrength = Number.parseInt(filterStrengthEl.value, 10);
+      if (filterStrength <= 0 || filteredValue === null) {
+        filteredValue = clampedValue;
+      } else {
+        filteredValue += (clampedValue - filteredValue) / (filterStrength + 1);
+      }
+
+      const now = Date.now();
+      samples.push({ time: now, value: Math.round(filteredValue) });
+      trimSamples(now);
+      drawChart();
+    }
+
+    async function connect() {
+      if (!navigator.bluetooth) {
+        setStatus("Web Bluetooth unavailable", false);
+        return;
+      }
+
+      setStatus("Selecting device", false);
+      device = await navigator.bluetooth.requestDevice({
+        filters: [{ services: [SERVICE_UUID] }],
+        optionalServices: [SERVICE_UUID]
+      });
+
+      device.addEventListener("gattserverdisconnected", onDisconnected);
+
+      setStatus("Connecting", false);
+      const server = await device.gatt.connect();
+      const service = await server.getPrimaryService(SERVICE_UUID);
+      characteristic = await service.getCharacteristic(VALUE_UUID);
+
+      await characteristic.startNotifications();
+      characteristic.addEventListener("characteristicvaluechanged", onValueChanged);
+
+      setStatus("Connected", true);
+    }
+
+    async function disconnect() {
+      if (characteristic) {
+        await characteristic.stopNotifications().catch(() => {});
+        characteristic.removeEventListener("characteristicvaluechanged", onValueChanged);
+      }
+
+      if (device && device.gatt.connected) {
+        device.gatt.disconnect();
+      } else {
+        onDisconnected();
+      }
+    }
+
+    connectButton.addEventListener("click", async () => {
+      connectButton.disabled = true;
+      try {
+        if (device && device.gatt.connected) {
+          await disconnect();
+        } else {
+          await connect();
+        }
+      } catch (error) {
+        setStatus(error.message || "Connection failed", false);
+      } finally {
+        connectButton.disabled = false;
+      }
+    });
+
+    filterStrengthEl.addEventListener("input", () => {
+      filterValueEl.textContent = filterStrengthEl.value;
+      filteredValue = samples.length ? samples[samples.length - 1].value : null;
+    });
+
+    window.addEventListener("resize", resizeCanvas);
+    resizeCanvas();
+  </script>
+</body>
+</html>

@@ -1,0 +1,1992 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="data:,">
+  <title>Nema BLE Controller</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #eef2f4;
+      --panel: #fbfcfd;
+      --panel-2: #f5f7f8;
+      --line: #cfd9df;
+      --text: #182028;
+      --muted: #657380;
+      --teal: #0b857a;
+      --green: #198754;
+      --red: #b42318;
+      --shadow: 0 18px 42px rgba(23, 31, 38, 0.12);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      min-height: 100%;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    body {
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    button,
+    input,
+    select {
+      font: inherit;
+    }
+
+    button {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #ffffff;
+      color: var(--text);
+      cursor: pointer;
+      min-height: 38px;
+      padding: 0 14px;
+      font-weight: 700;
+    }
+
+    button:hover {
+      border-color: #9fb1bb;
+    }
+
+    button:active {
+      transform: translateY(1px);
+    }
+
+    button.primary {
+      border-color: var(--teal);
+      background: var(--teal);
+      color: #ffffff;
+    }
+
+    button.danger {
+      border-color: #efb4ad;
+      color: var(--red);
+    }
+
+    button:disabled {
+      border-color: var(--line);
+      background: #dde5ea;
+      color: var(--muted);
+      cursor: default;
+      transform: none;
+    }
+
+    input,
+    select {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #ffffff;
+      color: var(--text);
+      min-height: 38px;
+      padding: 0 12px;
+      font-weight: 700;
+      width: 100%;
+    }
+
+    input[type="range"] {
+      accent-color: var(--teal);
+      padding: 0;
+    }
+
+    label {
+      display: grid;
+      gap: 7px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .debug-switch {
+      position: fixed;
+      z-index: 20;
+      top: 18px;
+      right: 18px;
+      border-color: #126c43;
+      background: var(--green);
+      color: #ffffff;
+      box-shadow: 0 8px 18px rgba(25, 135, 84, 0.24);
+    }
+
+    .app {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 14px 28px;
+    }
+
+    .surface {
+      width: min(988px, calc(100vw - 56px));
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+    }
+
+    .default-surface {
+      padding: 24px;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      margin-bottom: 18px;
+    }
+
+    h1,
+    h2,
+    h3 {
+      margin: 0;
+      letter-spacing: 0;
+    }
+
+    h1 {
+      font-size: 24px;
+      line-height: 1.2;
+    }
+
+    h2 {
+      font-size: 22px;
+      line-height: 1.25;
+    }
+
+    h3 {
+      font-size: 16px;
+      line-height: 1.35;
+    }
+
+    .actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 30px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #ffffff;
+      padding: 0 10px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--red);
+    }
+
+    .badge.connected .dot {
+      background: var(--green);
+    }
+
+    .position-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 146px;
+      grid-template-rows: minmax(360px, 690px) 174px;
+      gap: 30px;
+    }
+
+    .pad {
+      position: relative;
+      min-height: 360px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: hidden;
+      touch-action: none;
+      background:
+        linear-gradient(90deg, transparent calc(100% - 1px), rgba(25, 135, 84, 0.12) 1px),
+        linear-gradient(0deg, transparent calc(100% - 1px), rgba(25, 135, 84, 0.12) 1px),
+        #f9fbfa;
+      background-size: 10% 100%, 100% 10%;
+    }
+
+    .pad::before,
+    .pad::after {
+      content: "";
+      position: absolute;
+      pointer-events: none;
+      background: rgba(44, 65, 74, 0.18);
+    }
+
+    .pad::before {
+      top: 0;
+      bottom: 0;
+      left: 50%;
+      width: 1px;
+    }
+
+    .pad::after {
+      top: 50%;
+      left: 0;
+      right: 0;
+      height: 1px;
+    }
+
+    .pad-thumb {
+      position: absolute;
+      z-index: 3;
+      width: 24px;
+      height: 24px;
+      border: 4px solid var(--teal);
+      border-radius: 50%;
+      background: #ffffff;
+      box-shadow: 0 16px 28px rgba(0, 0, 0, 0.14);
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+    }
+
+    .pad.sticky-drag .pad-thumb {
+      box-shadow:
+        0 0 0 6px rgba(31, 143, 139, 0.18),
+        0 16px 28px rgba(0, 0, 0, 0.14);
+    }
+
+    .axis-panel {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel-2);
+      padding: 22px;
+    }
+
+    .m2-panel {
+      display: grid;
+      grid-template-rows: auto auto minmax(220px, 1fr) auto;
+      gap: 34px;
+      align-items: center;
+    }
+
+    .m1-panel {
+      display: grid;
+      grid-template-columns: 140px minmax(220px, 1fr) 140px;
+      grid-column: 1;
+      align-items: end;
+      gap: 20px;
+    }
+
+    .number-display {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #ffffff;
+      min-height: 62px;
+      display: grid;
+      place-items: center;
+      font-size: clamp(24px, 3vw, 30px);
+      line-height: 1;
+      font-weight: 900;
+    }
+
+    .m1-control {
+      display: grid;
+      grid-template-rows: 70px 1fr;
+      gap: 12px;
+      align-items: end;
+    }
+
+    .linear {
+      position: relative;
+      touch-action: none;
+      cursor: pointer;
+    }
+
+    .linear.horizontal {
+      height: 26px;
+      align-self: center;
+    }
+
+    .linear.vertical {
+      width: 38px;
+      justify-self: center;
+      height: 100%;
+      min-height: 300px;
+    }
+
+    .track {
+      position: absolute;
+      border: 1px solid #b9c4ca;
+      border-radius: 8px;
+      background: #ffffff;
+      overflow: hidden;
+    }
+
+    .horizontal .track {
+      left: 0;
+      right: 0;
+      top: 50%;
+      height: 10px;
+      transform: translateY(-50%);
+    }
+
+    .vertical .track {
+      top: 0;
+      bottom: 0;
+      left: 50%;
+      width: 10px;
+      transform: translateX(-50%);
+    }
+
+    .fill {
+      position: absolute;
+      background: var(--teal);
+    }
+
+    .horizontal .fill {
+      top: 0;
+      bottom: 0;
+      left: 0;
+      width: 50%;
+    }
+
+    .vertical .fill {
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 50%;
+    }
+
+    .thumb {
+      position: absolute;
+      z-index: 2;
+      width: 20px;
+      height: 20px;
+      border: 0;
+      border-radius: 50%;
+      background: var(--teal);
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.18);
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+    }
+
+    .horizontal .thumb {
+      top: 50%;
+      left: 50%;
+    }
+
+    .vertical .thumb {
+      left: 50%;
+      top: 50%;
+    }
+
+    .tuning {
+      grid-column: 1 / -1;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(180px, 1fr)) auto;
+      gap: 18px;
+      align-items: end;
+    }
+
+    .invert-controls {
+      grid-column: 1 / -1;
+      display: flex;
+      justify-content: flex-end;
+      gap: 18px;
+      flex-wrap: wrap;
+    }
+
+    .invert-controls label {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .invert-controls input {
+      min-height: auto;
+      width: auto;
+      accent-color: var(--teal);
+    }
+
+    .current-control {
+      margin-top: 18px;
+      padding-top: 18px;
+      border-top: 1px solid var(--line);
+      display: grid;
+      grid-template-columns: repeat(2, minmax(180px, 1fr)) auto;
+      gap: 18px;
+      align-items: end;
+    }
+
+    .game-control {
+      margin-top: 18px;
+      padding-top: 18px;
+      border-top: 1px solid var(--line);
+      display: grid;
+      grid-template-columns: minmax(150px, auto) repeat(4, minmax(100px, 1fr));
+      gap: 12px;
+      align-items: stretch;
+    }
+
+    .shoot-button {
+      min-height: 70px;
+      border-color: #8f1d14;
+      background: #b42318;
+      color: #ffffff;
+      font-size: 22px;
+      letter-spacing: 0;
+    }
+
+    .shoot-button.reloading {
+      border-color: #d7a32b;
+      background: #f3bd3c;
+      color: #34250a;
+    }
+
+    .game-metric {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #ffffff;
+      padding: 10px;
+      min-width: 0;
+    }
+
+    .game-metric span {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .game-metric strong {
+      display: block;
+      margin-top: 5px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-size: 18px;
+      font-weight: 900;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .range-row {
+      display: grid;
+      grid-template-columns: minmax(120px, 1fr) 72px;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .range-value {
+      color: var(--text);
+      text-align: right;
+      font-size: 15px;
+      font-weight: 900;
+    }
+
+    .debug-view {
+      width: min(1160px, calc(100vw - 36px));
+      padding: 24px;
+    }
+
+    .debug-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 18px;
+      margin-bottom: 18px;
+    }
+
+    body.debug-open .debug-header {
+      padding-right: 96px;
+    }
+
+    .debug-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(250px, 1fr));
+      gap: 14px;
+    }
+
+    .tool {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel-2);
+      padding: 16px;
+      display: grid;
+      gap: 13px;
+    }
+
+    .tool.wide {
+      grid-column: span 2;
+    }
+
+    .tool.full {
+      grid-column: 1 / -1;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .axis-choice {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    .axis-choice label {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .axis-choice input {
+      min-height: auto;
+      width: auto;
+      accent-color: var(--teal);
+    }
+
+    .status-table {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .metric {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #ffffff;
+      padding: 11px;
+      min-width: 0;
+    }
+
+    .metric span {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .metric strong {
+      display: block;
+      margin-top: 5px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-size: 18px;
+      font-weight: 900;
+    }
+
+    .log {
+      height: 170px;
+      margin: 0;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #101418;
+      color: #c7f7e8;
+      overflow: auto;
+      padding: 12px;
+      font: 12px/1.45 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    @media (max-width: 900px) {
+      .app {
+        padding: 12px;
+        align-items: start;
+      }
+
+      .surface,
+      .debug-view {
+        width: min(100%, calc(100vw - 24px));
+      }
+
+      .default-surface {
+        padding: 18px;
+      }
+
+      .topbar,
+      .debug-header {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      body.debug-open .debug-header {
+        padding-top: 48px;
+        padding-right: 0;
+      }
+
+      .position-layout {
+        grid-template-columns: minmax(0, 1fr) 118px;
+        grid-template-rows: minmax(280px, 52vh) auto auto;
+        gap: 16px;
+      }
+
+      .m1-panel {
+        grid-column: 1 / -1;
+        grid-template-columns: 1fr;
+        align-items: stretch;
+      }
+
+      .m1-control {
+        grid-row: 1;
+      }
+
+      .m2-panel {
+        padding: 18px 12px;
+      }
+
+      .number-display {
+        min-height: 54px;
+      }
+
+      .tuning {
+        grid-column: 1 / -1;
+        grid-template-columns: 1fr;
+      }
+
+      .current-control {
+        grid-template-columns: 1fr;
+      }
+
+      .game-control {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .shoot-button {
+        grid-column: 1 / -1;
+      }
+
+      .debug-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .tool.wide,
+      .tool.full {
+        grid-column: auto;
+      }
+
+      .status-table {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (min-width: 901px) and (max-height: 760px) {
+      .default-surface {
+        padding: 18px 24px;
+      }
+
+      .topbar {
+        margin-bottom: 12px;
+      }
+
+      .position-layout {
+        grid-template-rows: 410px 112px auto;
+        gap: 14px 30px;
+      }
+
+      .axis-panel {
+        padding: 14px 22px;
+      }
+
+      .m2-panel {
+        grid-template-rows: auto auto minmax(170px, 1fr) auto;
+        gap: 14px;
+      }
+
+      .linear.vertical {
+        min-height: 170px;
+      }
+
+      .m1-control {
+        grid-template-rows: 44px 1fr;
+      }
+
+      .number-display {
+        min-height: 44px;
+        font-size: 24px;
+      }
+
+      .tuning {
+        gap: 12px;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .position-layout {
+        grid-template-columns: 1fr;
+        grid-template-rows: 54vh auto auto;
+      }
+
+      .m2-panel {
+        grid-row: 2;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: auto auto;
+      }
+
+      .linear.vertical {
+        grid-column: 1 / -1;
+        width: 100%;
+        height: 32px;
+        min-height: 32px;
+      }
+
+      .linear.vertical .track {
+        left: 0;
+        right: 0;
+        top: 50%;
+        bottom: auto;
+        width: auto;
+        height: 10px;
+        transform: translateY(-50%);
+      }
+
+      .linear.vertical .fill {
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: auto;
+        height: auto;
+        width: 50%;
+      }
+
+      .linear.vertical .thumb {
+        top: 50%;
+        left: 50%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <button id="debugToggle" class="debug-switch" type="button">Debug</button>
+
+  <div class="app">
+    <main id="defaultView" class="surface default-surface" aria-label="Simple motor controller">
+      <header class="topbar">
+        <h1>Position</h1>
+        <div class="actions">
+          <span id="connectionBadge" class="badge"><span class="dot"></span><span id="connectionText">Disconnected</span></span>
+          <button id="connectButton" class="primary" type="button">Connect</button>
+          <span id="sensorBadge" class="badge"><span class="dot"></span><span id="sensorText">Sensor disconnected</span></span>
+          <button id="sensorConnectButton" type="button">Connect sensor</button>
+          <button id="zeroButton" type="button">Set zero</button>
+          <button id="stopButton" class="danger" type="button">Stop</button>
+        </div>
+      </header>
+
+      <section class="position-layout">
+        <div id="pad" class="pad" role="slider" aria-label="M1 and M2 position" tabindex="0">
+          <div id="padThumb" class="pad-thumb"></div>
+        </div>
+
+        <aside class="axis-panel m2-panel">
+          <label>M2 max
+            <input id="m2Max" type="number" step="0.01" value="15.00">
+          </label>
+          <div id="m2Value" class="number-display">0.00</div>
+          <div id="m2Slider" class="linear vertical" aria-label="M2 slider" tabindex="0">
+            <div class="track"><div id="m2Fill" class="fill"></div></div>
+            <div id="m2Thumb" class="thumb"></div>
+          </div>
+          <label>M2 min
+            <input id="m2Min" type="number" step="0.01" value="-15.00">
+          </label>
+        </aside>
+
+        <aside class="axis-panel m1-panel">
+          <label>M1 min
+            <input id="m1Min" type="number" step="0.01" value="-15.00">
+          </label>
+          <div class="m1-control">
+            <div id="m1Value" class="number-display">0.00</div>
+            <div id="m1Slider" class="linear horizontal" aria-label="M1 slider" tabindex="0">
+              <div class="track"><div id="m1Fill" class="fill"></div></div>
+              <div id="m1Thumb" class="thumb"></div>
+            </div>
+          </div>
+          <label>M1 max
+            <input id="m1Max" type="number" step="0.01" value="15.00">
+          </label>
+        </aside>
+
+        <section class="tuning" aria-label="Motion controls">
+          <div class="invert-controls" aria-label="Motor direction inversion">
+            <label><input id="m1Invert" type="checkbox"> Motor 1 invert</label>
+            <label><input id="m2Invert" type="checkbox"> Motor 2 invert</label>
+          </div>
+        </section>
+      </section>
+
+      <section class="current-control" aria-label="Driver current">
+        <label>Run current
+          <div class="range-row">
+            <input id="currentSlider" type="range" min="0" max="31" step="1" value="0">
+            <span id="currentValue" class="range-value">1</span>
+          </div>
+        </label>
+        <label>Hold current
+          <div class="range-row">
+            <input id="holdCurrentSlider" type="range" min="0" max="31" step="1" value="0">
+            <span id="holdCurrentValue" class="range-value">1</span>
+          </div>
+        </label>
+        <button id="currentApplyButton" type="button">Apply current</button>
+      </section>
+
+      <section class="game-control" aria-label="Laser turret game">
+        <button id="shootButton" class="shoot-button" type="button">Shoot A</button>
+        <div class="game-metric"><span>Sensor</span><strong id="sensorValue">-</strong></div>
+        <div class="game-metric"><span>5s avg</span><strong id="sensorAverage">-</strong></div>
+        <div class="game-metric"><span>Hits</span><strong id="hitCount">0</strong></div>
+        <div class="game-metric"><span>Gun</span><strong id="gunStatus">Ready</strong></div>
+      </section>
+    </main>
+
+    <main id="debugView" class="surface debug-view hidden" aria-label="Debug motor controller">
+      <header class="debug-header">
+        <h2>Debug</h2>
+        <div class="actions">
+          <span id="debugConnectionBadge" class="badge"><span class="dot"></span><span id="debugConnectionText">Disconnected</span></span>
+          <button id="debugConnectButton" class="primary" type="button">Connect</button>
+          <button id="queryButton" type="button">Query</button>
+          <button id="debugStopButton" class="danger" type="button">Stop</button>
+        </div>
+      </header>
+
+      <section class="debug-grid">
+        <section class="tool wide">
+          <h3>Status</h3>
+          <div class="status-table">
+            <div class="metric"><span>M1 actual</span><strong id="statusM1Actual">0.00</strong></div>
+            <div class="metric"><span>M2 actual</span><strong id="statusM2Actual">0.00</strong></div>
+            <div class="metric"><span>M1 target</span><strong id="statusM1Target">0.00</strong></div>
+            <div class="metric"><span>M2 target</span><strong id="statusM2Target">0.00</strong></div>
+          </div>
+          <div class="status-table">
+            <div class="metric"><span>Moving</span><strong id="statusMoving">0</strong></div>
+            <div class="metric"><span>M1 microstep</span><strong id="statusM1Micro">8</strong></div>
+            <div class="metric"><span>M2 microstep</span><strong id="statusM2Micro">8</strong></div>
+            <div class="metric"><span>Last ack</span><strong id="statusAck">-</strong></div>
+          </div>
+        </section>
+
+        <section class="tool">
+          <h3>Axis</h3>
+          <div class="axis-choice">
+            <label><input id="axisM1" type="checkbox" checked> M1</label>
+            <label><input id="axisM2" type="checkbox" checked> M2</label>
+          </div>
+          <button id="selectedStopButton" class="danger" type="button">Stop selected</button>
+          <button id="selectedZeroButton" type="button">Set zero selected</button>
+        </section>
+
+        <section class="tool">
+          <h3>F1 Relative</h3>
+          <label>Degrees
+            <input id="relativeDegrees" type="number" step="0.01" value="15.01">
+          </label>
+          <label>Speed 1..10
+            <input id="relativeSpeed" type="range" min="1" max="10" step="1" value="10">
+          </label>
+          <button id="relativeButton" type="button">Run relative</button>
+        </section>
+
+        <section class="tool">
+          <h3>F2 Absolute</h3>
+          <label>Degrees
+            <input id="absoluteDegrees" type="number" step="0.01" value="720.00">
+          </label>
+          <button id="absoluteButton" type="button">Run absolute</button>
+        </section>
+
+        <section class="tool">
+          <h3>F4 Limits</h3>
+          <div class="form-grid">
+            <label>Min
+              <input id="limitMin" type="number" step="0.01" value="-720.00">
+            </label>
+            <label>Max
+              <input id="limitMax" type="number" step="0.01" value="720.00">
+            </label>
+          </div>
+          <button id="limitButton" type="button">Set limits</button>
+          <button id="limitOffButton" type="button">Disable limits</button>
+        </section>
+
+        <section class="tool">
+          <h3>Driver Output</h3>
+          <button id="enableButton" type="button">Enable</button>
+          <button id="disableButton" type="button">Disable</button>
+        </section>
+
+        <section class="tool full">
+          <h3>Raw</h3>
+          <div class="form-grid">
+            <input id="rawCommand" type="text" value="Q|1">
+            <button id="rawButton" type="button">Send raw</button>
+          </div>
+          <pre id="log" class="log"></pre>
+        </section>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    "use strict";
+
+    const SERVICE_UUID = "7b48f4e8-4f2f-4b7b-8fd6-7c3366d67001";
+    const RX_UUID = "7b48f4e8-4f2f-4b7b-8fd6-7c3366d67002";
+    const TX_UUID = "7b48f4e8-4f2f-4b7b-8fd6-7c3366d67003";
+    const BLE_CHUNK_BYTES = 20;
+    const UI_STATE_STORAGE_KEY = "nemaBleControllerUiState";
+    const LIGHT_SERVICE_UUID = "19b10000-e8f2-537e-4f6c-d104768a1214";
+    const LIGHT_VALUE_UUID = "19b10001-e8f2-537e-4f6c-d104768a1214";
+    const SENSOR_AVG_WINDOW_MS = 5000;
+    const SHOOT_RELOAD_MS = 500;
+    const SHOT_WINDOW_MS = 100;
+    const HIT_THRESHOLD_DELTA = 100;
+    const SHOT_SOUND_URL = "public/bullet%20shot.mp3";
+    const HIT_SOUND_URL = "public/explosion.mp3";
+
+    const encoder = new TextEncoder();
+    const decoder = new TextDecoder();
+
+    let bluetoothDevice = null;
+    let rxCharacteristic = null;
+    let txCharacteristic = null;
+    let connected = false;
+    let sequence = 1;
+    let outgoing = [];
+    let writing = false;
+    let notifyBuffer = "";
+    let heartbeatTimer = 0;
+    let positionTimer = 0;
+    let lastPositionSent = 0;
+    let activePointer = null;
+    let padStickyDrag = false;
+    let presetStoreArmed = false;
+    const positionPresets = Array(10).fill(null);
+    let sensorDevice = null;
+    let sensorCharacteristic = null;
+    let sensorSamples = [];
+    let sensorConnected = false;
+    let shooting = false;
+    let reloading = false;
+    let shotEndsAt = 0;
+    let shotTimer = 0;
+    let reloadTimer = 0;
+    let hitCount = 0;
+    const shotSound = new Audio(SHOT_SOUND_URL);
+    const hitSound = new Audio(HIT_SOUND_URL);
+    shotSound.preload = "auto";
+    hitSound.preload = "auto";
+
+    const state = {
+      m1: { min: -15, max: 15, value: 0, actual: 0, target: 0, microsteps: 8, invert: false },
+      m2: { min: -15, max: 15, value: 0, actual: 0, target: 0, microsteps: 8, invert: false },
+      runCurrent: 0,
+      holdCurrent: 0,
+      movingMask: 0,
+      lastAck: "-"
+    };
+
+    const $ = (id) => document.getElementById(id);
+
+    const refs = {
+      defaultView: $("defaultView"),
+      debugView: $("debugView"),
+      debugToggle: $("debugToggle"),
+      connectionBadge: $("connectionBadge"),
+      connectionText: $("connectionText"),
+      sensorBadge: $("sensorBadge"),
+      sensorText: $("sensorText"),
+      sensorConnectButton: $("sensorConnectButton"),
+      debugConnectionBadge: $("debugConnectionBadge"),
+      debugConnectionText: $("debugConnectionText"),
+      connectButton: $("connectButton"),
+      debugConnectButton: $("debugConnectButton"),
+      stopButton: $("stopButton"),
+      debugStopButton: $("debugStopButton"),
+      selectedStopButton: $("selectedStopButton"),
+      zeroButton: $("zeroButton"),
+      selectedZeroButton: $("selectedZeroButton"),
+      queryButton: $("queryButton"),
+      pad: $("pad"),
+      padThumb: $("padThumb"),
+      m1Slider: $("m1Slider"),
+      m1Fill: $("m1Fill"),
+      m1Thumb: $("m1Thumb"),
+      m1Min: $("m1Min"),
+      m1Max: $("m1Max"),
+      m1Value: $("m1Value"),
+      m1Invert: $("m1Invert"),
+      m2Slider: $("m2Slider"),
+      m2Fill: $("m2Fill"),
+      m2Thumb: $("m2Thumb"),
+      m2Min: $("m2Min"),
+      m2Max: $("m2Max"),
+      m2Value: $("m2Value"),
+      m2Invert: $("m2Invert"),
+      currentSlider: $("currentSlider"),
+      currentValue: $("currentValue"),
+      holdCurrentSlider: $("holdCurrentSlider"),
+      holdCurrentValue: $("holdCurrentValue"),
+      currentApplyButton: $("currentApplyButton"),
+      shootButton: $("shootButton"),
+      sensorValue: $("sensorValue"),
+      sensorAverage: $("sensorAverage"),
+      hitCount: $("hitCount"),
+      gunStatus: $("gunStatus"),
+      axisM1: $("axisM1"),
+      axisM2: $("axisM2"),
+      relativeDegrees: $("relativeDegrees"),
+      relativeSpeed: $("relativeSpeed"),
+      relativeButton: $("relativeButton"),
+      absoluteDegrees: $("absoluteDegrees"),
+      absoluteButton: $("absoluteButton"),
+      limitMin: $("limitMin"),
+      limitMax: $("limitMax"),
+      limitButton: $("limitButton"),
+      limitOffButton: $("limitOffButton"),
+      enableButton: $("enableButton"),
+      disableButton: $("disableButton"),
+      rawCommand: $("rawCommand"),
+      rawButton: $("rawButton"),
+      log: $("log"),
+      statusM1Actual: $("statusM1Actual"),
+      statusM2Actual: $("statusM2Actual"),
+      statusM1Target: $("statusM1Target"),
+      statusM2Target: $("statusM2Target"),
+      statusMoving: $("statusMoving"),
+      statusM1Micro: $("statusM1Micro"),
+      statusM2Micro: $("statusM2Micro"),
+      statusAck: $("statusAck")
+    };
+
+    function clamp(value, min, max) {
+      return Math.min(max, Math.max(min, value));
+    }
+
+    function readNumber(input, fallback) {
+      const value = Number(input.value);
+      return Number.isFinite(value) ? value : fallback;
+    }
+
+    function readStoredNumber(value, fallback) {
+      const number = Number(value);
+      return Number.isFinite(number) ? number : fallback;
+    }
+
+    function readStoredBoolean(value, fallback) {
+      return typeof value === "boolean" ? value : fallback;
+    }
+
+    function toCentiDegrees(value) {
+      return Math.round(Number(value) * 100);
+    }
+
+    function fromCentiDegrees(value) {
+      return Number(value) / 100;
+    }
+
+    function formatDegrees(value) {
+      if (!Number.isFinite(value)) return "0.00";
+      return value.toFixed(2);
+    }
+
+    function isTextInputTarget(target) {
+      if (!(target instanceof HTMLElement)) return false;
+      const tag = target.tagName;
+      return target.isContentEditable || tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT";
+    }
+
+    function digitForKey(key) {
+      return /^[0-9]$/.test(key) ? Number(key) : null;
+    }
+
+    function motorForAxis(axis) {
+      return axis === 1 ? state.m1 : state.m2;
+    }
+
+    function invertForAxis(axis, value) {
+      return motorForAxis(axis).invert ? -value : value;
+    }
+
+    function toDeviceCentiDegrees(axis, value) {
+      return toCentiDegrees(invertForAxis(axis, value));
+    }
+
+    function fromDeviceCentiDegrees(axis, value) {
+      return invertForAxis(axis, fromCentiDegrees(value));
+    }
+
+    function deviceLimitCentiDegrees(axis, min, max) {
+      const a = invertForAxis(axis, min);
+      const b = invertForAxis(axis, max);
+      return {
+        min: toCentiDegrees(Math.min(a, b)),
+        max: toCentiDegrees(Math.max(a, b))
+      };
+    }
+
+    function nextSeq() {
+      sequence += 1;
+      if (sequence > 65535) sequence = 1;
+      return sequence;
+    }
+
+    function selectedMask() {
+      let mask = 0;
+      if (refs.axisM1.checked) mask |= 1;
+      if (refs.axisM2.checked) mask |= 2;
+      return mask;
+    }
+
+    function selectedAxes() {
+      const axes = [];
+      if (refs.axisM1.checked) axes.push(1);
+      if (refs.axisM2.checked) axes.push(2);
+      return axes;
+    }
+
+    function logLine(line) {
+      const now = new Date();
+      const stamp = now.toLocaleTimeString();
+      refs.log.textContent += `[${stamp}] ${line}\n`;
+      refs.log.scrollTop = refs.log.scrollHeight;
+    }
+
+    function setConnectionUi(isConnected, text) {
+      connected = isConnected;
+      refs.connectionText.textContent = text;
+      refs.debugConnectionText.textContent = text;
+      refs.connectionBadge.classList.toggle("connected", isConnected);
+      refs.debugConnectionBadge.classList.toggle("connected", isConnected);
+      refs.connectButton.textContent = isConnected ? "Disconnect" : "Connect";
+      refs.debugConnectButton.textContent = isConnected ? "Disconnect" : "Connect";
+    }
+
+    function setSensorConnectionUi(isConnected, text) {
+      sensorConnected = isConnected;
+      refs.sensorText.textContent = text;
+      refs.sensorBadge.classList.toggle("connected", isConnected);
+      refs.sensorConnectButton.textContent = isConnected ? "Disconnect sensor" : "Connect sensor";
+    }
+
+    function trimSensorSamples(now) {
+      const cutoff = now - SENSOR_AVG_WINDOW_MS;
+      while (sensorSamples.length && sensorSamples[0].time < cutoff) {
+        sensorSamples.shift();
+      }
+    }
+
+    function sensorAverage() {
+      if (!sensorSamples.length) return null;
+      return sensorSamples.reduce((sum, sample) => sum + sample.value, 0) / sensorSamples.length;
+    }
+
+    function updateSensorReadout(value = null) {
+      const average = sensorAverage();
+      refs.sensorValue.textContent = value === null ? "-" : String(value);
+      refs.sensorAverage.textContent = average === null ? "-" : average.toFixed(0);
+      refs.hitCount.textContent = String(hitCount);
+    }
+
+    function renderGunStatus(text) {
+      refs.gunStatus.textContent = text;
+      refs.shootButton.textContent = text === "Ready" ? "Shoot A" : text;
+      refs.shootButton.disabled = reloading;
+      refs.shootButton.classList.toggle("reloading", reloading);
+    }
+
+    function playSound(sound) {
+      const instance = sound.cloneNode();
+      instance.currentTime = 0;
+      instance.play().catch((error) => {
+        logLine(`! audio ${error.message || error}`);
+      });
+    }
+
+    function registerHit() {
+      if (!shooting) return;
+      shooting = false;
+      window.clearTimeout(shotTimer);
+      hitCount += 1;
+      updateSensorReadout(sensorSamples.length ? sensorSamples[sensorSamples.length - 1].value : null);
+      renderGunStatus("Hit");
+      playSound(hitSound);
+    }
+
+    function startShot() {
+      if (reloading) return;
+
+      playSound(shotSound);
+      reloading = true;
+      shooting = true;
+      shotEndsAt = Date.now() + SHOT_WINDOW_MS;
+      renderGunStatus("Firing");
+
+      window.clearTimeout(shotTimer);
+      window.clearTimeout(reloadTimer);
+
+      shotTimer = window.setTimeout(() => {
+        shooting = false;
+        if (reloading) renderGunStatus("Reloading");
+      }, SHOT_WINDOW_MS);
+
+      reloadTimer = window.setTimeout(() => {
+        reloading = false;
+        shooting = false;
+        renderGunStatus("Ready");
+      }, SHOOT_RELOAD_MS);
+    }
+
+    function handleSensorValue(value) {
+      const now = Date.now();
+      trimSensorSamples(now);
+      const baseline = sensorAverage();
+
+      sensorSamples.push({ time: now, value });
+      trimSensorSamples(now);
+      updateSensorReadout(value);
+
+      if (
+        shooting &&
+        now <= shotEndsAt &&
+        baseline !== null &&
+        value >= baseline + HIT_THRESHOLD_DELTA
+      ) {
+        registerHit();
+      }
+    }
+
+    function onSensorValueChanged(event) {
+      const text = decoder.decode(event.target.value).trim();
+      const value = Number.parseInt(text, 10);
+      if (!Number.isFinite(value)) return;
+      handleSensorValue(value);
+    }
+
+    function onSensorDisconnected() {
+      if (sensorCharacteristic) {
+        sensorCharacteristic.removeEventListener("characteristicvaluechanged", onSensorValueChanged);
+      }
+
+      sensorCharacteristic = null;
+      sensorDevice = null;
+      setSensorConnectionUi(false, "Sensor disconnected");
+      updateSensorReadout();
+      logLine("! sensor disconnected");
+    }
+
+    async function connectSensor() {
+      if (sensorConnected) {
+        disconnectSensor();
+        return;
+      }
+
+      if (!navigator.bluetooth) {
+        setSensorConnectionUi(false, "Bluetooth unavailable");
+        return;
+      }
+
+      try {
+        refs.sensorConnectButton.disabled = true;
+        setSensorConnectionUi(false, "Selecting sensor");
+        sensorDevice = await navigator.bluetooth.requestDevice({
+          filters: [{ services: [LIGHT_SERVICE_UUID] }],
+          optionalServices: [LIGHT_SERVICE_UUID]
+        });
+        sensorDevice.addEventListener("gattserverdisconnected", onSensorDisconnected);
+
+        setSensorConnectionUi(false, "Connecting sensor");
+        const server = await sensorDevice.gatt.connect();
+        const service = await server.getPrimaryService(LIGHT_SERVICE_UUID);
+        sensorCharacteristic = await service.getCharacteristic(LIGHT_VALUE_UUID);
+
+        sensorCharacteristic.addEventListener("characteristicvaluechanged", onSensorValueChanged);
+        await sensorCharacteristic.startNotifications();
+
+        setSensorConnectionUi(true, "Sensor connected");
+      } catch (error) {
+        setSensorConnectionUi(false, "Sensor disconnected");
+        logLine(`! sensor connect ${error.message || error}`);
+      } finally {
+        refs.sensorConnectButton.disabled = false;
+      }
+    }
+
+    function disconnectSensor() {
+      if (sensorCharacteristic) {
+        sensorCharacteristic.stopNotifications().catch(() => {});
+        sensorCharacteristic.removeEventListener("characteristicvaluechanged", onSensorValueChanged);
+      }
+
+      if (sensorDevice && sensorDevice.gatt && sensorDevice.gatt.connected) {
+        sensorDevice.gatt.disconnect();
+      }
+
+      sensorCharacteristic = null;
+      sensorDevice = null;
+      setSensorConnectionUi(false, "Sensor disconnected");
+    }
+
+    function enqueue(line, options = {}) {
+      if (!line.endsWith("\n")) line += "\n";
+      if (!connected || !rxCharacteristic) {
+        logLine(`! ${line.trim()} skipped`);
+        return;
+      }
+
+      if (options.coalesceKey) {
+        outgoing = outgoing.filter((job) => job.coalesceKey !== options.coalesceKey);
+      }
+
+      outgoing.push({ line, coalesceKey: options.coalesceKey || "" });
+      logLine(`> ${line.trim()}`);
+      pumpWrites();
+    }
+
+    async function writeChunk(bytes) {
+      if (!rxCharacteristic) return;
+      if (typeof rxCharacteristic.writeValueWithoutResponse === "function") {
+        try {
+          await rxCharacteristic.writeValueWithoutResponse(bytes);
+          return;
+        } catch (error) {
+          if (!connected) throw error;
+        }
+      }
+      await rxCharacteristic.writeValue(bytes);
+    }
+
+    async function pumpWrites() {
+      if (writing) return;
+      writing = true;
+
+      try {
+        while (outgoing.length && connected && rxCharacteristic) {
+          const job = outgoing.shift();
+          const bytes = encoder.encode(job.line);
+          for (let offset = 0; offset < bytes.length; offset += BLE_CHUNK_BYTES) {
+            await writeChunk(bytes.slice(offset, offset + BLE_CHUNK_BYTES));
+          }
+        }
+      } catch (error) {
+        logLine(`! write ${error.message || error}`);
+        disconnect();
+      } finally {
+        writing = false;
+      }
+    }
+
+    function sendCommand(command, body, options = {}) {
+      const seq = nextSeq();
+      enqueue(`${command}|${seq}${body ? `|${body}` : ""}`, options);
+      return seq;
+    }
+
+    function sendRaw(line) {
+      enqueue(line, { coalesceKey: "" });
+    }
+
+    function sendPositionPair() {
+      sendCommand(
+        "P",
+        `${toDeviceCentiDegrees(1, state.m1.value)}|${toDeviceCentiDegrees(2, state.m2.value)}`,
+        { coalesceKey: "position" }
+      );
+    }
+
+    function schedulePositionSend() {
+      window.clearTimeout(positionTimer);
+      const now = performance.now();
+      const delay = Math.max(0, 50 - (now - lastPositionSent));
+      positionTimer = window.setTimeout(() => {
+        lastPositionSent = performance.now();
+        sendPositionPair();
+      }, delay);
+    }
+
+    function sendSimpleLimits(axis) {
+      const model = axis === 1 ? state.m1 : state.m2;
+      const limits = deviceLimitCentiDegrees(axis, model.min, model.max);
+      sendCommand("L", `${axis}|${limits.min}|${limits.max}`, {
+        coalesceKey: `limits-${axis}`
+      });
+    }
+
+    function sendInitialSettings() {
+      sendCommand("I", `${state.runCurrent}|${state.holdCurrent}`, { coalesceKey: "current" });
+      sendSimpleLimits(1);
+      sendSimpleLimits(2);
+      sendPositionPair();
+      sendCommand("Q", "", { coalesceKey: "query" });
+    }
+
+    async function connect() {
+      if (connected) {
+        disconnect();
+        return;
+      }
+
+      if (!navigator.bluetooth) {
+        setConnectionUi(false, "Bluetooth unavailable");
+        return;
+      }
+
+      try {
+        setConnectionUi(false, "Selecting");
+        bluetoothDevice = await navigator.bluetooth.requestDevice({
+          filters: [{ services: [SERVICE_UUID] }],
+          optionalServices: [SERVICE_UUID]
+        });
+        bluetoothDevice.addEventListener("gattserverdisconnected", onDisconnected);
+
+        setConnectionUi(false, "Connecting");
+        const server = await bluetoothDevice.gatt.connect();
+        const service = await server.getPrimaryService(SERVICE_UUID);
+        rxCharacteristic = await service.getCharacteristic(RX_UUID);
+        txCharacteristic = await service.getCharacteristic(TX_UUID);
+
+        txCharacteristic.addEventListener("characteristicvaluechanged", onNotification);
+        await txCharacteristic.startNotifications();
+
+        setConnectionUi(true, "Connected");
+        heartbeatTimer = window.setInterval(() => {
+          sendCommand("Q", "", { coalesceKey: "query" });
+        }, 500);
+        sendInitialSettings();
+      } catch (error) {
+        setConnectionUi(false, "Disconnected");
+        logLine(`! connect ${error.message || error}`);
+      }
+    }
+
+    function disconnect() {
+      window.clearInterval(heartbeatTimer);
+      window.clearTimeout(positionTimer);
+      heartbeatTimer = 0;
+      positionTimer = 0;
+      outgoing = [];
+      writing = false;
+
+      if (bluetoothDevice && bluetoothDevice.gatt && bluetoothDevice.gatt.connected) {
+        bluetoothDevice.gatt.disconnect();
+      }
+
+      rxCharacteristic = null;
+      txCharacteristic = null;
+      setConnectionUi(false, "Disconnected");
+    }
+
+    function onDisconnected() {
+      rxCharacteristic = null;
+      txCharacteristic = null;
+      window.clearInterval(heartbeatTimer);
+      window.clearTimeout(positionTimer);
+      heartbeatTimer = 0;
+      positionTimer = 0;
+      outgoing = [];
+      writing = false;
+      setConnectionUi(false, "Disconnected");
+      logLine("! disconnected");
+    }
+
+    function onNotification(event) {
+      notifyBuffer += decoder.decode(event.target.value);
+      let newline = notifyBuffer.indexOf("\n");
+
+      while (newline >= 0) {
+        const line = notifyBuffer.slice(0, newline).trim();
+        notifyBuffer = notifyBuffer.slice(newline + 1);
+        if (line) handleIncomingLine(line);
+        newline = notifyBuffer.indexOf("\n");
+      }
+    }
+
+    function handleIncomingLine(line) {
+      logLine(`< ${line}`);
+      const parts = line.split("|");
+
+      if (parts[0] === "S" && parts.length >= 8) {
+        state.m1.actual = fromDeviceCentiDegrees(1, Number(parts[1]));
+        state.m2.actual = fromDeviceCentiDegrees(2, Number(parts[2]));
+        state.m1.target = fromDeviceCentiDegrees(1, Number(parts[3]));
+        state.m2.target = fromDeviceCentiDegrees(2, Number(parts[4]));
+        state.movingMask = Number(parts[5]) || 0;
+        state.m1.microsteps = Number(parts[6]) || state.m1.microsteps;
+        state.m2.microsteps = Number(parts[7]) || state.m2.microsteps;
+        updateStatus();
+        return;
+      }
+
+      if (parts[0] === "A" && parts.length >= 3) {
+        state.lastAck = parts[2];
+        updateStatus();
+        return;
+      }
+
+      if (parts[0] === "E" && parts.length >= 3) {
+        state.lastAck = `ERR ${parts[2]}`;
+        updateStatus();
+        return;
+      }
+
+      if (parts[0] === "W" && parts[1] === "timeout") {
+        state.lastAck = "timeout";
+        updateStatus();
+      }
+    }
+
+    function updateStatus() {
+      refs.statusM1Actual.textContent = formatDegrees(state.m1.actual);
+      refs.statusM2Actual.textContent = formatDegrees(state.m2.actual);
+      refs.statusM1Target.textContent = formatDegrees(state.m1.target);
+      refs.statusM2Target.textContent = formatDegrees(state.m2.target);
+      refs.statusMoving.textContent = String(state.movingMask);
+      refs.statusM1Micro.textContent = String(state.m1.microsteps);
+      refs.statusM2Micro.textContent = String(state.m2.microsteps);
+      refs.statusAck.textContent = state.lastAck;
+    }
+
+    function renderInvertControls() {
+      refs.m1Invert.checked = state.m1.invert;
+      refs.m2Invert.checked = state.m2.invert;
+    }
+
+    function renderCurrentControls() {
+      refs.currentSlider.value = String(state.runCurrent);
+      refs.currentValue.textContent = String(state.runCurrent);
+      refs.holdCurrentSlider.value = String(state.holdCurrent);
+      refs.holdCurrentValue.textContent = String(state.holdCurrent);
+    }
+
+    function saveUiState() {
+      const payload = {
+        runCurrent: state.runCurrent,
+        holdCurrent: state.holdCurrent,
+        m1Invert: state.m1.invert,
+        m2Invert: state.m2.invert,
+        m1Min: state.m1.min,
+        m1Max: state.m1.max,
+        m2Min: state.m2.min,
+        m2Max: state.m2.max
+      };
+
+      try {
+        localStorage.setItem(UI_STATE_STORAGE_KEY, JSON.stringify(payload));
+      } catch (error) {
+        logLine(`! localStorage save ${error.message || error}`);
+      }
+    }
+
+    function loadUiState() {
+      let saved;
+
+      try {
+        saved = JSON.parse(localStorage.getItem(UI_STATE_STORAGE_KEY) || "{}");
+      } catch (error) {
+        logLine(`! localStorage load ${error.message || error}`);
+        return;
+      }
+
+      const m1Min = readStoredNumber(saved.m1Min, state.m1.min);
+      const m1Max = readStoredNumber(saved.m1Max, state.m1.max);
+      const m2Min = readStoredNumber(saved.m2Min, state.m2.min);
+      const m2Max = readStoredNumber(saved.m2Max, state.m2.max);
+
+      if (m1Min < m1Max) {
+        state.m1.min = m1Min;
+        state.m1.max = m1Max;
+        state.m1.value = clamp(state.m1.value, m1Min, m1Max);
+      }
+
+      if (m2Min < m2Max) {
+        state.m2.min = m2Min;
+        state.m2.max = m2Max;
+        state.m2.value = clamp(state.m2.value, m2Min, m2Max);
+      }
+
+      state.runCurrent = clamp(Math.round(readStoredNumber(saved.runCurrent, state.runCurrent)), 0, 31);
+      state.holdCurrent = clamp(Math.round(readStoredNumber(saved.holdCurrent, state.holdCurrent)), 0, 31);
+      state.m1.invert = readStoredBoolean(saved.m1Invert, state.m1.invert);
+      state.m2.invert = readStoredBoolean(saved.m2Invert, state.m2.invert);
+    }
+
+    function setMotorValue(axis, value, transmit) {
+      const motor = axis === 1 ? state.m1 : state.m2;
+      motor.value = clamp(value, motor.min, motor.max);
+      renderPosition();
+      if (transmit) schedulePositionSend();
+    }
+
+    function storePositionPreset(index) {
+      positionPresets[index] = {
+        m1: state.m1.value,
+        m2: state.m2.value
+      };
+      logLine(`* stored position ${index}: M1 ${formatDegrees(state.m1.value)}, M2 ${formatDegrees(state.m2.value)}`);
+    }
+
+    function recallPositionPreset(index) {
+      const preset = positionPresets[index];
+      if (!preset) {
+        logLine(`! position ${index} is empty`);
+        return;
+      }
+
+      state.m1.value = clamp(preset.m1, state.m1.min, state.m1.max);
+      state.m2.value = clamp(preset.m2, state.m2.min, state.m2.max);
+      renderPosition();
+      schedulePositionSend();
+      logLine(`* recalled position ${index}: M1 ${formatDegrees(state.m1.value)}, M2 ${formatDegrees(state.m2.value)}`);
+    }
+
+    function handlePresetKeydown(event) {
+      if (event.metaKey || event.ctrlKey || event.altKey || isTextInputTarget(event.target)) return;
+
+      if (event.key.toLowerCase() === "s") {
+        event.preventDefault();
+        presetStoreArmed = true;
+        logLine("* press 0-9 to store current position");
+        return;
+      }
+
+      const digit = digitForKey(event.key);
+      if (digit === null) {
+        if (event.key === "Escape") presetStoreArmed = false;
+        return;
+      }
+
+      event.preventDefault();
+      if (presetStoreArmed) {
+        storePositionPreset(digit);
+        presetStoreArmed = false;
+      } else {
+        recallPositionPreset(digit);
+      }
+    }
+
+    function handleShootKeydown(event) {
+      if (event.metaKey || event.ctrlKey || event.altKey || isTextInputTarget(event.target)) return;
+      if (event.key.toLowerCase() !== "a") return;
+      event.preventDefault();
+      startShot();
+    }
+
+    function updateRange(axis) {
+      const motor = axis === 1 ? state.m1 : state.m2;
+      const minInput = axis === 1 ? refs.m1Min : refs.m2Min;
+      const maxInput = axis === 1 ? refs.m1Max : refs.m2Max;
+      const min = readNumber(minInput, motor.min);
+      const max = readNumber(maxInput, motor.max);
+
+      if (min >= max) {
+        minInput.value = formatDegrees(motor.min);
+        maxInput.value = formatDegrees(motor.max);
+        return;
+      }
+
+      motor.min = min;
+      motor.max = max;
+      motor.value = clamp(motor.value, min, max);
+      renderPosition();
+      saveUiState();
+      sendSimpleLimits(axis);
+      schedulePositionSend();
+    }
+
+    function ratioForMotor(motor) {
+      const span = motor.max - motor.min;
+      if (span <= 0) return 0.5;
+      return clamp((motor.value - motor.min) / span, 0, 1);
+    }
+
+    function renderPosition() {
+      const m1Ratio = ratioForMotor(state.m1);
+      const m2Ratio = ratioForMotor(state.m2);
+
+      refs.m1Value.textContent = formatDegrees(state.m1.value);
+      refs.m2Value.textContent = formatDegrees(state.m2.value);
+      refs.m1Min.value = formatDegrees(state.m1.min);
+      refs.m1Max.value = formatDegrees(state.m1.max);
+      refs.m2Min.value = formatDegrees(state.m2.min);
+      refs.m2Max.value = formatDegrees(state.m2.max);
+
+      refs.m1Fill.style.width = `${m1Ratio * 100}%`;
+      refs.m1Thumb.style.left = `${m1Ratio * 100}%`;
+
+      if (window.matchMedia("(max-width: 560px)").matches) {
+        refs.m2Fill.style.width = `${m2Ratio * 100}%`;
+        refs.m2Fill.style.height = "auto";
+        refs.m2Thumb.style.left = `${m2Ratio * 100}%`;
+        refs.m2Thumb.style.top = "50%";
+      } else {
+        refs.m2Fill.style.height = `${m2Ratio * 100}%`;
+        refs.m2Fill.style.width = "auto";
+        refs.m2Thumb.style.top = `${(1 - m2Ratio) * 100}%`;
+        refs.m2Thumb.style.left = "50%";
+      }
+
+      refs.padThumb.style.left = `${m1Ratio * 100}%`;
+      refs.padThumb.style.top = `${(1 - m2Ratio) * 100}%`;
+    }
+
+    function valueFromHorizontal(element, event, motor) {
+      const rect = element.getBoundingClientRect();
+      const ratio = clamp((event.clientX - rect.left) / rect.width, 0, 1);
+      return motor.min + ratio * (motor.max - motor.min);
+    }
+
+    function valueFromVertical(element, event, motor) {
+      const rect = element.getBoundingClientRect();
+      const narrow = window.matchMedia("(max-width: 560px)").matches;
+      const ratio = narrow
+        ? clamp((event.clientX - rect.left) / rect.width, 0, 1)
+        : clamp(1 - (event.clientY - rect.top) / rect.height, 0, 1);
+      return motor.min + ratio * (motor.max - motor.min);
+    }
+
+    function bindSlider(element, axis) {
+      element.addEventListener("pointerdown", (event) => {
+        event.preventDefault();
+        activePointer = event.pointerId;
+        element.setPointerCapture(event.pointerId);
+        const value = axis === 1
+          ? valueFromHorizontal(element, event, state.m1)
+          : valueFromVertical(element, event, state.m2);
+        setMotorValue(axis, value, true);
+      });
+
+      element.addEventListener("pointermove", (event) => {
+        if (activePointer !== event.pointerId || !(event.buttons & 1)) return;
+        event.preventDefault();
+        const value = axis === 1
+          ? valueFromHorizontal(element, event, state.m1)
+          : valueFromVertical(element, event, state.m2);
+        setMotorValue(axis, value, true);
+      });
+
+      element.addEventListener("pointerup", (event) => {
+        if (activePointer === event.pointerId) activePointer = null;
+      });
+    }
+
+    function bindPad() {
+      const handle = (event) => {
+        const rect = refs.pad.getBoundingClientRect();
+        const xRatio = clamp((event.clientX - rect.left) / rect.width, 0, 1);
+        const yRatio = clamp(1 - (event.clientY - rect.top) / rect.height, 0, 1);
+        state.m1.value = state.m1.min + xRatio * (state.m1.max - state.m1.min);
+        state.m2.value = state.m2.min + yRatio * (state.m2.max - state.m2.min);
+        renderPosition();
+        schedulePositionSend();
+      };
+
+      const hitsThumb = (event) => {
+        const thumb = refs.padThumb.getBoundingClientRect();
+        const centerX = thumb.left + thumb.width / 2;
+        const centerY = thumb.top + thumb.height / 2;
+        const radius = Math.max(thumb.width, thumb.height) / 2 + 8;
+        return Math.hypot(event.clientX - centerX, event.clientY - centerY) <= radius;
+      };
+
+      const setStickyDrag = (enabled) => {
+        padStickyDrag = enabled;
+        refs.pad.classList.toggle("sticky-drag", enabled);
+        activePointer = null;
+      };
+
+      document.addEventListener("pointermove", (event) => {
+        if (!padStickyDrag) return;
+        event.preventDefault();
+        handle(event);
+      });
+
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape" && padStickyDrag) setStickyDrag(false);
+      });
+
+      document.addEventListener("pointerdown", (event) => {
+        if (!padStickyDrag || refs.pad.contains(event.target)) return;
+        setStickyDrag(false);
+      });
+
+      refs.pad.addEventListener("pointerdown", (event) => {
+        event.preventDefault();
+
+        if (padStickyDrag) {
+          handle(event);
+          setStickyDrag(false);
+          return;
+        }
+
+        if (hitsThumb(event)) {
+          setStickyDrag(true);
+          return;
+        }
+
+        activePointer = event.pointerId;
+        refs.pad.setPointerCapture(event.pointerId);
+        handle(event);
+      });
+
+      refs.pad.addEventListener("pointermove", (event) => {
+        if (activePointer !== event.pointerId || !(event.buttons & 1)) return;
+        event.preventDefault();
+        handle(event);
+      });
+
+      refs.pad.addEventListener("pointerup", (event) => {
+        if (activePointer === event.pointerId) activePointer = null;
+      });
+    }
+
+    function connectButtonHandler() {
+      connect();
+    }
+
+    function stop(mask = 3) {
+      sendCommand("H", String(mask), { coalesceKey: "stop" });
+    }
+
+    function zero(mask = 3) {
+      sendCommand("Z", String(mask), { coalesceKey: "zero" });
+      if (mask & 1) state.m1.value = 0;
+      if (mask & 2) state.m2.value = 0;
+      renderPosition();
+    }
+
+    function bindEvents() {
+      refs.connectButton.addEventListener("click", connectButtonHandler);
+      refs.debugConnectButton.addEventListener("click", connectButtonHandler);
+      refs.sensorConnectButton.addEventListener("click", connectSensor);
+      refs.shootButton.addEventListener("click", startShot);
+      refs.stopButton.addEventListener("click", () => stop(3));
+      refs.debugStopButton.addEventListener("click", () => stop(3));
+      refs.selectedStopButton.addEventListener("click", () => stop(selectedMask() || 3));
+      refs.zeroButton.addEventListener("click", () => zero(3));
+      refs.selectedZeroButton.addEventListener("click", () => zero(selectedMask() || 3));
+      refs.queryButton.addEventListener("click", () => sendCommand("Q", "", { coalesceKey: "query" }));
+
+      refs.debugToggle.addEventListener("click", () => {
+        const showDebug = refs.debugView.classList.contains("hidden");
+        refs.debugView.classList.toggle("hidden", !showDebug);
+        refs.defaultView.classList.toggle("hidden", showDebug);
+        document.body.classList.toggle("debug-open", showDebug);
+        refs.debugToggle.textContent = showDebug ? "Simple" : "Debug";
+      });
+
+      refs.m1Min.addEventListener("change", () => updateRange(1));
+      refs.m1Max.addEventListener("change", () => updateRange(1));
+      refs.m2Min.addEventListener("change", () => updateRange(2));
+      refs.m2Max.addEventListener("change", () => updateRange(2));
+      refs.m1Invert.addEventListener("change", () => {
+        state.m1.invert = refs.m1Invert.checked;
+        saveUiState();
+        sendSimpleLimits(1);
+      });
+      refs.m2Invert.addEventListener("change", () => {
+        state.m2.invert = refs.m2Invert.checked;
+        saveUiState();
+        sendSimpleLimits(2);
+      });
+      window.addEventListener("resize", renderPosition);
+
+      refs.currentSlider.addEventListener("input", () => {
+        state.runCurrent = clamp(Math.round(readNumber(refs.currentSlider, state.runCurrent)), 0, 31);
+        renderCurrentControls();
+        saveUiState();
+      });
+
+      refs.holdCurrentSlider.addEventListener("input", () => {
+        state.holdCurrent = clamp(Math.round(readNumber(refs.holdCurrentSlider, state.holdCurrent)), 0, 31);
+        renderCurrentControls();
+        saveUiState();
+      });
+
+      refs.currentApplyButton.addEventListener("click", () => {
+        state.runCurrent = clamp(Math.round(readNumber(refs.currentSlider, state.runCurrent)), 0, 31);
+        state.holdCurrent = clamp(Math.round(readNumber(refs.holdCurrentSlider, state.holdCurrent)), 0, 31);
+        renderCurrentControls();
+        saveUiState();
+        sendCommand("I", `${state.runCurrent}|${state.holdCurrent}`, { coalesceKey: "current" });
+      });
+
+      refs.relativeButton.addEventListener("click", () => {
+        const axes = selectedAxes();
+        if (!axes.length) return;
+        const degrees = readNumber(refs.relativeDegrees, 0);
+        const speed = clamp(Math.round(readNumber(refs.relativeSpeed, 10)), 1, 10);
+        axes.forEach((axis) => {
+          sendCommand("R", `${axis}|${toDeviceCentiDegrees(axis, degrees)}|${speed}`);
+        });
+      });
+
+      refs.absoluteButton.addEventListener("click", () => {
+        const axes = selectedAxes();
+        if (!axes.length) return;
+        const degrees = readNumber(refs.absoluteDegrees, 0);
+        axes.forEach((axis) => {
+          sendCommand("G", `${axis}|${toDeviceCentiDegrees(axis, degrees)}`);
+        });
+      });
+
+      refs.limitButton.addEventListener("click", () => {
+        const axes = selectedAxes();
+        if (!axes.length) return;
+        const min = readNumber(refs.limitMin, -720);
+        const max = readNumber(refs.limitMax, 720);
+        axes.forEach((axis) => {
+          const limits = deviceLimitCentiDegrees(axis, min, max);
+          sendCommand("L", `${axis}|${limits.min}|${limits.max}`);
+        });
+      });
+
+      refs.limitOffButton.addEventListener("click", () => {
+        const mask = selectedMask();
+        if (!mask) return;
+        sendCommand("L", `${mask}|0|0`);
+      });
+
+      refs.enableButton.addEventListener("click", () => sendCommand("N", "1"));
+      refs.disableButton.addEventListener("click", () => sendCommand("N", "0"));
+      refs.rawButton.addEventListener("click", () => sendRaw(refs.rawCommand.value));
+      document.addEventListener("keydown", handlePresetKeydown);
+      document.addEventListener("keydown", handleShootKeydown);
+
+      bindSlider(refs.m1Slider, 1);
+      bindSlider(refs.m2Slider, 2);
+      bindPad();
+    }
+
+    loadUiState();
+    bindEvents();
+    renderPosition();
+    renderInvertControls();
+    renderCurrentControls();
+    updateStatus();
+    setConnectionUi(false, "Disconnected");
+    setSensorConnectionUi(false, "Sensor disconnected");
+    updateSensorReadout();
+    renderGunStatus("Ready");
+  </script>
+</body>
+</html>
